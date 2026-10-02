@@ -1,0 +1,21 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="120" startCamPosY="650" zoom="0.8" name="bootleg" folder="">
+	<sprite name="startbutton" sprite="mario/dad7/start" x="400" y="1250" scale="4"/>
+	<sprite name="flintbg" sprite="mario/dad7/flint" x="900" y="250" scale="12" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="flintwater" sprite="mario/dad7/Water" x="50" y="1650" scrollx="1.4" scale="12" visible="false" anim="Water idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Water idle" anim="Water idle" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="thegang" sprite="mario/dad7/Grand_Dad_Girlfriend_Assets_gang" x="430" y="360" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="funnygangIdle" anim="funnygangIdle" fps="24" loop="true"/>
+		<anim name="idle" anim="funnygangIdle" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="hamster" sprite="mario/dad7/Hamster" x="50" y="-1400" scale="0.8"/>
+	<sprite name="title7" sprite="mario/dad7/gdtitle" x="-200" y="-1400" scale="0.8"/>
+	<girlfriend x="500" y="250"/>
+	<dad x="-200" y="330"/>
+	<boyfriend x="1270" y="310"/>
+</stage>

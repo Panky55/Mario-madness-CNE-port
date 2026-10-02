@@ -1,0 +1,6 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MX_POWERDOWN_GameOver_Assets" y="-110" x="-380" isPlayer="false" icon="bf" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="deathConfirm" anim="BF Dead confirm" fps="24" loop="false"/>
+	<anim name="firstDeath" anim="BF dies" y="5" fps="24" loop="false"/>
+	<anim name="deathLoop" anim="BF Dead Loop" fps="24" loop="false"/>
+</character>

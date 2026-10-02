@@ -1,0 +1,100 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="220" startCamPosY="150" zoom="1" name="forest" folder="">
+	<sprite name="faropapu" sprite="mario/Coronation/firstpart/FondoFondo" x="-1200" y="-500" scrollx="0.5" scrolly="0.5"/>
+	<sprite name="trueno" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="180" y="-600" scrollx="0.7" scrolly="0.7" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="AAARayo" anim="AAARayo" fps="24" loop="false"/>
+		<anim name="rayo" anim="AAARayo" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="seaweed1" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="520" y="-50" scale="1.2" updateHitbox="true" visible="false" anim="Leave0" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Leave0" anim="Leave0" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="seaweed2" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="1420" y="-150" scale="1.2" updateHitbox="true" visible="false" anim="Leave0" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Leave0" anim="Leave0" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="lospapus" sprite="mario/Coronation/firstpart/Arboles" x="-1200" y="-500"/>
+	<sprite name="atrasarboleda" sprite="mario/Coronation/firstpart/AtrasArboles" x="-1200" y="-500"/>
+	<sprite name="aas" sprite="mario/Coronation/firstpart/asdas" x="-1200" y="-500"/>
+	<sprite name="seaweed3" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="820" y="350" scale="1.2" updateHitbox="true" visible="false" anim="Leave0" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Leave0" anim="Leave0" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="sopapo" sprite="mario/Coronation/firstpart/Stage" x="-1200" y="-500"/>
+	<sprite name="casa0" sprite="mario/Coronation/secondpart/BGforBG" x="-1200" y="-2500" scrollx="0.5" scrolly="0.5" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="casa1" sprite="mario/Coronation/secondpart/TreeHouse" x="-1200" y="-4500"/>
+	<sprite name="casa2" sprite="mario/Coronation/secondpart/CoroDay_DeadMario" x="400" y="-3300" anim="DeadMario" type="loop">
+		<anim name="DeadMario" anim="DeadMario" fps="24" loop="true"/>
+		<anim name="idle" anim="DeadMario" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="nerve0" sprite="mario/Coronation/secondpart/thenerve" x="-400" y="-2200"/>
+	<sprite name="nerve1" sprite="mario/Coronation/secondpart/thenerve" x="400" y="-2200"/>
+	<sprite name="nerve2" sprite="mario/Coronation/secondpart/thenerve" x="800" y="-2200"/>
+	<sprite name="nerve3" sprite="mario/Coronation/secondpart/thenerve" x="2400" y="-2200"/>
+	<sprite name="nerve4" sprite="mario/Coronation/secondpart/thenerve" x="0" y="1" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="nerve5" sprite="mario/Coronation/secondpart/thenerve" x="600" y="1" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="s3" sprite="mario/Coronation/secondpart/TransitionTop" x="-1200" y="-4200" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="s2" sprite="mario/Coronation/secondpart/TransitionBottom" x="-1200" y="-2200" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="capenose" sprite="characters/MM_IHY_Boyfriend_AssetsFINAL" x="1130" y="710">
+		<anim name="Capejajacomoelcharter" anim="Capejajacomoelcharter" fps="24" loop="false"/>
+		<anim name="idle" anim="Capejajacomoelcharter" type="none" fps="24" loop="true"/>
+		<anim name="miss" anim="CapeFail" type="none" fps="24" loop="false"/>
+	</sprite>
+	<girlfriend x="300" y="230"/>
+	<dad x="100" y="-200"/>
+	<boyfriend x="870" y="250"/>
+	<sprite name="glitch0" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="400" y="200" scrollx="1.3" scrolly="1.3" scale="2" updateHitbox="true" visible="false" anim="glitch2" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="glitch2" anim="glitch2" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="glitch1" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="1500" y="400" scalex="4" scaley="3" updateHitbox="true" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="glitch2" fps="16" loop="true"/>
+		<anim name="glitch2" anim="glitch2" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="glitch2" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="-500" y="600" scrollx="1.1" scrolly="1.1" scalex="2" scaley="6" updateHitbox="true" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="glitchcausa" fps="20" loop="true"/>
+		<anim name="glitchcausa" anim="glitchcausa" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="glitch3" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="-200" y="1200" scrollx="1.2" scrolly="1.2" scalex="5" scaley="3" updateHitbox="true" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="glitchcausa" fps="15" loop="true"/>
+		<anim name="glitchcausa" anim="glitchcausa" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="cososuelo" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="1700" y="400" scale="2.5" updateHitbox="true" visible="false" anim="har" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="har" anim="har" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="leaf0" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="0" y="-700" scrollx="1.3" scale="1.5" updateHitbox="true" visible="false" anim="Leavehar" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Leavehar" anim="Leavehar" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="leaf1" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="-400" y="-700" scrollx="1.3" scale="1.5" updateHitbox="true" visible="false" anim="Leavehar" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Leavehar" anim="Leavehar" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="leaf2" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="600" y="-700" scrollx="1.3" scale="1.5" updateHitbox="true" visible="false" anim="Leavehar" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Leavehar" anim="Leavehar" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="bola0" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="1000" y="-700" scrollx="1.3" scrolly="1.3" scale="1.5" updateHitbox="true" visible="false" anim="bobol" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="bobol" anim="bobol" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="bola1" sprite="mario/Coronation/thirdpart/Coronation_Peach_misc_Assets" x="300" y="-700" scrollx="1.3" scrolly="1.3" scale="1.5" updateHitbox="true" visible="false" anim="bobol" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="bobol" anim="bobol" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="fresco" sprite="characters/Coronation_Peach_Dialogue2" x="180" y="-740" alpha="0.00001">
+		<anim name="Peach" anim="Peach" fps="24" loop="false"/>
+		<anim name="llevar" anim="Peach" type="none" fps="24" loop="false"/>
+	</sprite>
+</stage>

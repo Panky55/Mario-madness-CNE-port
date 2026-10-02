@@ -1,0 +1,16 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MM_IHY_Boyfriend_AssetsFINAL" y="340" isPlayer="true" icon="bfworld" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="IDLE" x="-5" y="20" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="DOWN" x="-24" y="-23" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="LEFT" x="4" y="26" fps="24" loop="false"/>
+	<anim name="singUP" anim="UP" x="-30" y="89" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="RIGHT" x="-1" y="12" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="MISSLEFT" x="1" y="52" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="MISSDOWN" x="-31" y="32" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="MISSUP" x="-26" y="87" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="MISSRIGHT" x="-2" y="23" fps="24" loop="false"/>
+	<anim name="spin" anim="Spin" x="220" y="90" fps="24" loop="true"/>
+	<anim name="prejump" anim="PreJump" x="40" y="30" fps="24" loop="false"/>
+	<anim name="attack" anim="Attack" x="297" y="54" fps="24" loop="false"/>
+	<anim name="hey" anim="Yeah" x="55" y="56" fps="24" loop="false"/>
+</character>

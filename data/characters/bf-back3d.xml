@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Abandoned_BF_3D_Assets" y="10" x="-210" isPlayer="true" icon="bf3D" color="#31B0D1" scale="0.85" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="3d Idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="3d Left" x="32" y="-35" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="3d Down" x="52" y="-49" fps="24" loop="false"/>
+	<anim name="singUP" anim="3d Up" x="-40" y="99" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="3d Right" x="16" y="-3" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="3d Miss Left" x="-42" y="26" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="3d Miss Down" x="-33" y="-30" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="3d Miss Up" x="-40" y="98" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="3d Miss Right" x="15" y="38" fps="24" loop="false"/>
+</character>

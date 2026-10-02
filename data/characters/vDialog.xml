@@ -1,0 +1,5 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Mr_Virtual_Assets_Dialogue" y="350" isPlayer="false" icon="v" color="#FF0000" scale="1" camx="0" camy="0" holdTime="4">
+	<anim name="idle" anim="VDialPart1" x="230" y="700" fps="24" loop="false"/>
+	<anim name="hey" anim="VDialPart1" x="230" y="700" fps="24" loop="false"/>
+</character>

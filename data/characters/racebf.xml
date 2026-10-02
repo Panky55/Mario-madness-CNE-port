@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Race_Mario_Boyfriend_Assets_v1" y="110" x="-80" isPlayer="true" icon="bfr2" color="#31B0D1" scale="1" camx="-70" camy="-60" holdTime="4" flipX="true">
+	<anim name="idle" anim="BFIdle" x="305" y="-104" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="RaceDown" x="305" y="-137" fps="24" loop="false"/>
+	<anim name="singUP" anim="RaceUp" x="306" y="-60" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="RaceLeft" x="306" y="-109" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="RaceRight" x="317" y="-111" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="BFLeftMiss" x="305" y="-109" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="BFUpMiss" x="303" y="-59" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="BFRightMiss" x="314" y="-111" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="BFDownMiss" x="305" y="-137" fps="24" loop="false"/>
+</character>

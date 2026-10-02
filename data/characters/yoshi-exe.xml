@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Yoshi_EXE_Assets" y="217" x="76" isPlayer="false" icon="yoshiex" color="#FFFFFF" scale="1" camx="0" camy="0" holdTime="4">
+	<anim name="idle" anim="yoshiexe idle" x="10" y="-70" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="yoshiexe left" x="244" y="-41" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="yoshiexe right" x="25" y="-63" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="yoshiexe down" x="32" y="-193" fps="24" loop="false"/>
+	<anim name="singUP" anim="yoshiexe up" x="40" y="166" fps="24" loop="false"/>
+	<anim name="death" anim="yoshiexe death" x="756" y="145" fps="24" loop="false"/>
+	<anim name="duro" anim="yoshiexe stare" x="70" y="-50" fps="24" loop="true"/>
+	<anim name="pow" anim="yoshiexe ground pound" x="160" y="270" fps="24" loop="false" indices="2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19"/>
+	<anim name="prepow" anim="yoshiexe ground pound" x="160" y="270" fps="24" loop="true" indices="1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"/>
+</character>

@@ -1,0 +1,43 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="1220" startCamPosY="0" zoom="0.6" name="demiseport" folder="">
+	<sprite name="floordemise" sprite="mario/MX/demise/1/Demise_BG_suelo" x="-800" y="300" anim="idle" type="loop">
+		<anim name="idle" anim="Floor" fps="60" loop="true"/>
+		<anim name="Floor" anim="Floor" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="underfloordemise" sprite="mario/MX/demise/2/Demise_BG2_suelo" x="-800" y="300" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="Floor" fps="60" loop="true"/>
+		<anim name="Floor" anim="Floor" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="underroofdemise" sprite="mario/MX/demise/2/Demise_BG2_techo" x="-800" y="-1050" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="Celling" fps="60" loop="true"/>
+		<anim name="Celling" anim="Celling" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="demcut1" sprite="mario/MX/demise/cutscene/DemiseBF_Cutscene3" x="-1100" y="-250" alpha="0.000001">
+		<anim name="Bodies" anim="Bodies" fps="24" loop="false"/>
+		<anim name="idle" anim="Bodies" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="demcut2" sprite="mario/MX/demise/cutscene/DemiseBF_Cutscene2" x="0" y="0" alpha="0.000001">
+		<anim name="Bodies" anim="Bodies" fps="24" loop="false"/>
+		<anim name="idle" anim="Bodies" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="demcut3" sprite="mario/MX/demise/cutscene/DemiseBF_Cutscene1" x="0" y="0" alpha="0.000001" anim="BFheadcutscene" type="loop">
+		<anim name="BFheadcutscene" anim="BFheadcutscene" fps="24" loop="true"/>
+		<anim name="idle" anim="BFheadcutscene" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="demcut4" sprite="mario/MX/demise/cutscene/DemiseBF_Cutscene4" x="0" y="0" alpha="0.000001">
+		<anim name="GFHeadcutscene" anim="GFHeadcutscene" fps="24" loop="false"/>
+		<anim name="idle" anim="GFHeadcutscene" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="gordobondiola" sprite="mario/MX/demise/cutscene/MXJump" x="2200" y="-2900"/>
+	<girlfriend x="400" y="100"/>
+	<dad x="1900" y="100"/>
+	<boyfriend x="0" y="100"/>
+	<sprite name="demFore1" sprite="mario/MX/demise/1/Demise_BG_Foreground1" x="-3800" y="300" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="demFore2" sprite="mario/MX/demise/1/Demise_BG_Foreground2" x="-3800" y="300" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="demFore3" sprite="mario/MX/demise/1/Demise_BG_Foreground3" x="-1800" y="-1200" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="demFore4" sprite="mario/MX/demise/1/Demise_BG_Foreground4" x="-3800" y="300" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="underdemFore1" sprite="mario/MX/demise/2/Demise_BG2_Foreground1" x="-3800" y="300" scrollx="1.3" scrolly="1.3"/>
+	<sprite name="underdemFore2" sprite="mario/MX/demise/2/Demise_BG2_Foreground2" x="-3800" y="300" scrollx="1.3" scrolly="1.3"/>
+</stage>

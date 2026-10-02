@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="YouCannotBeatUS_Bowser_Asset" y="-46" x="-215" isPlayer="false" icon="bowser" color="#0AFF89" scale="1" camx="-30" camy="-60" holdTime="4">
+	<anim name="idle" anim="Idle" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="Down" x="-20" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="Left" x="-10" fps="24" loop="false"/>
+	<anim name="singUP" anim="Up" x="-14" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="Right" x="-68" fps="24" loop="false"/>
+</character>

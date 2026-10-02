@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="old/MarioLand" y="390" isPlayer="false" icon="mario-land" color="#464646" scale="2.8" camx="-170" camy="-230" holdTime="4" antialiasing="false">
+	<anim name="idle" anim="MBIdle" x="-82" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="MBLeft" x="-16" y="30" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="MBRight" x="-103" y="39" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="MBDown" x="-90" y="30" fps="24" loop="false"/>
+	<anim name="singUP" anim="MBUp" x="7" y="97" fps="24" loop="false"/>
+</character>

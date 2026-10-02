@@ -1,0 +1,46 @@
+<!DOCTYPE codename-engine-splashes>
+<!--
+	Dictator's projectile splash sheet.
+
+	The source swaps the splash texture for its two projectile note types
+	(`Note.hx:199/221`: `noteSplashTexture = 'BulletBillMario_NOTE_assets'`), and
+	`NoteSplash.loadAnims`'s `else if (skin == 'BulletBillMario_NOTE_assets')`
+	branch builds all eight `note<lane>-<variant>` animations from a single
+	`addByPrefix('notesplash', ...)` - i.e. every lane/variant plays the same
+	12-frame strip out of the bullet atlas, not the mod's normal `noteSplashes`
+	sheet.  This file is that sheet as a Codename splash group: `songs/noteskin.hx`
+	points a `Bullet Bill`/`Bullet2` note's `splash` at 'BulletBill', so the paired
+	projectile splash `data/notes/Bullet Bill.hx` spawns mounts these frames.
+
+	The frames live in `images/game/notes/BulletBillMario_NOTE_assets` alongside
+	the note heads - the same atlas the source draws the splash from.
+
+	Alpha 1 is the source's own (it raises the bullet splash from the usual 0.6
+	to fully opaque in `setupNoteSplash`, `NoteSplash.hx:35-46`).
+
+	The source also repositions this splash by hand (`setPosition(x - 370,
+	y - 340)` upscroll, `y - 620` and `flipY` under downscroll, then
+	`offset.set(10, 10)`).  Codename instead centres a splash on its strum, so
+	the source's numbers cannot live here - they are re-applied to the spawned
+	splash by `data/notes/Bullet Bill.hx` (`mmPlaceBulletSplash`) right after it
+	is shown.  The frame trim offsets the atlas carries are still applied by the
+	engine.
+-->
+<splashes sprite="game/notes/BulletBillMario_NOTE_assets" alpha="1">
+	<strum id="0"> <!-- LEFT / purple -->
+		<anim name="splashleft1" anim="notesplash" fps="24" />
+		<anim name="splashleft2" anim="notesplash" fps="24" />
+	</strum>
+	<strum id="1"> <!-- DOWN / blue -->
+		<anim name="splashdown1" anim="notesplash" fps="24" />
+		<anim name="splashdown2" anim="notesplash" fps="24" />
+	</strum>
+	<strum id="2"> <!-- UP / green -->
+		<anim name="splashup1" anim="notesplash" fps="24" />
+		<anim name="splashup2" anim="notesplash" fps="24" />
+	</strum>
+	<strum id="3"> <!-- RIGHT / red -->
+		<anim name="splashright1" anim="notesplash" fps="24" />
+		<anim name="splashright2" anim="notesplash" fps="24" />
+	</strum>
+</splashes>

@@ -1,0 +1,16 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="1300" startCamPosY="600" zoom="1" name="piracy" folder="">
+	<sprite name="bgH0" sprite="mario/piracy/HallyBG2" x="0" y="0" scrollx="0" scale="1.3" updateHitbox="true"/>
+	<sprite name="bgH3" sprite="mario/piracy/HallyBG3" x="240" y="0" scrollx="0" scale="1.3" updateHitbox="true" alpha="0.8"/>
+	<sprite name="bgH4" sprite="mario/piracy/HallyBG1" x="0" y="0" scrollx="0" scale="1.3" updateHitbox="true"/>
+	<sprite name="djStart" sprite="mario/piracy/start" x="510" y="0" scrollx="0" scale="2" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="djDone" sprite="mario/piracy/Finish" x="160" y="0" scrollx="0" scale="2" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<girlfriend x="922" y="283"/>
+	<dad x="600" y="100"/>
+	<boyfriend x="355" y="-90"/>
+	<sprite name="bfspot" sprite="mario/piracy/bfspotlight" x="0" y="0" scrollx="0" updateHitbox="true" alpha="0"/>
+</stage>

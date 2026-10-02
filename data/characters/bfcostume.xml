@@ -1,0 +1,18 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="CosBF" y="350" isPlayer="true" icon="bf" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="IDLE" x="-4" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="LEFT" x="4" y="31" fps="24" loop="false"/>
+	<anim name="singUP" anim="UP" x="-28" y="90" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="RIGHT" x="-46" y="31" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="MISSLEFT" x="3" y="37" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="MISSDOWN" x="-29" y="40" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="MISSUP" x="-28" y="94" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="MISSRIGHT" x="-45" y="59" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="COOLLEFT" x="47" y="34" fps="24" loop="false"/>
+	<anim name="singDOWN-alt" anim="COOLDOWN" x="-20" y="-32" fps="24" loop="false"/>
+	<anim name="singUP-alt" anim="COOLUP" x="-29" y="150" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="DOWN" x="-21" y="-6" fps="24" loop="false"/>
+	<anim name="singRIGHT-alt" anim="COOLRIGHT" x="-10" y="20" fps="24" loop="false"/>
+	<anim name="dodge" anim="DODGE" x="12" y="78" fps="24" loop="false"/>
+	<anim name="hurt" anim="HIT" y="108" fps="24" loop="false"/>
+</character>

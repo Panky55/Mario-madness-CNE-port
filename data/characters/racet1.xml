@@ -1,0 +1,5 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Racetalk1" y="110" x="-80" isPlayer="false" icon="race2" color="#DC0D2A" scale="1" camx="-70" camy="-60" holdTime="4">
+	<anim name="idle" anim="Racetraitors" x="305" y="9" fps="30" loop="false"/>
+	<anim name="talk" anim="Racetraitors" x="305" y="9" fps="30" loop="false"/>
+</character>

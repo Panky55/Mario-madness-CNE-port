@@ -1,0 +1,31 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="620" startCamPosY="550" zoom="1" name="warioworld" folder="">
+	<sprite name="bgwario" sprite="mario/Wario/wea_mala_ctm" x="180" y="100" scale="2.4" anim="fondo instancia 1" type="loop">
+		<anim name="fondo instancia 1" anim="fondo instancia 1" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="bftors" sprite="characters/apparitionbf/BFRUNNING_backlegs" x="490" y="780" anim="idle" type="loop">
+		<anim name="idle" anim="back0" fps="48" loop="true"/>
+		<anim name="back0" anim="back0" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="bftorsmiss" sprite="characters/apparitionbf/BFRUNNING_backlegs" x="490" y="780" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="back fail" fps="48" loop="true"/>
+		<anim name="back fail" anim="back fail" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="bfFall" sprite="mario/Wario/Apparition_Game_Over" x="0" y="0" scale="0.9" alpha="0.00001">
+		<anim name="bf fall anim" anim="bf fall anim" fps="24" loop="false"/>
+		<anim name="fall" anim="bf fall anim" type="none" fps="24" loop="true"/>
+	</sprite>
+	<girlfriend x="400" y="100"/>
+	<dad x="250" y="100"/>
+	<boyfriend x="470" y="190"/>
+	<sprite name="bfext" sprite="characters/apparitionbf/BFRUNNING_frontlegs" x="440" y="730" anim="idle" type="loop">
+		<anim name="idle" anim="front0" fps="48" loop="true"/>
+		<anim name="frontlegs" anim="frontlegs" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="bfextmiss" sprite="characters/apparitionbf/BFRUNNING_frontlegs" x="440" y="730" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="front fail" fps="48" loop="true"/>
+		<anim name="front fail" anim="front fail" fps="24" loop="true" type="none"/>
+	</sprite>
+</stage>

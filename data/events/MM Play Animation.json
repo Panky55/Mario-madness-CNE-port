@@ -1,0 +1,14 @@
+{
+ "params": [
+  {
+   "name": "Animation",
+   "type": "String",
+   "defaultValue": ""
+  },
+  {
+   "name": "Character",
+   "type": "String",
+   "defaultValue": "dad"
+  }
+ ]
+}

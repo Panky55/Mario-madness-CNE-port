@@ -1,0 +1,9 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Mario_Stanley" y="80" isPlayer="false" icon="stanley" color="#FF2C00" scale="1" camx="-255" camy="150" holdTime="4">
+	<anim name="singLEFT" anim="stanley left" x="394" y="80" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="stanley right" x="-168" y="47" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="stanley down" x="146" y="-217" fps="24" loop="false"/>
+	<anim name="singUP" anim="stanley up" x="155" y="228" fps="24" loop="false"/>
+	<anim name="idle-alt" anim="stanley idle left" fps="24" loop="false"/>
+	<anim name="idle" anim="stanley idle right" fps="24" loop="false"/>
+</character>

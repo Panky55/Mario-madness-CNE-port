@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="desk-bf" y="300" x="-170" isPlayer="true" icon="streamerbf" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="facecam bf idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="facecam bf left" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="facecam bf down" fps="24" loop="false"/>
+	<anim name="singUP" anim="facecam bf up" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="facecam bf right" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="facecam bf miss left" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="facecam bf miss down" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="facecam bf miss up" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="facecam bf miss right" fps="24" loop="false"/>
+</character>

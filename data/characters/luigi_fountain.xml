@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Fountain_Luigi_2D_Assets" y="-150" isPlayer="false" icon="wdwluigi" color="#71A30D" scale="0.5" camx="-45" camy="420" holdTime="4">
+	<anim name="idle" anim="fountain idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="fountain left" x="100" y="-30" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="fountain right" x="40" y="-65" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="fountain down" x="-1" y="-100" fps="24" loop="false"/>
+	<anim name="singUP" anim="fountain up" x="-5" y="90" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="fountain alt left" x="50" y="-10" fps="24" loop="false"/>
+	<anim name="singRIGHT-alt" anim="fountain alt right" x="-20" y="-3" fps="24" loop="false"/>
+	<anim name="singDOWN-alt" anim="fountain alt down" x="5" y="-25" fps="24" loop="false"/>
+	<anim name="singUP-alt" anim="fountain alt up" x="10" y="40" fps="24" loop="false"/>
+</character>

@@ -1,0 +1,10 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="GB_Phase2" y="210" x="238" isPlayer="false" icon="gb" color="#949494" scale="5.99999999999999" camx="-170" camy="-230" holdTime="4" antialiasing="false">
+	<anim name="idle" anim="idle" fps="24" loop="true"/>
+	<anim name="singUP" anim="up" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="left" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="right" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="down" fps="24" loop="false"/>
+	<anim name="laugh-alt" anim="laughalt" fps="24" loop="false"/>
+	<anim name="laugh" anim="laughnormal" fps="24" loop="false"/>
+</character>

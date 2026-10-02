@@ -1,0 +1,9 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="BF_BadDay_DEAD_Assets" y="260" x="-130" isPlayer="false" icon="bf" color="#31B0D1" scale="1" camx="130" camy="-270" holdTime="4" flipX="true">
+	<anim name="deathLoop" anim="BF Dead Loop" y="3" fps="24" loop="false"/>
+	<anim name="firstDeath" anim="BF Dies 1" fps="24" loop="false"/>
+	<anim name="secondDeath" anim="BF Dies 2" fps="24" loop="false"/>
+	<anim name="thirdDeath" anim="BF Dies 3" fps="24" loop="false"/>
+	<anim name="fourthDeath" anim="BF Dies 4" fps="24" loop="false"/>
+	<anim name="deathConfirm" anim="BF Dead confirm" y="27" fps="24" loop="false"/>
+</character>

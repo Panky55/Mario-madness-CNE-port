@@ -1,0 +1,29 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="1011" startCamPosY="558.5" zoom="0.66" name="directstream" folder="">
+	<sprite name="bggrey" sprite="mario/Real/direct bg grey" x="0" y="-50"/>
+	<sprite name="bgred" sprite="mario/Real/direct bg red" x="0" y="-50"/>
+	<sprite name="miyamoto" sprite="mario/Real/miyamoto" x="345" y="236" anim="miyamoto still" type="loop">
+		<anim name="miyamoto still" anim="miyamoto still" fps="24" loop="true"/>
+		<anim name="idle" anim="miyamoto still" type="none" fps="24" loop="false"/>
+		<anim name="talk" anim="miyamoto talking" type="none" fps="24" loop="true"/>
+		<anim name="hand" anim="miyamoto hand motion" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="ytUI" sprite="mario/Real/ytui" x="0" y="0" scrollx="0" scrolly="0" scale="1.52" updateHitbox="true" alpha="0"/>
+	<sprite name="camBG" sprite="mario/Real/facecam bg" x="1345" y="636" anim="facecam bg down" type="loop">
+		<anim name="facecam bg down" anim="facecam bg down" fps="24" loop="true"/>
+		<anim name="up" anim="facecam bg up" type="none" fps="1" loop="false"/>
+		<anim name="down" anim="facecam bg down" type="none" fps="1" loop="false"/>
+		<anim name="left" anim="facecam bg left" type="none" fps="1" loop="false"/>
+		<anim name="right" anim="facecam bg right" type="none" fps="1" loop="false"/>
+	</sprite>
+	<girlfriend x="1225.5" y="411"/>
+	<dad x="2000" y="100"/>
+	<boyfriend x="1500" y="331"/>
+	<sprite name="ytbutton" sprite="mario/Real/button" x="0" y="0" scrollx="0" scrolly="0" scale="0.8" updateHitbox="true" alpha="0" anim="button play" type="loop">
+		<anim name="button play" anim="button play" fps="24" loop="true"/>
+		<anim name="play" anim="button play" type="none" fps="1" loop="false"/>
+		<anim name="pause" anim="button pause" type="none" fps="1" loop="false"/>
+	</sprite>
+	<sprite name="bordervid" sprite="mario/Real/facecam border" x="1340" y="50"/>
+	<sprite name="nametag" sprite="mario/Real/nametag" x="-510" y="790" alpha="0"/>
+</stage>

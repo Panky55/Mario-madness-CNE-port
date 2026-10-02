@@ -1,0 +1,21 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MRV_Boyfriend_Assets" y="350" isPlayer="true" icon="bfv" color="#000000" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="IDLE" x="-4" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="LEFT" x="4" y="31" fps="24" loop="false"/>
+	<anim name="singUP" anim="UP" x="-28" y="90" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="RIGHT" x="-46" y="31" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="MISSLEFT" x="3" y="37" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="MISSDOWN" x="-29" y="40" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="MISSUP" x="-28" y="94" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="MISSRIGHT" x="-45" y="59" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="DOWN" x="-21" y="-6" fps="24" loop="false"/>
+	<anim name="idle-alt" anim="SCAREDIDLE" x="-7" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="SCAREDLEFT" x="-10" y="32" fps="24" loop="false"/>
+	<anim name="singUP-alt" anim="SCAREDUP" x="-28" y="90" fps="24" loop="false"/>
+	<anim name="singDOWN-alt" anim="SCAREDDOWN" x="-21" y="-6" fps="24" loop="false"/>
+	<anim name="singRIGHT-alt" anim="SCAREDRIGHT" x="-46" y="31" fps="24" loop="false"/>
+	<anim name="singLEFTmiss-alt" anim="MISSSCAREDLEFT" x="-10" y="52" fps="24" loop="false"/>
+	<anim name="singUPmiss-alt" anim="MISSSCAREDUP" x="-23" y="123" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss-alt" anim="MISSSCAREDRIGHT" x="-40" y="61" fps="24" loop="false"/>
+	<anim name="singDOWNmiss-alt" anim="MISSSCAREDDOWN" x="-22" fps="24" loop="false"/>
+</character>

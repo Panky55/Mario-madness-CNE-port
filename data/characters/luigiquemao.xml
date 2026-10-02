@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="old/Luigi_IHY" y="110" x="-80" isPlayer="false" icon="luigiH" color="#14B400" scale="1" camx="-30" camy="-60" holdTime="4">
+	<anim name="idle" anim="LuigiIdle" x="-55" y="86" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="LuigiDown" x="-65" y="-170" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="LuigiLeft" x="7" y="106" fps="24" loop="false"/>
+	<anim name="singUP" anim="LuigiUp" x="-40" y="176" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="LuigiRight" x="-138" y="110" fps="24" loop="false"/>
+</character>

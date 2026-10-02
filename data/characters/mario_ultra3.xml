@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Act_4_FINALE_Ultra" y="-50" x="-60" isPlayer="false" icon="ultram4" color="#A93953" scale="1" camx="-70" camy="-100" holdTime="4">
+	<anim name="idle" anim="ultra idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="ultra left" y="-20" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="ultra right" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="ultra down" fps="24" loop="false"/>
+	<anim name="singUP" anim="ultra up" fps="24" loop="false"/>
+</character>

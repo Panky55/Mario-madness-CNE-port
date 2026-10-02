@@ -1,0 +1,13 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="bf_Bad_Day_Assets" y="310" x="-50" isPlayer="true" icon="bf" color="#31B0D1" scale="1.2" camx="60" camy="-260" holdTime="4" flipX="true">
+	<anim name="idle" anim="IDLE" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="LEFT" x="7" y="-1" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="DOWN" x="-25" y="-45" fps="24" loop="false"/>
+	<anim name="singUP" anim="UP" x="-30" y="73" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="RIGHT" x="-50" y="-1" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="MISSLEFT" x="7" y="9" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="MISSDOWN" x="-25" y="11" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="MISSUP" x="-32" y="75" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="MISSRIGHT" x="-48" y="36" fps="24" loop="false"/>
+	<anim name="hit" anim="HIT" x="-49" y="4" fps="24" loop="false"/>
+</character>

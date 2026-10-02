@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Morshu" y="20" x="-540" isPlayer="false" icon="test" color="#A1A1A1" scale="1.2" camx="30" camy="40" holdTime="4">
+	<anim name="idle" anim="morshu idle" x="-135" y="-42" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="morshu down" x="-251" y="-64" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="morshu left" x="-126" y="-67" fps="24" loop="false"/>
+	<anim name="singUP" anim="morshu up" x="-326" y="-55" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="morshu right" x="-361" y="-120" fps="24" loop="false"/>
+</character>

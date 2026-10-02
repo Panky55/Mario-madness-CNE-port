@@ -1,0 +1,9 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Coronation_Assets" y="60" x="-80" isPlayer="false" icon="peach" color="#853F44" scale="1" camx="-150" camy="-220" holdTime="4">
+	<anim name="hey" anim="Wahoo" x="57" y="120" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="PeachDown" x="95" y="-100" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="PeachLeft" x="480" y="-100" fps="24" loop="false"/>
+	<anim name="singUP" anim="PeachUp" x="237" y="172" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="PeachRight" x="22" y="-131" fps="24" loop="false"/>
+	<anim name="idle" anim="PeachIdle" x="76" y="156" fps="24" loop="true"/>
+</character>

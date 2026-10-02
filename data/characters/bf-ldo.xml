@@ -1,0 +1,16 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="BoyFriend_LDO" y="190" x="-20" isPlayer="true" icon="bf-ldo" color="#C4E0F5" scale="1.1" camx="-230" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="ldo bf idle normal" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="ldo bf left" x="20" y="-3" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="ldo bf down" x="-120" y="-20" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="ldo bf right" x="-63" y="1" fps="24" loop="false"/>
+	<anim name="singUP" anim="ldo bf up" x="5" y="29" fps="24" loop="false"/>
+	<anim name="hey" anim="ldo bf yeah" x="33" y="27" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="ldo bf miss left" x="29" y="-6" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="ldo bf miss down" x="-116" y="-23" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="ldo bf miss up" x="4" y="24" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="ldo bf miss right" x="-60" y="2" fps="24" loop="false"/>
+	<anim name="firstDeath" anim="ldo bf death" x="11" y="-28" fps="24" loop="false"/>
+	<anim name="deathLoop" anim="ldo bf loop death" x="11" y="-28" fps="24" loop="false"/>
+	<anim name="deathConfirm" anim="ldo bf dead confirm" x="1" y="3" fps="24" loop="false"/>
+</character>

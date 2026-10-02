@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MM_Boyfriend_Alone_Assetsa" y="240" isPlayer="true" icon="bfghost" color="#20DFFE" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="BFIdle" x="-4" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="BFLeft0" x="15" y="30" fps="24" loop="false"/>
+	<anim name="singUP" anim="BFUp0" x="-32" y="52" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="BFRight0" x="-58" y="31" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="BFDown0" x="-9" y="2" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="BFLeftMiss" x="15" y="31" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="BFDownMiss" x="-7" y="6" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="BFUpMiss" x="-31" y="54" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="BFRightMiss" x="-55" y="35" fps="24" loop="false"/>
+</character>

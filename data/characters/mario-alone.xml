@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Alone_Mario_Assets" y="30" x="160" isPlayer="false" icon="alonemario" color="#5D3447" scale="1.2" camx="-190" camy="40" holdTime="4">
+	<anim name="idle" anim="MarioIdle" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="MarioDown" x="7" y="-30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="MarioLeft" x="60" y="20" fps="24" loop="false"/>
+	<anim name="singUP" anim="MarioUp" y="30" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="MarioRight" x="-30" fps="24" loop="false"/>
+</character>

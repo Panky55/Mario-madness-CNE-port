@@ -1,0 +1,13 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="PowerStar_Mario" y="-90" x="-100" isPlayer="false" icon="devil" color="#E62F53" scale="1" camx="-30" camy="-60" holdTime="4">
+	<anim name="idle" anim="PowerIdle" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="PowerDown" x="55" y="-183" fps="30" loop="false"/>
+	<anim name="singLEFT" anim="PowerLeft" x="58" y="-65" fps="30" loop="false"/>
+	<anim name="singUP" anim="PowerUp" x="146" y="40" fps="30" loop="false"/>
+	<anim name="singRIGHT" anim="PowerRight" x="-86" y="98" fps="30" loop="false"/>
+	<anim name="idle-alt" anim="ALTPowerIdle" x="71" y="364" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="ALTPowerLeft" x="273" y="218" fps="30" loop="false"/>
+	<anim name="singDOWN-alt" anim="ALTPowerDown" x="212" y="133" fps="30" loop="false"/>
+	<anim name="singUP-alt" anim="ALTPowerUp" x="149" y="439" fps="30" loop="false"/>
+	<anim name="singRIGHT-alt" anim="ALTPowerRight" x="95" y="255" fps="30" loop="false"/>
+</character>

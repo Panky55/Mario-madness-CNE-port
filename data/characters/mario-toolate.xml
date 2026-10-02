@@ -1,0 +1,9 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Too_Late_Mario" y="-40" x="-50" isPlayer="false" icon="latemario" color="#B73F26" scale="1" camx="-60" camy="-70" holdTime="4">
+	<anim name="idle" anim="mario idle" x="-3" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="mario left" x="143" y="-41" fps="24" loop="false"/>
+	<anim name="singUP" anim="mario up" x="75" y="147" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="mario right" x="152" y="-41" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="mario down" x="65" y="-180" fps="24" loop="false"/>
+	<anim name="fade" anim="mario fade away" x="81" y="196" fps="24" loop="false"/>
+</character>

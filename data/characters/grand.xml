@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Grand_Dad_Assets" y="200" isPlayer="false" icon="gdad" color="#FF8F7E" scale="1.2" camx="-30" camy="-60" holdTime="4">
+	<anim name="idle" anim="GrandIdle" x="-85" y="6" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="GrandDown" x="-35" y="-170" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="GrandLeft" x="-66" y="8" fps="24" loop="false"/>
+	<anim name="singUP" anim="GrandUp" x="-40" y="136" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="GrandRight" x="-108" y="10" fps="24" loop="false"/>
+</character>

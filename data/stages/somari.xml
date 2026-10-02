@@ -1,0 +1,24 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="100" startCamPosY="100" zoom="1" name="somari" folder="">
+	<sprite name="bg" sprite="mario/Somari/somari_stag1" x="256" y="222" scrollx="0" scrolly="0" scale="4" updateHitbox="true"/>
+	<sprite name="building" sprite="mario/Somari/buildings_papu" x="256" y="222" scrollx="0" scrolly="0" scale="4" updateHitbox="true" anim="idle" type="loop">
+		<anim name="idle" anim="buildings papu color" fps="1" loop="true"/>
+		<anim name="buildings papu color" anim="buildings papu color" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="bgstars" sprite="mario/Somari/bgstars" x="256" y="222" scrollx="0" scrolly="0" scale="4" updateHitbox="true" anim="idle" type="loop">
+		<anim name="idle" anim="bgstars flash" fps="5" loop="true"/>
+		<anim name="bgstars flash" anim="bgstars flash" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="platformlol" sprite="mario/Somari/platform" x="922.5" y="593" scale="4" updateHitbox="true"/>
+	<girlfriend x="922" y="283"/>
+	<dad x="503" y="119"/>
+	<boyfriend x="939" y="140"/>
+	<sprite name="pixelLights" sprite="mario/Somari/spot" x="370.5" y="321" scale="4" updateHitbox="true" visible="false" anim="double" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="double" anim="spot 3" fps="1" loop="true"/>
+		<anim name="spot 3" anim="spot 3" fps="24" loop="false" type="none"/>
+		<anim name="full" anim="spot 0" fps="1" loop="true" type="none"/>
+		<anim name="left" anim="spot 1" fps="1" loop="true" type="none"/>
+		<anim name="right" anim="spot 2" fps="1" loop="true" type="none"/>
+	</sprite>
+</stage>

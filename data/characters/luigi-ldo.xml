@@ -1,0 +1,18 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Luigi_LDO" y="50" x="70" isPlayer="false" icon="luigi-ldo" color="#69BB68" scale="1" camx="50" camy="-40" holdTime="4">
+	<anim name="idle" anim="ldo luigi idle" fps="24" loop="true"/>
+	<anim name="singLEFT" anim="ldo luigi left" x="52" y="-2" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="ldo luigi right" x="-25" y="-3" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="ldo luigi down" x="-23" y="-15" fps="24" loop="false"/>
+	<anim name="singUP" anim="ldo luigi up" x="15" y="24" fps="24" loop="false"/>
+	<anim name="idle-alt" anim="ldo luigi sad idle" x="-7" fps="24" loop="true"/>
+	<anim name="turn" anim="ldo luigi face mario" x="70" y="2" fps="24" loop="false"/>
+	<anim name="sadr" anim="ldo luigi sad react" x="72" y="3" fps="24" loop="false"/>
+	<anim name="notgonna" anim="ldo luigi not gonna tell" x="70" y="33" fps="24" loop="false"/>
+	<anim name="turnback" anim="ldo luigi face mario" x="70" y="2" fps="24" loop="false" indices="12,11,10,9,8,7,6,5,4,3,2,1,0"/>
+	<anim name="singLEFTmiss" anim="ldo luigi miss left" x="50" y="-2" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="ldo luigi miss right" x="-25" y="-4" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="ldo luigi miss down" x="-15" y="-15" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="ldo luigi miss up" x="11" y="25" fps="24" loop="false"/>
+	<anim name="firstDeath" anim="ldo luigi game over" x="110" y="400" fps="24" loop="false"/>
+</character>

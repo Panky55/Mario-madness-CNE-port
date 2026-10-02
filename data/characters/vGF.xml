@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MR_V" y="160" x="-200" isPlayer="false" icon="gfv" color="#FF0000" scale="1" camx="-130" camy="-500" holdTime="6.1">
+	<anim name="singDOWN" anim="VAltDown" x="-60" y="330" fps="24" loop="false"/>
+	<anim name="idle" anim="VAltIdle" y="450" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="VAltRight" x="-75" y="441" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="VAltLeft" x="104" y="450" fps="24" loop="false"/>
+	<anim name="singUP" anim="VAltUp" x="90" y="700" fps="24" loop="false"/>
+</character>

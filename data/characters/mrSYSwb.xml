@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="YouCannotBeatUS_SuitGuy_WB" y="40" x="-440" isPlayer="false" icon="sys" color="#ADDDFF" scale="1.2" camx="-30" camy="-60" holdTime="4">
+	<anim name="idle" anim="Idle" x="-85" y="6" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="Down" x="-55" y="-10" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="Left" x="-53" y="-4" fps="24" loop="false"/>
+	<anim name="singUP" anim="Up" x="-80" y="-24" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="Right" x="-77" y="-50" fps="24" loop="false"/>
+</character>

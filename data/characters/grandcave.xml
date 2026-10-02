@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="cavegdpixel" y="190" isPlayer="false" icon="cavedad" color="#FF8170" scale="12" camx="-30" camy="-60" holdTime="4" antialiasing="false">
+	<anim name="idle" anim="pixelgrand idle" x="-85" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="pixelgrand down" x="-85" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="pixelgrand left" x="-73" fps="24" loop="false"/>
+	<anim name="singUP" anim="pixelgrand up" x="-61" y="24" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="pixelgrand right" x="-85" fps="24" loop="false"/>
+</character>

@@ -1,0 +1,6 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Too_Late_Pico_GameOver" y="-350" x="-1800" isPlayer="false" icon="pico" color="#B7D855" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="deathLoop" anim="Pico Game Over Loop" x="290" y="252" fps="24" loop="false"/>
+	<anim name="deathConfirm" anim="Pico Game Over Confirm" x="290" y="252" fps="24" loop="false"/>
+	<anim name="firstDeath" anim="Pico Game Over Anim" x="1500" y="300" fps="24" loop="false"/>
+</character>

@@ -1,0 +1,9 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Powerstar_Mario_v2_Assets2" y="-90" x="-100" isPlayer="false" icon="devil" color="#E62F53" scale="1" camx="-30" camy="-60" holdTime="4">
+	<anim name="singDOWN" anim="PowerStar Down" x="3" y="230" fps="30" loop="false"/>
+	<anim name="singLEFT" anim="PowerStar Left" x="22" y="-67" fps="30" loop="false"/>
+	<anim name="singUP" anim="PowerStar Up" x="107" y="31" fps="30" loop="false"/>
+	<anim name="singRIGHT" anim="PowerStar Right" x="-122" y="103" fps="30" loop="false"/>
+	<anim name="talk" anim="ABPowerDialog" x="3" y="230" fps="24" loop="false"/>
+	<anim name="idle" anim="ABPowerDialog" x="3" y="230" fps="24" loop="false" indices="0,1"/>
+</character>

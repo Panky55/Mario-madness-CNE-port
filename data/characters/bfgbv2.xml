@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="BFLand_v2" y="470" x="10" isPlayer="true" icon="bf-land2" color="#BEBEBE" scale="5.99999999999999" camx="50" camy="-70" holdTime="4" flipX="true" antialiasing="false">
+	<anim name="idle" anim="BFLand_v2 Idle" fps="12" loop="false"/>
+	<anim name="singLEFT" anim="BFLand_v2 Left0" x="-12" fps="12" loop="false"/>
+	<anim name="singDOWN" anim="BFLand_v2 Down0" x="-6" fps="12" loop="false"/>
+	<anim name="singUP" anim="BFLand_v2 Up0" fps="12" loop="false"/>
+	<anim name="singRIGHT" anim="BFLand_v2 Right0" x="-6" fps="12" loop="false"/>
+	<anim name="singDOWNmiss" anim="BFLand_v2 DownMiss" x="-95" y="-54" fps="12" loop="false"/>
+	<anim name="singUPmiss" anim="BFLand_v2 UpMiss" x="-90" y="-54" fps="12" loop="false"/>
+	<anim name="singRIGHTmiss" anim="BFLand_v2 RightMiss" x="-95" y="-53" fps="12" loop="false"/>
+	<anim name="singLEFTmiss" anim="BFLand_v2 LeftMiss" x="-84" y="-54" fps="12" loop="false"/>
+</character>

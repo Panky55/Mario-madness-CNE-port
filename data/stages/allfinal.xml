@@ -1,0 +1,102 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="-420" startCamPosY="150" zoom="0.4" name="allfinal" folder="">
+	<sprite name="act1Stat" sprite="mario/allfinal/act1/act1_stat" x="-900" y="-860" scrollx="0.4" scrolly="0.4" scale="4" anim="idle" type="loop">
+		<anim name="idle" anim="act1_static" fps="24" loop="true"/>
+		<anim name="act1_static" anim="act1_static" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act1Sky" sprite="mario/allfinal/act1/act1_sky" x="-1850" y="-660" scrollx="0.6" scrolly="0.6"/>
+	<sprite name="act1Skyline" sprite="mario/allfinal/act1/act1_skyline" x="-2100" y="-660" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="act1Buildings" sprite="mario/allfinal/act1/act1_bgbuildings" x="-2100" y="-660" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="act1Floor" sprite="mario/allfinal/act1/act1_floor" x="-2300" y="-660"/>
+	<sprite name="act1FG" sprite="mario/allfinal/act1/act1_fg" x="-2530" y="-850" scrollx="1.7" scrolly="1.7"/>
+	<sprite name="act1Gradient" sprite="mario/allfinal/act1/act1_gradient" x="-2300" y="-910"/>
+	<sprite name="act2Stat" sprite="mario/allfinal/act2/act2_static" x="-70" y="-360" scrollx="0.2" scrolly="0.2" scale="1.75" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="act2stat" fps="24" loop="true"/>
+		<anim name="act2Stat" anim="act2Stat" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act2PipesFar" sprite="mario/allfinal/act2/act2_pipes_far" x="-500" y="-270" scrollx="0.6" scrolly="0.6"/>
+	<sprite name="act2Gradient" sprite="mario/allfinal/act2/act2_abyss_gradient" x="-500" y="-425" scrollx="0.6" scrolly="0.6"/>
+	<sprite name="act2PipesMiddle" sprite="mario/allfinal/act2/act2_pipes_middle" x="-500" y="-300" scrollx="0.7" scrolly="0.7"/>
+	<sprite name="act2PipesClose" sprite="mario/allfinal/act2/act2_pipes_close" x="-500" y="-320" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="act2LPipe" sprite="mario/allfinal/act2/act2_pipes_lgbf" x="-600" y="440" scrollx="0.9" scrolly="0.9"/>
+	<sprite name="act2WPipe" sprite="mario/allfinal/act2/act2_pipes_waryosh" x="-740" y="540" scrollx="0.95" scrolly="0.95"/>
+	<sprite name="act2YPipe" sprite="mario/allfinal/act2/act2_pipes_waryosh" x="-460" y="540" scrollx="0.95" scrolly="0.95" flipX="true"/>
+	<sprite name="funnylayer0" sprite="characters/yoshi" x="850" y="1000" scrollx="0.9" scrolly="0.9" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="yoshi left" anim="yoshi left" fps="24" loop="false"/>
+		<anim name="idle" anim="yoshi idle" type="none" fps="24" loop="false"/>
+		<anim name="singUP" anim="YOSHI UP" type="none" fps="24" loop="false"/>
+		<anim name="singDOWN" anim="yoshi down" type="none" fps="24" loop="false"/>
+		<anim name="singLEFT" anim="yoshi left" type="none" fps="24" loop="false"/>
+		<anim name="singRIGHT" anim="yoshi right" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="act2BFPipe" sprite="mario/allfinal/act2/act2_pipes_lgbf" x="-630" y="-80" scale="1.2" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="act3Stat" sprite="mario/allfinal/act3/Act3_Static" x="-1005" y="-280" scrollx="0.2" scrolly="0.2" scale="1.3" anim="idle" type="loop">
+		<anim name="idle" anim="act3stat" fps="24" loop="true"/>
+		<anim name="act3Stat" anim="act3Stat" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act3Hills" sprite="mario/allfinal/act3/Act3_Hills" x="-705" y="450" scrollx="0.4" scrolly="0.4" scale="1.3" anim="idle" type="loop">
+		<anim name="idle" anim="hills" fps="24" loop="true"/>
+		<anim name="hills" anim="hills" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act3UltraArm" sprite="mario/allfinal/act3/Act3_Ultra_Arm" x="-1175" y="-775" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="act3UltraBody" sprite="mario/allfinal/act3/Act3_Ultra_M" x="-1185" y="-50" scrollx="0.8" scrolly="0.8" scale="1.4">
+		<anim name="torso idle 1" anim="torso idle 1" fps="24" loop="false"/>
+		<anim name="idle" anim="torso idle 1" type="none" fps="24" loop="false"/>
+		<anim name="change" anim="torso change pose" type="none" fps="24" loop="false"/>
+		<anim name="idle-alt" anim="torso idle 2" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="act3UltraHead1" sprite="mario/allfinal/act3/Act3_Ultra_M_Head" x="-475" y="-210" scrollx="0.8" scrolly="0.8" scale="1.1">
+		<anim name="ultra m static head" anim="ultra m static head" fps="24" loop="false"/>
+		<anim name="idle" anim="ultra m static head" type="none" fps="24" loop="true"/>
+		<anim name="sing" anim="ultra m lyrics 1" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="act3UltraHead2" sprite="mario/allfinal/act3/Act3_Ultra_M_Head2" x="-500" y="-325" scrollx="0.8" scrolly="0.8">
+		<anim name="ultra m lyrics 1" anim="ultra m lyrics 1" fps="24" loop="false"/>
+		<anim name="sing" anim="ultra m lyrics 2" type="none" fps="24" loop="false"/>
+		<anim name="laugh" anim="ultra m head laugh" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="act3UltraPupils" sprite="mario/allfinal/act3/Act3_Ultra_Pupils" x="-175" y="105" scrollx="0.8" scrolly="0.8">
+		<anim name="ultra pupils" anim="ultra pupils" fps="24" loop="false"/>
+		<anim name="idle" anim="ultra pupils" type="none" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="act3BFPipe" sprite="mario/allfinal/act3/Act3_bfpipe" x="115" y="605"/>
+	<sprite name="act3Spotlight" sprite="mario/allfinal/act3/act3Spotlight" x="-1550" y="-300" scalex="1.3" scaley="1" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="act4Stat" sprite="mario/allfinal/act4/gray static" x="-75" y="-300" scrollx="0.3" scrolly="0.3" anim="idle" type="loop">
+		<anim name="idle" anim="static" fps="24" loop="true"/>
+		<anim name="static" anim="static" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act4Ripple" sprite="mario/allfinal/act4/bg ripple" x="-180" y="25" scrollx="0.5" scrolly="0.5" anim="idle" type="loop">
+		<anim name="idle" anim="bg ripple" fps="24" loop="true"/>
+		<anim name="bg ripple" anim="bg ripple" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act4Pipe1" sprite="mario/allfinal/act4/bf pipe final" x="890" y="620" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="act4Pipe2" sprite="characters/Act_4_secondperspective" x="685" y="580" anim="idle" type="loop">
+		<anim name="idle" anim="pipe" fps="24" loop="true"/>
+		<anim name="pipe" anim="pipe" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act4Memory1" sprite="mario/allfinal/act4/memory" x="-70" y="250" scrollx="1.1" scrolly="1.1" scale="1.2" alpha="0"/>
+	<sprite name="act4Memory2" sprite="mario/allfinal/act4/she got infected with the exe" x="1250" y="-50" scrollx="1.1" scrolly="1.1" scale="1.2" alpha="0"/>
+	<sprite name="act4Lightning" sprite="mario/allfinal/act4/Act_4_FINALE_Lightingmcqueen" x="550" y="40" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="line" fps="24" loop="true"/>
+		<anim name="line" anim="line" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="act4DeadBF" sprite="mario/allfinal/act4/Act_4_FINALE_DEATH" x="340" y="-85" alpha="0.00001">
+		<anim name="Death" anim="Death" fps="24" loop="false"/>
+		<anim name="die" anim="Death" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="act4Spotlight" sprite="mario/allfinal/act4/spotlight" x="400" y="30" scale="2" alpha="0.25" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<girlfriend x="580" y="150"/>
+	<dad x="-1170" y="430"/>
+	<boyfriend x="270" y="120"/>
+</stage>

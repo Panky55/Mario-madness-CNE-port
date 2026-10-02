@@ -1,0 +1,6 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="400" startCamPosY="250" zoom="0.9" name="execlassicold" folder="">
+	<girlfriend x="400" y="100"/>
+	<dad x="100" y="100"/>
+	<boyfriend x="870" y="100"/>
+</stage>

@@ -1,0 +1,17 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="420" startCamPosY="500" zoom="0.9" name="turmoilsweep" folder="">
+	<sprite name="fartree" sprite="mario/Turmoil/ThirdBGTrees" x="-1300" y="-750" scrollx="0.5" scrolly="0.5"/>
+	<sprite name="backtree" sprite="mario/Turmoil/SecondBGTrees" x="-1300" y="-750" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="floor" sprite="mario/Turmoil/MainFloorAndTrees" x="-1300" y="-750"/>
+	<sprite name="lashojas" sprite="mario/Turmoil/TreeLeaves" x="-1300" y="-350" scrollx="1.9" scrolly="1.9"/>
+	<sprite name="ramasnose" sprite="mario/Turmoil/TreesForeground" x="-1300" y="-350" scrollx="1.4" scrolly="1.4"/>
+	<sprite name="warning" sprite="mario/Turmoil/Turmoil_HARHARHARHAR" x="-1300" y="-350" scrollx="1.4" scrolly="1.4" alpha="0"/>
+	<sprite name="buttonxml" sprite="mario/Turmoil/button" x="30" y="550" scale="0.25" updateHitbox="true">
+		<anim name="button no press" anim="button no press" fps="24" loop="false"/>
+		<anim name="nopress" anim="button no press" type="none" fps="12" loop="false"/>
+		<anim name="press" anim="button press" type="none" fps="12" loop="false"/>
+	</sprite>
+	<girlfriend x="500" y="50"/>
+	<dad x="-100" y="130"/>
+	<boyfriend x="870" y="120"/>
+</stage>

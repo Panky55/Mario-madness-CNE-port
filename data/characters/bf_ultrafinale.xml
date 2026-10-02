@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="ultram_final_bf" y="530" x="90" isPlayer="true" icon="bf4" color="#31B0D1" scale="1" camx="70" camy="20" holdTime="4" flipX="true">
+	<anim name="singLEFTmiss" anim="facecam bf miss left" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="facecam bf miss down" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="facecam bf miss up" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="facecam bf miss right" fps="24" loop="false"/>
+	<anim name="idle" anim="bf idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="bf left" x="9" y="-4" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="bf down" x="8" y="6" fps="24" loop="false"/>
+	<anim name="singUP" anim="bf up" x="-12" y="4" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="bf right" x="-13" y="4" fps="24" loop="false"/>
+</character>

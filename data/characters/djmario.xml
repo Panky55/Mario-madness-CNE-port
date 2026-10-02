@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="DJ_Hallyboo_Assetsa" y="330" x="-80" isPlayer="false" icon="hally" color="#2A55AA" scale="1.2" camx="-70" camy="-60" holdTime="4">
+	<anim name="idle" anim="HallyIdle" x="-64" y="116" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="HallyDown" x="-120" y="90" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="HallyLeft" x="-93" y="110" fps="24" loop="false"/>
+	<anim name="singUP" anim="HallyUp" x="-13" y="168" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="HallyRight" x="-35" y="123" fps="24" loop="false"/>
+</character>

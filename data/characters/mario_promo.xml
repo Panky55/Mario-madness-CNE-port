@@ -1,0 +1,14 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Mario_PromoShow" y="242" x="-180" isPlayer="false" icon="promo" color="#FF2C00" scale="1" camx="-450" camy="80" holdTime="4">
+	<anim name="idle" anim="promario idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="promario left" x="244" y="6" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="promario right" x="-192" y="-6" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="promario down" x="-6" y="-60" fps="24" loop="false"/>
+	<anim name="singUP" anim="promario up" x="-69" y="62" fps="24" loop="false"/>
+	<anim name="idle-alt" anim="promario depressed idle" x="-239" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="promario depressed left" x="-236" y="2" fps="24" loop="false"/>
+	<anim name="singRIGHT-alt" anim="promario depressed right" x="-239" y="-3" fps="24" loop="false"/>
+	<anim name="singDOWN-alt" anim="promario depressed down" x="-220" y="-22" fps="24" loop="false"/>
+	<anim name="singUP-alt" anim="promario depressed up" x="-246" y="38" fps="24" loop="false"/>
+	<anim name="depression" anim="promario transition idle" x="7" fps="24" loop="false"/>
+</character>

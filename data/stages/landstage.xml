@@ -1,0 +1,19 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="420" startCamPosY="450" zoom="1" name="landstage" folder="">
+	<sprite name="bglandEXE" sprite="mario/EXE2/bad/4" x="-500" y="-200" scrollx="0.3" scrolly="0.3" scale="6" updateHitbox="true"/>
+	<sprite name="bgfeo" sprite="mario/EXE2/old/Mario_Phase2_Background_Assets_Static" x="200" y="300" scrollx="0.1" scrolly="0.1" scale="2.5" alpha="0.5" anim="Estatica papu instancia " type="loop">
+		<anim name="Estatica papu instancia " anim="Estatica papu instancia " fps="24" loop="true"/>
+	</sprite>
+	<sprite name="bgwaterEXE" sprite="mario/EXE2/bad/3" x="-500" y="-200" scrollx="0.4" scrolly="0.4" scale="6" updateHitbox="true"/>
+	<sprite name="floorEXE" sprite="mario/EXE2/bad/2" x="-500" y="-200" scale="6" updateHitbox="true"/>
+	<sprite name="bgland" sprite="mario/EXE2/normal/4" x="-500" y="-200" scrollx="0.3" scrolly="0.3" scale="6" updateHitbox="true"/>
+	<sprite name="bgwater" sprite="mario/EXE2/normal/3" x="-500" y="-200" scrollx="0.4" scrolly="0.4" scale="6" updateHitbox="true"/>
+	<sprite name="floor" sprite="mario/EXE2/normal/2" x="-500" y="-200" scale="6" updateHitbox="true"/>
+	<girlfriend x="400" y="100"/>
+	<dad x="-21" y="103"/>
+	<boyfriend x="869" y="133"/>
+	<sprite name="brickslandEXE" sprite="mario/EXE2/bad/1" x="-500" y="-400" scrollx="1.2" scrolly="1.2" scale="6" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="bricksland" sprite="mario/EXE2/normal/1" x="-500" y="-400" scrollx="1.2" scrolly="1.2" scale="6" updateHitbox="true"/>
+</stage>

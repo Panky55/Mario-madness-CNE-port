@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="420" startCamPosY="450" zoom="0.9" name="racing" folder="">
+	<sprite name="bg" sprite="mario/Races/Race_Mario_BG2" x="-100" y="-50" scrollx="0.5" scrolly="0.5"/>
+	<sprite name="bgColina" sprite="mario/Races/Race_Mario_BG3" x="-400" y="-150" scrollx="0.9" scrolly="0.9"/>
+	<sprite name="bgPista" sprite="mario/Races/Race_Mario_BG1" x="-160" y="-120" scale="1.3" anim="Ground" type="loop">
+		<anim name="Ground" anim="Ground" fps="24" loop="true"/>
+	</sprite>
+	<girlfriend x="400" y="100"/>
+	<sprite name="xboxigualGOD" sprite="mario/Races/KRAAAATOOOOOS" x="2460" y="-90" scale="1.05"/>
+	<dad x="2000" y="150"/>
+	<boyfriend x="870" y="100"/>
+</stage>

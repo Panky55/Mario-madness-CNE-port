@@ -1,0 +1,7 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Too_Late_Pico_DIALOGUEFINAL_assets" y="350" isPlayer="true" icon="pico" color="#B7D855" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="dialog2" anim="PicoDIalogue" y="-5" fps="24" loop="false"/>
+	<anim name="dialog1" anim="PicoDialogue2" x="-38" y="88" fps="24" loop="false"/>
+	<anim name="dialog3" anim="PicoDialogue3" x="281" y="66" fps="24" loop="false"/>
+	<anim name="idle" anim="PicoDialogue2" x="-38" y="88" fps="24" loop="true"/>
+</character>

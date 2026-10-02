@@ -1,0 +1,13 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="1020" startCamPosY="1850" zoom="1.3" name="realbg" folder="">
+	<sprite name="skybox" sprite="mario/lisfalse/Skybox" x="-400" y="-150" scrollx="1.1" scrolly="1.1"/>
+	<sprite name="water" sprite="mario/lisfalse/Water" x="-400" y="-150"/>
+	<sprite name="eel" sprite="mario/lisfalse/Shaded_Mario_64_Eel" x="-8500" y="900" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="encima" sprite="mario/lisfalse/Encima" x="-400" y="-150"/>
+	<girlfriend x="400" y="450"/>
+	<dad x="100" y="1020"/>
+	<sprite name="aguaEstrella" sprite="mario/lisfalse/AguaEstrella" x="-400" y="-150"/>
+	<boyfriend x="870" y="247"/>
+	<sprite name="foreground2" sprite="mario/lisfalse/Foreground2" x="-400" y="-150"/>
+	<sprite name="foreground1" sprite="mario/lisfalse/Foreground" x="-400" y="-150"/>
+</stage>

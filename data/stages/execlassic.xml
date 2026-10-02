@@ -1,0 +1,17 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="400" startCamPosY="350" zoom="0.5" name="execlassic" folder="">
+	<sprite name="bg" sprite="mario/EXE1/Castillo fondo de hasta atras" x="-1000" y="-850" scrollx="0.45" scrolly="0.45"/>
+	<sprite name="fireL" sprite="mario/EXE1/starman/Starman_BG_Fire_Assets" x="-1400" y="500" scrollx="0.4" scrolly="0.4" alpha="0.00001" anim="fire anim effects" type="loop">
+		<anim name="fire anim effects" anim="fire anim effects" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="fireR" sprite="mario/EXE1/starman/Starman_BG_Fire_Assets" x="700" y="500" scrollx="0.4" scrolly="0.4" alpha="0.00001" flipX="true" anim="delay" type="loop">
+		<anim name="delay" anim="fire anim effects" indices="8,9,10,11,12,13,14,15,0,1,2,3,4,5,6,7" fps="24" loop="true"/>
+		<anim name="fire anim effects" anim="fire anim effects" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="castillo" sprite="mario/EXE1/Suelo y brillo atmosferico" x="-1000" y="-850"/>
+	<sprite name="suelo" sprite="mario/EXE1/Arboles y sombra" x="-1000" y="-850"/>
+	<girlfriend x="790" y="310"/>
+	<dad x="100" y="120"/>
+	<boyfriend x="1000" y="120"/>
+	<sprite name="bloques" sprite="mario/EXE1/CLadrillosPapus" x="-1000" y="-850"/>
+</stage>

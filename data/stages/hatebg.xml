@@ -1,0 +1,47 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="220" startCamPosY="300" zoom="0.7" name="hatebg" folder="">
+	<sprite name="bg" sprite="mario/IHY/Ladrillos y ventanas" x="-960" y="-700" scrollx="0.6" scrolly="0.6"/>
+	<sprite name="bgsign" sprite="mario/IHY/Luigi_IHY_Background_Assets_ete_sech_v2" x="1160" y="300" scrollx="0.6" scrolly="0.6" scale="0.8" alpha="0"/>
+	<sprite name="fire3" sprite="mario/IHY/OGN_Fireball" x="-1200" y="0.6" scrollx="0.6" scale="0.5" anim="idle" type="loop">
+		<anim name="idle" anim="flame" fps="24" loop="true"/>
+		<anim name="flame" anim="flame" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="fire4" sprite="mario/IHY/OGN_Fireball" x="-1200" y="0.5" scrollx="0.5" scale="0.5" anim="idle" type="loop">
+		<anim name="idle" anim="flame" fps="25" loop="true"/>
+		<anim name="flame" anim="flame" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="eyelessboo" sprite="mario/IHY/Luigi_HY_BG_Assetss" x="-500" y="233" scrollx="0.8" scrolly="0.8" alpha="0" flipX="true" anim="GhostIdle" type="loop">
+		<anim name="GhostIdle" anim="GhostIdle" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="eyelessboo2" sprite="mario/IHY/Luigi_HY_BG_Assetss" x="1500" y="33" scrollx="0.8" scrolly="0.8" alpha="0" anim="GhostIdle" type="loop">
+		<anim name="GhostIdle" anim="GhostIdle" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="eyelessboo3" sprite="mario/IHY/Luigi_HY_BG_Assetss" x="1450" y="333" scrollx="0.8" scrolly="0.8" alpha="0" anim="GhostIdle" type="loop">
+		<anim name="GhostIdle" anim="GhostIdle" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="puenteHate" sprite="mario/IHY/PuenteCompleto" x="-1360" y="-680"/>
+	<sprite name="puenteHate_2" sprite="mario/IHY/Puente Roto" x="-1360" y="-680"/>
+	<sprite name="blueMario" sprite="mario/IHY/Luigi_HY_BG_Assetss" x="100" y="352" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="MarioIntro" anim="MarioIntro" fps="24" loop="false"/>
+		<anim name="hey" anim="MarioIntro" type="none" fps="24" loop="false"/>
+		<anim name="dance" anim="MarioIdle" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="blueMario2" sprite="mario/IHY/Luigi_HY_BG_Assetss" x="1360" y="352" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="MarioIntro" anim="MarioIntro" fps="24" loop="false"/>
+		<anim name="hey" anim="MarioIntro" type="none" fps="24" loop="false"/>
+		<anim name="dance" anim="MarioIdle" type="none" fps="24" loop="false"/>
+	</sprite>
+	<girlfriend x="250" y="100"/>
+	<dad x="-200" y="80"/>
+	<boyfriend x="870" y="60"/>
+	<sprite name="fire1" sprite="mario/IHY/OGN_Fireball" x="-1200" y="1.5" scrollx="1.5" anim="idle" type="loop">
+		<anim name="idle" anim="flame" fps="21" loop="true"/>
+		<anim name="flame" anim="flame" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="fire2" sprite="mario/IHY/OGN_Fireball" x="-1200" y="1.5" scrollx="1.5" anim="idle" type="loop">
+		<anim name="idle" anim="flame" fps="26" loop="true"/>
+		<anim name="flame" anim="flame" fps="24" loop="true" type="none"/>
+	</sprite>
+</stage>

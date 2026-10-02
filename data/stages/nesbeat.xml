@@ -1,0 +1,81 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="620" startCamPosY="450" zoom="0.9" name="nesbeat" folder="">
+	<sprite name="ducktree" sprite="mario/beatus/tree" x="-600" y="-100" scrollx="0.6" scrolly="0.6" scale="6.5" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="duckleafs" sprite="mario/beatus/arbust" x="1600" y="400" scrollx="0.8" scrolly="0.8" scale="6.5" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="duckfloor" sprite="mario/beatus/grass" x="0" y="550" scale="6.5" updateHitbox="true" alpha="0"/>
+	<sprite name="bowbg" sprite="mario/beatus/castle" x="-700" y="-200" scrollx="0.4" scrolly="0.4" scale="5" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="bowbg2" sprite="mario/beatus/castle2" x="-700" y="-200" scrollx="0.4" scrolly="0.4" scale="5" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="bowplat" sprite="mario/beatus/platnes" x="800" y="300" scrollx="0.5" scrolly="0.5" scale="5" updateHitbox="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="bowlava" sprite="mario/beatus/neslava" x="-300" y="900" scrollx="0.85" scrolly="0.85" scale="5" updateHitbox="true" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="lava hot ow ow its too hot aaa" fps="5" loop="true"/>
+		<anim name="lava hot ow ow its too hot aaa" anim="lava hot ow ow its too hot aaa" fps="24" loop="false" type="none"/>
+	</sprite>
+	<sprite name="cutbg" sprite="mario/beatus/staticbg" x="800" y="300" scrollx="0.2" scrolly="0.2" scale="2.61" updateHitbox="true" visible="false" anim="staticbg duck" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="staticbg duck" anim="staticbg duck" fps="24" loop="true"/>
+		<anim name="duck" anim="staticbg duck" type="none" fps="15" loop="true"/>
+		<anim name="bowser" anim="staticbg castle" type="none" fps="15" loop="true"/>
+	</sprite>
+	<sprite name="cutskyline" sprite="mario/beatus/staticbg" x="800" y="300" scrollx="0.2" scrolly="0.2" scale="2.61" updateHitbox="true" visible="false" anim="staticbg duck" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="staticbg duck" anim="staticbg duck" fps="24" loop="true"/>
+		<anim name="duck" anim="staticbg duck" type="none" fps="15" loop="true"/>
+		<anim name="bowser" anim="staticbg castle" type="none" fps="15" loop="true"/>
+	</sprite>
+	<sprite name="cutstatic" sprite="mario/beatus/static" x="800" y="300" scrollx="0.2" scrolly="0.2" scale="1.3" updateHitbox="true" visible="false" anim="static idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="static idle" anim="static idle" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="ycbuLightningL" sprite="mario/beatus/ycbu_lightning" x="0" y="0" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="lightning" fps="15" loop="true"/>
+		<anim name="lightning" anim="lightning" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="ycbuLightningR" sprite="mario/beatus/ycbu_lightning" x="0" y="0" visible="false" anim="idle" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="lightning" fps="15" loop="true"/>
+		<anim name="lightning" anim="lightning" fps="24" loop="true" type="none"/>
+	</sprite>
+	<sprite name="ycbuGyromite" sprite="mario/beatus/YouCannotBeatUS_Fellas_Assets" x="800" y="1000" scrollx="1.1" scrolly="1.1" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Bird Up" anim="Bird Up" fps="24" loop="false"/>
+		<anim name="idle" anim="Bird Up" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="ycbuLakitu" sprite="mario/beatus/YouCannotBeatUS_Fellas_Assets" x="0" y="1000" scrollx="1.1" scrolly="1.1" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Lakitu" anim="Lakitu" fps="24" loop="false"/>
+		<anim name="idle" anim="Lakitu" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="clownCar" sprite="mario/beatus/Clown_Car" x="0" y="0" scale="55" visible="false" anim="clown car anim" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="clown car anim" anim="clown car anim" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="funnylayer0" sprite="characters/YouCannotBeatUS_Bowser_Asset" x="600" y="100">
+		<anim name="Left" anim="Left" fps="24" loop="false"/>
+		<anim name="idle" anim="Idle" type="none" fps="24" loop="false"/>
+		<anim name="singUP" anim="Up" type="none" fps="24" loop="false"/>
+		<anim name="singDOWN" anim="Down" type="none" fps="24" loop="false"/>
+		<anim name="singLEFT" anim="Left" type="none" fps="24" loop="false"/>
+		<anim name="singRIGHT" anim="Right" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="starmanGF" sprite="characters/YouCannotBeatUS_GF_Assets" x="400" y="250">
+		<anim name="GF Dancing Beat" anim="GF Dancing Beat" fps="24" loop="false"/>
+		<anim name="danceRight" anim="GF Dancing Beat" indices="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" type="none" fps="24" loop="false"/>
+		<anim name="danceLeft" anim="GF Dancing Beat" indices="15,16,17,18,19,20,21,22,23,24,25,28,29" type="none" fps="24" loop="false"/>
+		<anim name="hey" anim="GF Cheer" type="none" fps="24" loop="false"/>
+	</sprite>
+	<girlfriend x="250" y="150"/>
+	<dad x="400" y="100"/>
+	<boyfriend x="100" y="150"/>
+</stage>

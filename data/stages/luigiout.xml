@@ -1,0 +1,37 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="620" startCamPosY="450" zoom="0.9" name="luigiout" folder="">
+	<sprite name="sky" sprite="mario/cityout/skyL" x="-200" y="-1000" scrollx="0.7" scrolly="0.8"/>
+	<sprite name="citybg" sprite="mario/cityout/buildings far" x="400" y="-200" scrollx="0.7" scrolly="0.8"/>
+	<sprite name="cityplus" sprite="mario/cityout/road plus building" x="600" y="100" scrollx="0.8"/>
+	<sprite name="lightsky" sprite="mario/cityout/corner sky overlay" x="800" y="-500" scrollx="0.8" scrolly="0.8"/>
+	<sprite name="wall" sprite="mario/cityout/buildingSide" x="-950" y="-450"/>
+	<sprite name="gflol" sprite="mario/cityout/GF_LDO" x="-400" y="300" alpha="0.000001">
+		<anim name="ldo gf dance" anim="ldo gf dance" fps="24" loop="false"/>
+		<anim name="danceleft" anim="ldo gf dance" indices="1,2,3,4,5,6,7,8,9,10,11,12,13,14" type="none" fps="24" loop="false"/>
+		<anim name="danceright" anim="ldo gf dance" indices="15,16,17,18,19,20,21,22,23,24,25,26,27,28,29" type="none" fps="24" loop="false"/>
+		<anim name="danceLeft-alt" anim="ldo gf dance annoyed" indices="1,2,3,4,5,6,7,8,9,10,11,12,13,14" type="none" fps="24" loop="false"/>
+		<anim name="danceRight-alt" anim="ldo gf dance annoyed" indices="15,16,17,18,19,20,21,22,23,24,25,26,27,28,29" type="none" fps="24" loop="false"/>
+		<anim name="why" anim="ldo gf why" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="gfwalk" sprite="mario/cityout/they-walkin" x="-390" y="280" alpha="0.000001">
+		<anim name="ldo gf end dialogue" anim="ldo gf end dialogue" fps="24" loop="false"/>
+		<anim name="why" anim="ldo gf end dialogue" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="gfspeak" sprite="mario/cityout/stereo_still_image" x="-390" y="640" alpha="0.000001"/>
+	<sprite name="bfwalk" sprite="mario/cityout/they-walkin" x="-13" y="325" scale="1.1" alpha="0.000001">
+		<anim name="ldo bf end dialogue" anim="ldo bf end dialogue" fps="24" loop="false"/>
+		<anim name="why" anim="ldo bf end dialogue" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="mrwalk" sprite="mario/cityout/they-walkin" x="355" y="248" alpha="0.000001">
+		<anim name="ldo mario end dialogue" anim="ldo mario end dialogue" fps="24" loop="false"/>
+		<anim name="why" anim="ldo mario end dialogue" type="none" fps="21" loop="false"/>
+	</sprite>
+	<sprite name="lgwalk" sprite="mario/cityout/they-walkin" x="796.5" y="150" alpha="0.000001">
+		<anim name="ldo luigi end dialogue" anim="ldo luigi end dialogue" fps="24" loop="false"/>
+		<anim name="why" anim="ldo luigi end dialogue" type="none" fps="21" loop="false"/>
+	</sprite>
+	<girlfriend x="720" y="100"/>
+	<dad x="400" y="100"/>
+	<boyfriend x="0" y="140"/>
+	<sprite name="lightWall" sprite="mario/cityout/Overlay All" x="-800" y="-550" scrollx="1.2" scrolly="1.2"/>
+</stage>

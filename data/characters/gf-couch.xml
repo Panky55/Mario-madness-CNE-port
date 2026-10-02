@@ -1,0 +1,7 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="christopher_pratt_gf" y="220" x="120" isPlayer="false" icon="gf" color="#A50061" scale="1" camx="-20" camy="80" holdTime="4">
+	<anim name="danceLeft" anim="couch gf dance" fps="24" loop="false" indices="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14"/>
+	<anim name="danceRight" anim="couch gf dance" fps="24" loop="false" indices="15,16,17,18,19,20,21,22,23,24,25,26,27,28,29"/>
+	<anim name="sad" anim="couch gf cringe" fps="24" loop="false"/>
+	<anim name="scared" anim="couch gf cringe" fps="24" loop="false"/>
+</character>

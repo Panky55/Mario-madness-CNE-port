@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="old/Wario_Apparition_assets_v1" y="350" x="160" isPlayer="false" icon="wario" color="#A37C3C" scale="1.2" camx="0" camy="0" holdTime="4">
+	<anim name="singLEFT" anim="WarioLeft" x="235" y="344" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="WarioDown" x="70" y="270" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="WarioRight" x="-158" y="293" fps="24" loop="false"/>
+	<anim name="idle" anim="WarioIdle" x="35" y="316" fps="24" loop="false"/>
+	<anim name="singUP" anim="WarioUp" x="101" y="477" fps="24" loop="false"/>
+</character>

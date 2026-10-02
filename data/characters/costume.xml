@@ -1,0 +1,13 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Costume_Mario_Assets" y="270" x="-50" isPlayer="false" icon="costume" color="#31B0D1" scale="1" camx="-160" camy="-390" holdTime="6.1">
+	<anim name="idle" anim="Idle" y="450" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="Right" x="-82" y="278" fps="28" loop="false"/>
+	<anim name="singLEFT" anim="Left" x="182" y="419" fps="28" loop="false"/>
+	<anim name="singDOWN" anim="Down" x="78" y="177" fps="28" loop="false"/>
+	<anim name="singUP" anim="Up" x="52" y="499" fps="28" loop="false"/>
+	<anim name="singRIGHT-alt" anim="Slumped Right" x="155" y="103" fps="28" loop="false"/>
+	<anim name="singLEFT-alt" anim="Slumped Left" x="152" y="88" fps="28" loop="false"/>
+	<anim name="singDOWN-alt" anim="Slumped Down" x="158" y="80" fps="28" loop="false"/>
+	<anim name="singUP-alt" anim="Slumped Up" x="149" y="123" fps="28" loop="false"/>
+	<anim name="idle-alt" anim="Slumped Idle" x="150" y="80" fps="24" loop="true"/>
+</character>

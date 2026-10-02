@@ -1,0 +1,14 @@
+{
+ "params": [
+  {
+   "name": "param1",
+   "type": "String",
+   "defaultValue": ""
+  },
+  {
+   "name": "param2",
+   "type": "String",
+   "defaultValue": ""
+  }
+ ]
+}

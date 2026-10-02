@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Race_Mario_Girlfriend_Assets_v1" y="170" x="-90" isPlayer="false" icon="gf" color="#A5004D" scale="1" camx="0" camy="0" holdTime="4">
+	<anim name="cheer" anim="GFAnim1" x="2" y="-19" fps="24" loop="false"/>
+	<anim name="danceRight" anim="GFIdle" x="2" y="-19" fps="24" loop="false" indices="15,16,17,18,19,20,21,22,23,24,25,26,27,28,29"/>
+	<anim name="danceLeft" anim="GFIdle" x="2" y="-19" fps="24" loop="false" indices="30,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14"/>
+	<anim name="sad" anim="GFMiss" x="2" y="-46" fps="24" loop="false" indices="0,1,2,3,4,5,6,7,8,9,10,11,12"/>
+	<anim name="scared" anim="GFShoked" x="2" y="-28" fps="24" loop="false"/>
+</character>

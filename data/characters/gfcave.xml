@@ -1,0 +1,6 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="cavegfpixel" y="320" x="120" isPlayer="false" icon="gf" color="#A5004D" scale="12" camx="0" camy="0" holdTime="4" antialiasing="false">
+	<anim name="idle" anim="bop" fps="12" loop="true"/>
+	<anim name="hey0" anim="up" fps="12" loop="true"/>
+	<anim name="hey1" anim="break" fps="12" loop="true"/>
+</character>

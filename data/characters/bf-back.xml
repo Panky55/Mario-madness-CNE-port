@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Abandoned_BF_Assets" y="110" x="-270" isPlayer="true" icon="bf" color="#31B0D1" scale="1.00000000000002" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="Idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="Left0" x="99" y="7" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="Down0" x="-30" y="129" fps="24" loop="false"/>
+	<anim name="singUP" anim="Up0" x="-64" y="45" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="Right0" x="-5" y="31" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="LeftMiss" x="100" y="23" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="DownMiss" x="-31" y="132" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="UpMiss" x="-55" y="47" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="RightMiss" x="-5" y="30" fps="24" loop="false"/>
+</character>

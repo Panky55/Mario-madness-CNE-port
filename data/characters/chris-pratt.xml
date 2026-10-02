@@ -1,0 +1,10 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="christopher_pratt" y="260" x="20" isPlayer="false" icon="chris" color="#C2C2C2" scale="1" camx="-30" camy="-20" holdTime="4">
+	<anim name="idle" anim="chris pratt idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="chris pratt left" x="84" y="58" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="chris pratt right" x="8" y="59" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="chris pratt down" x="24" y="28" fps="24" loop="false"/>
+	<anim name="singUP" anim="chris pratt up" x="15" y="47" fps="24" loop="false"/>
+	<anim name="hey" anim="chris pratt mario" x="138" y="101" fps="24" loop="false"/>
+	<anim name="itsame" anim="chris pratt itsame" x="-9" fps="24" loop="false"/>
+</character>

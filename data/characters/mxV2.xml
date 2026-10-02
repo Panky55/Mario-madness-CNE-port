@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MX_v2_NEW_Assets" y="-600" x="-810" isPlayer="false" icon="2MX" color="#4B140E" scale="1.1" camx="-50" camy="-250" holdTime="4">
+	<anim name="singRIGHT" anim="MXRight" x="12" y="-61" fps="24" loop="false"/>
+	<anim name="idle" anim="MXIdle" x="76" y="246" fps="24" loop="false"/>
+	<anim name="singUP" anim="MXUp" x="167" y="1042" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="MXLeft" x="191" y="700" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="MXDown" x="61" y="-106" fps="24" loop="false"/>
+</character>

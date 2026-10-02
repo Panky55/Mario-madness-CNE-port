@@ -1,0 +1,49 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="360" startCamPosY="450" zoom="0.6" name="exeport" folder="">
+	<sprite name="bg" sprite="mario/MX/MXBG1_2" x="-1250" y="-1100"/>
+	<sprite name="fullbg" sprite="mario/MX/1" x="-1920" y="-1680"/>
+	<sprite name="creppyleaf" sprite="mario/MX/MX_BG_Assets_2" x="294" y="-319" scrollx="0.8" scrolly="0.8" anim="BushIdle" type="loop">
+		<anim name="BushIdle" anim="BushIdle" fps="24" loop="true"/>
+		<anim name="idle" anim="BushIdle" type="none" fps="24" loop="true"/>
+		<anim name="blink" anim="BushBlink" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="creepyCloud" sprite="mario/MX/MX_BG_Assets_2" x="-400" y="-1233" scrollx="0.6" scrolly="0.6">
+		<anim name="Cloud" anim="Cloud" fps="24" loop="false"/>
+		<anim name="idle" anim="Cloud" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="bgfloor" sprite="mario/MX/2" x="-1920" y="-1680"/>
+	<sprite name="luigiempa" sprite="mario/MX/MX_BG_Assets_1" x="1763" y="-170" anim="LucasHead" type="loop">
+		<anim name="LucasHead" anim="LucasHead" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="luigibody" sprite="mario/MX/MX_BG_Assets_1" x="1383" y="360" anim="Lucasody" type="loop">
+		<anim name="Lucasody" anim="Lucasody" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="dedtoad" sprite="mario/MX/MX_BG_Assets_1" x="183" y="370" anim="ToadBody" type="loop">
+		<anim name="ToadBody" anim="ToadBody" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="funnylayer0" sprite="mario/MX/MM_Boyfriend_Assets_jump" x="1120" y="185" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="JUMP" anim="JUMP" fps="24" loop="false"/>
+		<anim name="jump" anim="JUMP0" type="none" fps="30" loop="false"/>
+		<anim name="jumpend" anim="JUMPLAND0" type="none" fps="24" loop="false"/>
+	</sprite>
+	<girlfriend x="400" y="100"/>
+	<dad x="100" y="100"/>
+	<boyfriend x="1170" y="140"/>
+	<sprite name="lightmx" sprite="mario/MX/MXBG1_3" x="-1250" y="-1100"/>
+	<sprite name="shadowbg" sprite="mario/MX/3" x="-1920" y="-1680"/>
+	<sprite name="wahooText" sprite="mario/MX/waho" x="483" y="-220" alpha="0"/>
+	<sprite name="killMX" sprite="mario/MX/MX_v2_Assets_wahoo" x="-1500" y="-1150" alpha="0.000001">
+		<anim name="MXWahoo" anim="MXWahoo" fps="24" loop="false"/>
+		<anim name="yupi" anim="MXWahoo" type="none" fps="32" loop="false"/>
+	</sprite>
+	<sprite name="gfFall" sprite="mario/MX/MX_v2_Assets_gfdiesepico" x="-1600" y="-700" alpha="0.000001">
+		<anim name="GFDies" anim="GFDies" fps="24" loop="false"/>
+		<anim name="fallgirls" anim="GFDies0" type="none" fps="32" loop="false"/>
+	</sprite>
+	<sprite name="gfwasTaken" sprite="mario/MX/MX_v2_Assets_gfdiesepico" x="-1600" y="200" alpha="0.000001">
+		<anim name="GFDies2" anim="GFDies2" fps="24" loop="false"/>
+		<anim name="fallgu" anim="GFDies2" type="none" fps="32" loop="false"/>
+		<anim name="idle" anim="GFDieLoop" type="none" fps="32" loop="true"/>
+	</sprite>
+</stage>

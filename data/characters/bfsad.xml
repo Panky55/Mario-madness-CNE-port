@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="MM_Boyfriend_Assets_cryingfuck" y="350" isPlayer="true" icon="bfsad" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="SCAREDIDLE" x="-4" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="SCAREDLEFT" x="-10" y="31" fps="24" loop="false"/>
+	<anim name="singUP" anim="SCAREDUP" x="-25" y="92" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="SCAREDRIGHT" x="-41" y="31" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="MISSSCAREDLEFT" y="53" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="MISSSCAREDDOWN" x="-28" y="-3" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="MISSSCAREDUP" x="-23" y="120" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="MISSSCAREDRIGHT" x="-43" y="61" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="SCAREDDOWN" x="-31" y="-6" fps="24" loop="false"/>
+</character>

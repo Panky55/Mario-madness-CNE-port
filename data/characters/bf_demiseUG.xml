@@ -1,0 +1,10 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Demise_BF_Assets_Underground" y="250" x="-30" isPlayer="true" icon="bfdemise" color="#31B0D1" scale="1" camx="-140" camy="150" holdTime="6.1" flipX="true">
+	<anim name="idle-legs" anim="Bottom" x="33" y="-236" fps="24" loop="false"/>
+	<anim name="idle-arm" anim="BF Right Arm" x="-13" y="-155" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="UpperLeft" x="75" y="-20" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="UpperDown" x="10" y="-15" fps="24" loop="false"/>
+	<anim name="singUP" anim="UpperUp" x="-40" y="25" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="UpperRight" x="72" y="-1" fps="24" loop="false"/>
+	<anim name="idle" anim="BF Running" fps="0" loop="true"/>
+</character>

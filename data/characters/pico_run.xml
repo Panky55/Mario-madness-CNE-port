@@ -1,0 +1,17 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Too_Late_Pico_FINALSEQUENCE_assets" y="230" x="-30" isPlayer="true" icon="pico" color="#B7D855" scale="1" camx="-140" camy="150" holdTime="6.1" flipX="true">
+	<anim name="singLEFT" anim="TopLeftFront" x="165" y="16" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="TopDown" x="-80" y="35" fps="24" loop="false"/>
+	<anim name="singUP" anim="TopUpFront" x="-90" y="25" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="TopRightFront" x="-141" y="-14" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="TopLeftFront" x="165" y="16" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="TopDown" x="-80" y="35" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="TopUpFront" x="-90" y="25" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="TopRightFront" x="-141" y="-14" fps="24" loop="false"/>
+	<anim name="idle" anim="TopIdle" fps="0" loop="true"/>
+	<anim name="idle-legs" anim="Legs" x="30" y="-275" fps="32" loop="true"/>
+	<anim name="singLEFTarm" anim="TopLeftBack" x="-222" y="-207" fps="24" loop="false"/>
+	<anim name="singUParm" anim="TopUpBack" x="-273" y="-180" fps="24" loop="false"/>
+	<anim name="singRIGHTarm" anim="TopRightBack" x="-50" y="-200" fps="24" loop="false"/>
+	<anim name="dialog1" anim="TopDialgoue" fps="24" loop="false"/>
+</character>

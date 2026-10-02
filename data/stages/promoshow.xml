@@ -1,0 +1,44 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="1009" startCamPosY="544" zoom="0.8" name="promoshow" folder="">
+	<sprite name="promoBGSad" sprite="mario/promo/promobg" x="0" y="19" visible="false" anim="bg depression" type="loop">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="bg depression" anim="bg depression" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="promoBG" sprite="mario/promo/promobg" x="0" y="19" anim="bg normal" type="loop">
+		<anim name="bg normal" anim="bg normal" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="darkFloor" sprite="mario/promo/wood floor" x="600" y="800" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="bgLuigi" sprite="mario/promo/promo_luigi" x="200" y="275" alpha="0">
+		<anim name="luigi idle right" anim="luigi idle right" fps="24" loop="false"/>
+		<anim name="idle" anim="luigi idle right" type="none" fps="24" loop="false"/>
+		<anim name="idle-alt" anim="luigi idle left" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="bgPeach" sprite="mario/promo/promo_peach" x="1225" y="225" alpha="0">
+		<anim name="peach idle right" anim="peach idle right" fps="24" loop="false"/>
+		<anim name="idle" anim="peach idle right" type="none" fps="24" loop="false"/>
+		<anim name="idle-alt" anim="peach idle left" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="stanlines" sprite="mario/promo/stanley_lines" x="550" y="500" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="lines" anim="lines" fps="24" loop="false"/>
+		<anim name="line1" anim="lines" indices="0" type="none" fps="24" loop="true"/>
+		<anim name="line2" anim="lines" indices="1" type="none" fps="24" loop="true"/>
+		<anim name="line3" anim="lines" indices="2" type="none" fps="24" loop="true"/>
+		<anim name="line4" anim="lines" indices="3" type="none" fps="24" loop="true"/>
+		<anim name="line5" anim="lines" indices="4" type="none" fps="24" loop="true"/>
+		<anim name="line6" anim="lines" indices="5" type="none" fps="24" loop="true"/>
+		<anim name="line7" anim="lines" indices="6" type="none" fps="24" loop="true"/>
+		<anim name="line8" anim="lines" indices="7" type="none" fps="24" loop="true"/>
+	</sprite>
+	<girlfriend x="100" y="350"/>
+	<sprite name="promoDesk" sprite="mario/promo/promodesk" x="740" y="552" anim="Promario desk static" type="loop">
+		<anim name="Promario desk static" anim="Promario desk static" fps="24" loop="true"/>
+		<anim name="stat" anim="Promario desk static" type="none" fps="24" loop="true"/>
+		<anim name="luigi" anim="Promario desk luigi" type="none" fps="24" loop="true"/>
+		<anim name="flash" anim="Promario desk flash" type="none" fps="24" loop="false"/>
+	</sprite>
+	<dad x="1150" y="64"/>
+	<boyfriend x="285" y="375"/>
+</stage>

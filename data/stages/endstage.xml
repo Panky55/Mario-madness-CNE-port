@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="350" startCamPosY="450" zoom="0.45" name="endstage" folder="">
+	<sprite name="bg" sprite="mario/costume/PedacitoDeGris" x="-1200" y="-770" scrollx="0.5"/>
+	<sprite name="floor" sprite="mario/costume/Floor and Courtains" x="-1200" y="-770"/>
+	<sprite name="mesa" sprite="mario/costume/mesa mesa mesa que mas aplauda" x="-1200" y="-770"/>
+	<girlfriend x="40" y="130"/>
+	<dad x="-70" y="120"/>
+	<boyfriend x="870" y="120"/>
+	<sprite name="castle0" sprite="mario/costume/Foreground" x="-1400" y="-300" scrollx="1.4" scrolly="1.4"/>
+	<sprite name="funnylayer0" sprite="mario/costume/Lamp" x="-1200" y="-770"/>
+	<sprite name="elfin" sprite="mario/costume/end" x="0" y="0" updateHitbox="true" alpha="0"/>
+</stage>

@@ -1,0 +1,21 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="420" startCamPosY="450" zoom="0.8" name="betamansion" folder="">
+	<sprite name="bg" sprite="mario/LuigiBeta/Skybox" x="-1200" y="-850" scrollx="0.2" scrolly="0.2"/>
+	<sprite name="scarymansion" sprite="mario/LuigiBeta/BackBG" x="-1200" y="-850" scrollx="0.8" scrolly="0.8"/>
+	<girlfriend x="400" y="100"/>
+	<sprite name="betafire1" sprite="mario/LuigiBeta/Alone_Fire" x="-320" y="-630" anim="fire" type="loop">
+		<anim name="fire" anim="fire" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="betafire2" sprite="mario/LuigiBeta/Alone_Fire" x="1270" y="-630" flipX="true" anim="fire" type="loop">
+		<anim name="fire" anim="fire" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="scaryfloor" sprite="mario/LuigiBeta/FrontBG" x="-1200" y="-850"/>
+	<sprite name="starmanGF" sprite="characters/Beta_Luigi_GF_Assets" x="570" y="100">
+		<anim name="GFIdle" anim="GFIdle" fps="24" loop="false"/>
+		<anim name="danceRight" anim="GFIdle" indices="15,16,17,18,19,20,21,22,23,24,25,26,27,28,29" type="none" fps="24" loop="false"/>
+		<anim name="danceLeft" anim="GFIdle" indices="30,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14" type="none" fps="24" loop="false"/>
+		<anim name="sad" anim="GFMiss" type="none" fps="24" loop="false"/>
+	</sprite>
+	<dad x="70" y="100"/>
+	<boyfriend x="920" y="100"/>
+</stage>

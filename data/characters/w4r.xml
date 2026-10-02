@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="W4R_Assets_New" y="167" x="26" isPlayer="false" icon="W4R" color="#AF9148" scale="1" camx="0" camy="0" holdTime="4">
+	<anim name="idle" anim="w4r idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="w4r left" x="51" y="-24" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="w4r right" x="-55" y="56" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="w4r down" x="82" y="-63" fps="24" loop="false"/>
+	<anim name="singUP" anim="w4r up" x="80" y="136" fps="24" loop="false"/>
+</character>

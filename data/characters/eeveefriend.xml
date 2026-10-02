@@ -1,0 +1,10 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="eeveefriend" y="390" isPlayer="false" icon="pika" color="#464646" scale="4" camx="-170" camy="-230" holdTime="4" antialiasing="false">
+	<anim name="danceLeft" anim="eeveefriend idle" fps="12" loop="false"/>
+	<anim name="sad2" anim="eeveefriend two miss" fps="12" loop="true" indices="0,1,0,1,0,1,0,1,0,1"/>
+	<anim name="sad3" anim="eeveefriend three miss" fps="12" loop="true" indices="0,1,0,1,0,1,0,1,0,1"/>
+	<anim name="sad4" anim="eeveefriend four miss" fps="12" loop="true" indices="0,1,0,1,0,1,0,1,0,1"/>
+	<anim name="die" anim="eeveefriend die" fps="12" loop="true"/>
+	<anim name="danceRight" anim="eeveefriend idle" fps="12" loop="false"/>
+	<anim name="sad1" anim="eeveefriend one miss" fps="12" loop="false" indices="0,1,0,1,0,1,0,1,0,1"/>
+</character>

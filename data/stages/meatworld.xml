@@ -1,0 +1,36 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="-80" startCamPosY="450" zoom="0.5" name="meatworld" folder="">
+	<sprite name="castleFloor" sprite="mario/TooLateBG/feet/Overdue_Final_BG_floorfixed" x="-1500" y="650" alpha="0">
+		<anim name="Floor" anim="Floor" fps="24" loop="false"/>
+		<anim name="idle" anim="Floor" type="none" fps="24" loop="false"/>
+		<anim name="loop" anim="Floor" type="none" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="castleCeiling" sprite="mario/TooLateBG/feet/Overdue_Final_BG_topfixed" x="-1500" y="-1100" alpha="0">
+		<anim name="Top" anim="Top" fps="24" loop="false"/>
+		<anim name="idle" anim="Top" type="none" fps="24" loop="false"/>
+		<anim name="loop" anim="Top" type="none" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="street1" sprite="mario/TooLateBG/street/BackTrees" x="-1400" y="-550" scrollx="0.95" scrolly="0.95"/>
+	<sprite name="street2" sprite="mario/TooLateBG/street/Front Trees" x="-1400" y="-550" scrollx="1.05" scrolly="1.05"/>
+	<sprite name="street3" sprite="mario/TooLateBG/street/Road" x="-1400" y="-550"/>
+	<sprite name="street4" sprite="mario/TooLateBG/street/car" x="-1400" y="-550"/>
+	<sprite name="meat1" sprite="mario/TooLateBG/meat/TL_Meat_Sky" x="-2350" y="-1350" scrollx="0.2" scrolly="0.2" scale="2"/>
+	<sprite name="meat2" sprite="mario/TooLateBG/meat/TL_Meat_FarBG" x="-2350" y="-1350" scrollx="0.4" scrolly="0.4" scale="2"/>
+	<sprite name="meat3" sprite="mario/TooLateBG/meat/TL_Meat_MedBG" x="-2350" y="-1350" scrollx="0.6" scrolly="0.6" scale="2"/>
+	<sprite name="meat4" sprite="mario/TooLateBG/meat/TL_Meat_BG" x="-2350" y="-1350" scrollx="0.8" scrolly="0.8" scale="2"/>
+	<sprite name="meat5" sprite="mario/TooLateBG/meat/TL_Meat_Ground" x="-2350" y="-1350" scale="2"/>
+	<sprite name="meat6" sprite="mario/TooLateBG/meat/TL_Meat_Pupil" x="530" y="-100"/>
+	<sprite name="meat1_2" sprite="mario/TooLateBG/meat/TL_Meat_FG_string" x="1310" y="-955" scrollx="1.15" scrolly="1.15" scale="2"/>
+	<sprite name="meat2_2" sprite="mario/TooLateBG/meat/TL_Meat_FG_bottomteeth" x="-1105" y="1369" scrollx="1.15" scrolly="1.15" scale="2"/>
+	<sprite name="meat3_2" sprite="mario/TooLateBG/meat/TL_Meat_FG_topteeth" x="-1471" y="-1350" scrollx="1.15" scrolly="1.15" scale="2"/>
+	<sprite name="meat4_2" sprite="mario/TooLateBG/meat/TL_Meat_FG_topteeth2" x="-1429" y="-2239" scrollx="1.15" scrolly="1.15" scale="2"/>
+	<sprite name="meat5_2" sprite="mario/TooLateBG/meat/TL_Meat_CloseFG" x="-2280" y="-1400" scrollx="1.35" scrolly="1.35" scale="2"/>
+	<sprite name="gunShotPico" sprite="characters/Too_Late_Pico_ass_sets_v2" x="1" y="1" alpha="0.0001">
+		<anim name="PicoShoot" anim="PicoShoot" fps="24" loop="false"/>
+		<anim name="Shoot" anim="PicoShoot" type="none" fps="40" loop="false"/>
+	</sprite>
+	<girlfriend x="400" y="130"/>
+	<dad x="-460" y="300"/>
+	<boyfriend x="884" y="-50"/>
+	<sprite name="streetFore" sprite="mario/TooLateBG/street/Foreground Trees" x="-1600" y="-550" scrollx="1.2"/>
+</stage>

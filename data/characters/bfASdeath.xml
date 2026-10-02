@@ -1,0 +1,6 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="BF_AllStars_DEAD_Assets" y="-60" x="-230" isPlayer="false" icon="bf" color="#31B0D1" scale="1" camx="130" camy="-270" holdTime="4" flipX="true">
+	<anim name="deathLoop" anim="BF Dead Loop" y="17" fps="24" loop="false"/>
+	<anim name="deathConfirm" anim="BF Dead confirm" y="37" fps="24" loop="false"/>
+	<anim name="firstDeath" anim="BF dies" fps="24" loop="false"/>
+</character>

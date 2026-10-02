@@ -1,0 +1,10 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="NEW_Wario_Apparition_Assets" y="350" x="160" isPlayer="false" icon="wario2" color="#D8C64E" scale="1.2" camx="0" camy="0" holdTime="4">
+	<anim name="idle" anim="Idle" x="35" y="316" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="Left" x="225" y="344" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="Down" x="50" y="290" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="Right" x="-128" y="293" fps="24" loop="false"/>
+	<anim name="singUP" anim="Up" x="61" y="507" fps="24" loop="false"/>
+	<anim name="eyestart" anim="Green Eye Start" x="41" y="317" fps="24" loop="false"/>
+	<anim name="eyeloop" anim="Green Eye Loop" x="41" y="307" fps="24" loop="true"/>
+</character>

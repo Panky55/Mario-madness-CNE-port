@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Mario_OHGODNO_Assets" y="-40" isPlayer="true" icon="marioP" color="#FF003B" scale="1" camx="-30" camy="-60" holdTime="4">
+	<anim name="idle" anim="MarioIdle" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="MarioDown0" y="-50" fps="30" loop="false"/>
+	<anim name="singDOWNmiss" anim="MarioDownMiss" y="-22" fps="30" loop="false"/>
+	<anim name="singUPmiss" anim="MarioUpMiss" x="44" y="47" fps="30" loop="false"/>
+	<anim name="singLEFTmiss" anim="MarioLeftMiss" x="73" y="8" fps="30" loop="false"/>
+	<anim name="singRIGHTmiss" anim="MarioRightMiss" x="-20" y="6" fps="30" loop="false"/>
+	<anim name="singRIGHT" anim="MarioRight0" x="-19" y="5" fps="30" loop="false" indices="0,1,2,3,4,5,6,7,8,9,10,11"/>
+	<anim name="singUP" anim="MarioUp0" x="56" y="44" fps="30" loop="false" indices="0,1,2,3,4,5,6,7,8,9,10,11"/>
+	<anim name="singLEFT" anim="MarioLeft0" x="115" y="-2" fps="30" loop="false" indices="0,1,2,3,4,5,6,7,8,9,10,11"/>
+</character>

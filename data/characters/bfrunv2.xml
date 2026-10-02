@@ -1,0 +1,12 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="apparitionbf/BFRUNNING_poses" y="370" x="-20" isPlayer="true" icon="bf" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="idle" fps="0" loop="true"/>
+	<anim name="singUP" anim="up0" x="15" y="35" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="left0" x="39" y="-15" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="down0" x="53" y="-30" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="right0" x="-32" y="2" fps="24" loop="false"/>
+	<anim name="singUPmiss" anim="up fail" x="15" y="55" fps="24" loop="false"/>
+	<anim name="singLEFTmiss" anim="left fail" x="9" y="-8" fps="24" loop="false"/>
+	<anim name="singDOWNmiss" anim="down fail" x="-19" y="-20" fps="24" loop="false"/>
+	<anim name="singRIGHTmiss" anim="right fail" x="-35" y="2" fps="24" loop="false"/>
+</character>

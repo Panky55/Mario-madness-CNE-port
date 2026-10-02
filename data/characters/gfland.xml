@@ -1,0 +1,6 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="gfland" y="310" x="190" isPlayer="false" icon="gf" color="#A5004D" scale="5" camx="0" camy="0" holdTime="4" antialiasing="false">
+	<anim name="danceLeft" anim="gfland idle" fps="12" loop="false"/>
+	<anim name="danceRight" anim="gfland idle" fps="12" loop="false"/>
+	<anim name="idle" anim="gfland idle" fps="10" loop="true"/>
+</character>

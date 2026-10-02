@@ -1,0 +1,7 @@
+{
+ "displayName": "Promotion",
+ "bpm": 130,
+ "icon": "promo",
+ "coopAllowed": true,
+ "opponentModeAllowed": true
+}

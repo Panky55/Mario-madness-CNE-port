@@ -1,0 +1,7 @@
+{
+ "displayName": "Overdue",
+ "bpm": 190,
+ "icon": "fake-mrl",
+ "coopAllowed": true,
+ "opponentModeAllowed": true
+}

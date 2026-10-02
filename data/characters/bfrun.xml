@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="BoyFriend_Wario_Assets_v1" y="350" isPlayer="true" icon="bf" color="#31B0D1" scale="1" camx="0" camy="0" holdTime="4" flipX="true">
+	<anim name="idle" anim="BF idle dance" x="-5" fps="24" loop="true"/>
+	<anim name="singUP" anim="BF NOTE UP" x="-9" y="9" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="BF NOTE LEFT" x="-1" y="9" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="BF NOTE DOWN" x="-6" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="BF NOTE RIGHT" x="-18" y="8" fps="24" loop="false"/>
+</character>

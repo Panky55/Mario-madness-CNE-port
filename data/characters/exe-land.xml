@@ -1,0 +1,9 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="old/MarioLand" y="390" isPlayer="false" icon="exe-land" color="#464646" scale="2.8" camx="-170" camy="-230" holdTime="4" antialiasing="false">
+	<anim name="idle" anim="GBIdleCrazy" x="-82" y="30" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="GBLeftCrazy" x="86" y="128" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="GBRightCrazy" x="-109" y="36" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="GBDownCrazy" x="20" y="28" fps="24" loop="false"/>
+	<anim name="singUP" anim="GBUpCrazy" x="24" y="199" fps="24" loop="false"/>
+	<anim name="hey" anim="GBLaugh" x="182" y="125" fps="24" loop="false"/>
+</character>

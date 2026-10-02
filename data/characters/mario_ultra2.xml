@@ -1,0 +1,8 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Ultra_M2_Assets" y="-40" x="-420" isPlayer="false" icon="ultram4" color="#A93953" scale="1.11" camx="-70" camy="-100" holdTime="4">
+	<anim name="idle" anim="ultra idle" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="ultra left" x="6" y="80" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="ultra right" x="231" y="36" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="ultra down" x="140" y="238" fps="24" loop="false"/>
+	<anim name="singUP" anim="ultra up" x="342" y="324" fps="24" loop="false"/>
+</character>

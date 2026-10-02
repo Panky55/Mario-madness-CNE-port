@@ -1,0 +1,23 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="380" startCamPosY="450" zoom="0.7" name="castlestar" folder="">
+	<sprite name="bg" sprite="mario/star/Cielo" x="0.1" y="0.1"/>
+	<sprite name="castle2" sprite="mario/star/castillos traseros" x="0.1" y="0.1"/>
+	<sprite name="castle2_2" sprite="mario/star/castillos medio" x="0.25" y="0.25"/>
+	<sprite name="castle1" sprite="mario/star/castillos delanteros" x="0.4" y="0.4"/>
+	<sprite name="floor" sprite="mario/star/pUENTE" x="1" y="1"/>
+	<sprite name="charStar0" sprite="mario/star/Powerstar_Mario_BG_Assets" x="-850" y="650" anim="Luigi" type="loop">
+		<anim name="Luigi" anim="Luigi" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="charStar1" sprite="mario/star/Powerstar_Mario_BG_Assets" x="1600" y="600" anim="Peach" type="loop">
+		<anim name="Peach" anim="Peach" fps="24" loop="true"/>
+	</sprite>
+	<sprite name="marioattack" sprite="mario/star/Powerstar_Mario_v2_AssetsFINAL1" x="1600" y="600">
+		<anim name="AttackPrev" anim="AttackPrev" fps="24" loop="false"/>
+		<anim name="prevAttack" anim="AttackPrev" type="none" fps="16" loop="false"/>
+		<anim name="Attack" anim="AttackFinal" type="none" fps="24" loop="false"/>
+	</sprite>
+	<girlfriend x="870" y="100"/>
+	<dad x="150" y="235"/>
+	<boyfriend x="1250" y="160"/>
+	<sprite name="fore" sprite="mario/star/LADRILLOS" x="-1000" y="-930" scrollx="1.5" scrolly="1.5" scale="1.2"/>
+</stage>

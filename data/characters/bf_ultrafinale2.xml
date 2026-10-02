@@ -1,0 +1,13 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Act_4_secondperspective" y="190" x="-10" isPlayer="true" icon="bf4" color="#31B0D1" scale="1" camx="70" camy="20" holdTime="4" flipX="true">
+	<anim name="singLEFT" anim="BFLeft0" x="-2" y="1" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="BFRight0" x="-5" fps="24" loop="false"/>
+	<anim name="singUP" anim="BFUp0" x="-8" y="23" fps="24" loop="false"/>
+	<anim name="idle" anim="BFIldle" fps="24" loop="false"/>
+	<anim name="idle-alt" anim="BFIdleALT" x="-4" y="-1" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="BFLeftALT" x="86" y="13" fps="24" loop="false"/>
+	<anim name="singRIGHT-alt" anim="BFRightALT" x="-10" y="-4" fps="24" loop="false"/>
+	<anim name="singUP-alt" anim="BFUpALT" x="60" y="160" fps="24" loop="false"/>
+	<anim name="singDOWN-alt" anim="BFDownALT" x="25" y="-100" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="BFDown0" x="2" y="-15" fps="24" loop="false"/>
+</character>

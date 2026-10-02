@@ -1,0 +1,15 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Mario_LDO" y="150" x="-30" isPlayer="false" icon="mario-ldo" color="#A51E2C" scale="1" camx="-100" camy="-20" holdTime="4">
+	<anim name="idle" anim="ldo mario idle normal" x="1" fps="24" loop="false"/>
+	<anim name="idle-alt" anim="ldo mario idle annoyed" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="ldo mario left" x="52" y="-5" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="ldo mario right" x="-42" y="-3" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="ldo mario down" x="-33" y="-15" fps="24" loop="false"/>
+	<anim name="singUP" anim="ldo mario up" x="8" y="20" fps="24" loop="false"/>
+	<anim name="smoke hold" anim="ldo mario smoke hold" fps="24" loop="true"/>
+	<anim name="gonnatell" anim="ldo mario gonnatellmom" fps="24" loop="false"/>
+	<anim name="betternot" anim="ldo mario yeayoubetternot" x="7" y="4" fps="24" loop="false"/>
+	<anim name="hey" anim="ldo mario hey" fps="24" loop="false"/>
+	<anim name="dumbass" anim="ldo mario dumbassgeek" x="-68" y="-10" fps="24" loop="false"/>
+	<anim name="idiot" anim="ldo mario moms an idiot" x="51" y="2" fps="24" loop="false"/>
+</character>

@@ -1,0 +1,4 @@
+<!DOCTYPE codename-engine-character>
+<character sprite="Peach_OGN_Assets" y="-150" x="160" isPlayer="false" icon="peach" color="#853F44" scale="1" camx="0" camy="0" holdTime="4">
+	<anim name="idle" anim="PeachSad" fps="24" loop="true"/>
+</character>

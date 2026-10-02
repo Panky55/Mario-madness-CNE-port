@@ -1,0 +1,36 @@
+<!DOCTYPE codename-engine-stage>
+<stage startCamPosX="260" startCamPosY="270" zoom="0.6" name="virtual" folder="">
+	<sprite name="yourhead" sprite="mario/virtual/headbg" x="-400" y="-200" scrollx="0" scrolly="0" scale="2" alpha="0.2" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<sprite name="vwall" sprite="mario/virtual/Wall Bg" x="-1200" y="-750" scrollx="0.6" scrolly="0.6"/>
+	<sprite name="backFloor" sprite="mario/virtual/Back Platform" x="-1200" y="-750" scrollx="0.75" scrolly="0.75"/>
+	<sprite name="turtle" sprite="mario/virtual/v_koopa_thorny" x="800" y="200" scrollx="0.75" scrolly="0.75" scale="0.8" flipX="true" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Koopa Idle Glitch" anim="Koopa Idle Glitch" fps="24" loop="false"/>
+		<anim name="glitch" anim="glitch in" type="none" fps="24" loop="false"/>
+		<anim name="idle" anim="Koopa Idle Glitch" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="turtle2" sprite="mario/virtual/v_koopa_thorny" x="200" y="200" scrollx="0.75" scrolly="0.75" scale="0.8" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="Koopa Idle Glitch" anim="Koopa Idle Glitch" fps="24" loop="false"/>
+		<anim name="glitch" anim="glitch in" type="none" fps="24" loop="false"/>
+		<anim name="idle" anim="Koopa Idle Glitch" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="gfwasTaken" sprite="characters/Mr_Virtual_Girlfriend_Assets_jaj" x="900" y="0" scrollx="0.75" scrolly="0.75" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="GF Dies lol" anim="GF Dies lol" fps="24" loop="false"/>
+		<anim name="dies" anim="GF Dies lol" type="none" fps="24" loop="false"/>
+	</sprite>
+	<sprite name="backPipes" sprite="mario/virtual/Back Pipes" x="-1200" y="-750" scrollx="0.75" scrolly="0.75"/>
+	<sprite name="frontFloor" sprite="mario/virtual/Main Platform" x="-1200" y="-750"/>
+	<sprite name="frontPipes" sprite="mario/virtual/Front Pipes" x="-1200" y="-750"/>
+	<sprite name="cornerPipes" sprite="mario/virtual/Corner top Left Pipes" x="-1400" y="-600" scrollx="0.75" scrolly="0.75"/>
+	<sprite name="cornerPipes_2" sprite="mario/virtual/Corner top Left Pipes" x="-1400" y="-600" scrollx="0.75" scrolly="0.75"/>
+	<sprite name="crazyFloor" sprite="mario/virtual/Platform" x="-1200" y="-170" visible="false">
+		<property name="visible" type="bool" value="false"/>
+	</sprite>
+	<girlfriend x="870" y="100"/>
+	<dad x="100" y="200"/>
+	<boyfriend x="1100" y="100"/>
+</stage>
