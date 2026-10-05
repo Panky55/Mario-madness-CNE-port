@@ -136,6 +136,24 @@ var mmWinOgH:Int = 0;
 var mmWinOk:Bool = false;                 // did the box resolve?
 var mmWinTween = null;                    // running mmWinBox tween, if any
 
+// --- keeping the window pushes off the hot path --------------------------- //
+// `window.move()`/`window.resize()` are synchronous round trips to the window
+// manager, and a resize also reallocates the GL framebuffer the engine then has
+// to rebuild its camera buffers around. The source does both on every frame of
+// the desktop dance (PlayState.hx 7622-7630) and gets away with it on its own
+// native target; in this port it made the song's FPS sag and recover with each
+// of the two resize bursts - the 1.6s grow at step 1008 and the 1s shrink on
+// 'Triggers Paranoia' 4. So the box is only pushed when it has actually moved,
+// and a *resize* is additionally rate-limited: 20Hz over 1.6s is ~32 resizes
+// instead of ~96 and looks identical, because the size tween is what is
+// driving it frame to frame anyway.
+// - mmWinApplied is the geometry the window was last told about.
+// - mmWinResizeAt is the time (s) before the next resize becomes allowed.
+var mmWinApplied = {x: -1, y: -1, w: -1, h: -1};
+var mmWinResizeAt:Float = 0;
+var mmWinResizeEvery:Float = 0.05;
+var mmWinDt:Float = 0;                    // last frame's elapsed, for the above
+
 function postCreate() {
 	if (gf != null) gf.visible = false;
 	mmCreateShaders();
@@ -374,23 +392,72 @@ function mmWindowInit() {
 	mmWinBox.y = mmWinSmall.y;
 	mmWinBox.w = mmWinSmall.w;
 	mmWinBox.h = mmWinSmall.h;
-	mmWinApply();
+	// Force the first push past the change check: mmWinApplied starts at -1, but
+	// a monitor can legitimately be 0-sized on some drivers, and the box has to
+	// land whatever it says.
+	mmWinApplied = {x: -1, y: -1, w: -1, h: -1};
+	mmWinApplyNow();
 }
 
 // Pushes mmWinBox to the window. This is the source's `startresize` branch of
-// update() (7626-7630), which is what makes the box tweens move the window.
+// update() (7626-7630), which is what makes the box tweens move *and* resize the
+// window. Frames where the box has not changed are skipped, and a resize that
+// has changed is held back until mmWinResizeEvery has passed (see
+// mmWinApplied). On a held-back frame the move is dropped with it, because
+// during a grow or a shrink both halves travel together.
 function mmWinApply() {
+	if (window == null || !mmWinOk) return;
+
+	var nx = Std.int(mmWinBox.x);
+	var ny = Std.int(mmWinBox.y);
+	var nw = Std.int(mmWinBox.w);
+	var nh = Std.int(mmWinBox.h);
+	if (nx == mmWinApplied.x && ny == mmWinApplied.y
+		&& nw == mmWinApplied.w && nh == mmWinApplied.h) return;
+
+	if (nw != mmWinApplied.w || nh != mmWinApplied.h) {
+		// The expensive half: a resize reallocates the framebuffer.
+		if (mmWinResizeAt > 0) mmWinResizeAt -= mmWinDt;
+		if (mmWinResizeAt > 0) return;
+		mmWinResizeAt = mmWinResizeEvery;
+	}
+
+	window.resize(nw, nh);
+	window.move(nx, ny);
+	mmWinApplied.x = nx;
+	mmWinApplied.y = ny;
+	mmWinApplied.w = nw;
+	mmWinApplied.h = nh;
+}
+
+// The same push with the checks bypassed, for the calls that have to land
+// exactly: the initial box, and the last frame of a grow/shrink tween.
+function mmWinApplyNow() {
 	if (window == null || !mmWinOk) return;
 	window.resize(Std.int(mmWinBox.w), Std.int(mmWinBox.h));
 	window.move(Std.int(mmWinBox.x), Std.int(mmWinBox.y));
+	mmWinApplied.x = Std.int(mmWinBox.x);
+	mmWinApplied.y = Std.int(mmWinBox.y);
+	mmWinApplied.w = Std.int(mmWinBox.w);
+	mmWinApplied.h = Std.int(mmWinBox.h);
+	mmWinResizeAt = mmWinResizeEvery;
 }
 
 // The source's `startwindow` branch (7624): position only. The window keeps the
 // same size for the whole desktop dance, so asking the window manager to resize
-// it on every frame of a 60fps ping-pong would only make it stutter.
+// it on every frame of a 60fps ping-pong would only make it stutter. This is
+// the half that runs for the ~64s between steps 320 and 935, so it also skips
+// the stretches where the dance has left the box sitting still.
 function mmWinPushMove() {
 	if (window == null || !mmWinOk) return;
-	window.move(Std.int(mmWinBox.x), Std.int(mmWinBox.y));
+
+	var nx = Std.int(mmWinBox.x);
+	var ny = Std.int(mmWinBox.y);
+	if (nx == mmWinApplied.x && ny == mmWinApplied.y) return;
+
+	window.move(nx, ny);
+	mmWinApplied.x = nx;
+	mmWinApplied.y = ny;
 }
 
 // Eases the box to a new one; the per-frame push in update() moves the window
@@ -403,7 +470,7 @@ function mmWinTweenTo(x:Float, y:Float, w:Float, h:Float, sec:Float, ease) {
 	mmWinTween = FlxTween.tween(mmWinBox, {x: x, y: y, w: w, h: h}, sec, {ease: ease, onComplete: function(twn) {
 		mmWinResize = false;
 		mmWinTween = null;
-		mmWinApply();
+		mmWinApplyNow();   // the rate limit must not cost the final exact frame
 	}});
 }
 
@@ -418,6 +485,28 @@ function mmWinDance(twn) {
 function mmWinCancelDances() {
 	for (twn in mmWinDances) twn.cancel();
 	mmWinDances = [];
+}
+
+// PlayState.hx's `for (tween in windowTween)` loops at steps 384/392/400
+// (15864-15889). They are the source's "skip ahead" beats: each nudges every
+// running dance tween 20% along its own curve and flips `active`, which is what
+// makes the ping-pong jump rather than glide when the next phrase drops. 384
+// and 392 pause the tweens again 0.1s later, so the window holds still for a
+// beat between them; 400 leaves them running. `percent` and `active` are both
+// publicly settable on FlxTween, and the timed pauses use a bare FlxTimer like
+// case 935 below, since the source's `eventTimers` list has no counterpart here.
+function mmWinNudge(pause:Bool, startActive:Bool) {
+	for (twn in mmWinDances) {
+		twn.percent += 0.20;
+		// 384 only nudges and pauses 0.1s later; 392 re-activates first and 400
+		// re-activates and leaves it running.
+		if (startActive) twn.active = true;
+		if (pause) {
+			new FlxTimer().start(0.1, function(tmr) {
+				twn.active = false;
+			});
+		}
+	}
 }
 
 // Step 1008 (15890-15936): the source's `startresize = true` block, and the
@@ -450,10 +539,12 @@ function mmWindowShrink() {
 // lines later - i.e. wherever the window sits for the song, which in this port
 // is the small box. So homeX/homeY is the small box's own corner.
 //
-// 320 kicks the window around the desktop and starts the per-frame moves, 336
-// slides it to a quarter of its home position, 384-576 ping-pong it around
-// there, 935 cancels every running tween, pulls it home and stops the moves,
-// and 1008 grows it over the whole monitor (mmWindowGrow, above).
+// 320 kicks the window around the desktop and starts the per-frame moves, 332
+// starts the slide to a quarter of its home position, 336 cancels that slide and
+// settles it there before the two long ping-pongs start, 384/392/400 nudge those
+// ping-pongs 20% along (mmWinNudge), 448 re-homes it, 576 ping-pongs once more,
+// 935 cancels every running tween, pulls it home and stops the moves, and 1008
+// grows it over the whole monitor (mmWindowGrow, above).
 function stepHit(curStep:Int) {
 	if (window == null || !mmWinOk) return;
 
@@ -474,16 +565,27 @@ function stepHit(curStep:Int) {
 		case 332:
 			mmWinBox.x = homeX + 100;
 			mmWinBox.y = homeY - 100;
-		case 336:
+			// The source starts the slide here, not at 336.
 			mmWinDance(FlxTween.tween(mmWinBox, {x: homeX / 4, y: Std.int(homeY / 4)}, 0.2, {startDelay: 0.2, ease: FlxEase.backIn}));
-		case 384:
+		case 336:
+			// The source cancels every running dance tween here before settling
+			// on the quarter position and starting the two long ping-pongs. Without
+			// the cancel, the 332 slide tween is still live and the box arrives by
+			// tween rather than by the hard assignment the source uses - which read
+			// as the window sliding in from off-position after every kick.
+			mmWinCancelDances();
 			mmWinBox.x = homeX / 4;
 			mmWinBox.y = homeY / 4;
-		case 392:
 			mmWinDance(FlxTween.tween(mmWinBox, {y: Std.int(homeY + (homeX / 4))}, 3, {ease: FlxEase.quadInOut, type: FlxTween.PINGPONG}));
-		case 400:
 			mmWinDance(FlxTween.tween(mmWinBox, {x: Std.int(homeX + (homeX / 2))}, 5, {ease: FlxEase.quadInOut, type: FlxTween.PINGPONG}));
+		case 384:
+			mmWinNudge(true, false);
+		case 392:
+			mmWinNudge(true, true);
+		case 400:
+			mmWinNudge(false, true);
 		case 448:
+			mmWinCancelDances();
 			mmWinDance(FlxTween.tween(mmWinBox, {y: homeY}, 0.5, {ease: FlxEase.expoOut}));
 			mmWinDance(FlxTween.tween(mmWinBox, {x: homeX}, 0.5, {ease: FlxEase.expoOut}));
 			mmWinDance(FlxTween.tween(mmWinBox, {y: homeY + 50}, 5, {startDelay: 0.5, ease: FlxEase.cubeInOut, type: FlxTween.PINGPONG}));
@@ -495,7 +597,7 @@ function stepHit(curStep:Int) {
 			mmWinDance(FlxTween.tween(mmWinBox, {y: homeY}, 0.5, {ease: FlxEase.cubeInOut}));
 			new FlxTimer().start(0.5, function(tmr) {
 				mmWinStart = false;
-				mmWinApply();
+				mmWinApplyNow();
 			});
 		case 1008:
 			// The source also un-hides timeBarBG/timeBar/timeTxt/scoreTxt here
@@ -537,7 +639,10 @@ function update(elapsed:Float) {
 	// Source update() lines 7622-7630: while `startwindow` is set the window is
 	// moved to the box every frame, and while `startresize` is set it is also
 	// resized - that per-frame push is what animates the desktop dance and the
-	// grow/shrink tweens.
+	// grow/shrink tweens. Both pushes skip frames where the box has not actually
+	// moved, and mmWinApply additionally rate-limits the framebuffer-allocating
+	// resize, so a stall in the window manager cannot drain the frame budget.
+	mmWinDt = elapsed;
 	if (mmWinResize) mmWinApply();
 	else if (mmWinStart) mmWinPushMove();
 

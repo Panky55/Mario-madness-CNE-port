@@ -37,7 +37,10 @@
 // projectile's left edge is lined up with its strum's; this engine centres the
 // note's frame on the strum instead, so `mmBulletFrameOffset()` converts one
 // convention into the other (and, because the conversion carries the note's own
-// `frameWidth * scale` term, the two types do not take the same shift).
+// `frameWidth * scale` term, the two types do not take the same shift).  Both
+// conversions are head-only: on a sustain the `frameWidth` is the hold piece and
+// the live `scale.y` is the hold's length, so a head-sized nudge would be
+// multiplied several times over - see `onPostNoteCreation`.
 //
 // The mod ships its own `noteSplashes` sheet as well.  Psych's `NoteSplash`
 // starts from `SONG.splashSkin` and falls back to 'noteSplashes', which is what
@@ -88,14 +91,12 @@
 //     'Luigi_NOTE_assets')`).  `mmBotplaySkin()` reproduces it for the non-pixel
 //     stages; the typed notes whose source `botplaySkin = false` keep their own
 //     sheet, and the pixel/End stages are excluded as in the source.
-//   - the pixel *sustain* x nudge (`Note.hx:325-336`: `offsetX -= width / 2`,
-//     then +4 or -100 on virtual depending on scroll, +30 on the other two,
-//     -15 or +30 on piracy).  The two `width / 2` writes around `updateHitbox`
-//     cancel and the deltas are only applied to sustains, so the source's
-//     `x += offsetX` is a flat per-stage shift.  `Note.offset` cancels in this
-//     engine's `draw()`, so it goes through `frameOffset` like the bullets
-//     (`mmPixelSustainOffset`, see `onPostNoteCreation`).  The zooms are ported
-//     as before.
+//   - the pixel *sustain*'s centring.  The source nudges its sustains sideways
+//     (`Note.hx:325-336`: `offsetX += -100/+4` on virtual, `-15/+30` on piracy,
+//     `+30` otherwise), but that is a Psych placement artefact and is NOT
+//     reproduced - see `mmPixelSustainArtShift` for why, and for the only
+//     correction a pixel hold actually needs on this engine.  The zooms are
+//     ported as before.
 //
 // Not ported, and why:
 //   - the pixel sustain's extra `scale.y *= PlayState.daPixelZoom`
@@ -262,25 +263,47 @@ function onPostNoteCreation(event) {
 	if (event.noteType == 'Bullet Bill' || event.noteType == 'Bullet2') {
 		n.updateFlipY = false;
 		n.flipY = downscroll;
-		// `Note.hx:199-232`'s -50/-163 offsets land the pair (one lane
-		// apart, 112px at the default note scale) on top of each other - both
-		// types are the same size, so they stack into one projectile.  `Note.
-		// offset` cancels in this engine (see the header), and this engine draws
-		// a strum-relative note centred on its strum, so the nudges go through
-		// `mmBulletFrameOffset()` (see it for the exact arithmetic).
-		n.frameOffset.x = mmBulletFrameOffset(event.noteType == 'Bullet Bill' ? 50 : 163, n.scale.x, n.frameWidth);
-		// `Note.hx:209/224`'s `offsetY += 10` (both types) plus the downscroll
-		// `offsetY -= height - 50`, converted for this engine's anchoring (see
-		// `mmBulletFrameOffsetY` - the mirrored camera anchors a downscroll note
-		// by its box *bottom*, so the strum's height is needed here).
-		n.frameOffset.y = mmBulletFrameOffsetY(n.height, mmBulletStrumHeight(event), n.scale.y, downscroll);
+		// Heads only.  The two conversions below are written for a *note head*,
+		// and a sustain is not one in either term:
+		//
+		//   - `mmBulletFrameOffset` carries the note's own `frameWidth`, which on
+		//     a sustain is the hold piece (50px), not the projectile sheet's box
+		//     (463px), so the lane-centring term changes value;
+		//   - both writes are turned into pixels by the sprite's live `scale`, and
+		//     a sustain's `scale.y` is its *length* in frame units (see
+		//     `Note.updateSustain`: `scale.y = sustainLength * 0.45 * speed /
+		//     frameHeight`), not the note scale.  A nudge sized for the head is
+		//     therefore multiplied by 4-30x on a shaft, which throws the hold's
+		//     body and its end cap far off its own head.
+		//
+		// The fork's nudges are a flat sprite-box offset there (`daNote.x =
+		// strums[n].x + daNote.offsetX`), and this engine cannot express a flat
+		// box offset on a stretched sustain through `frameOffset` at all, so the
+		// hold is left where a hold of any other note type sits - aligned with
+		// its lane - instead of being thrown by the head's constant.
+		if (!n.isSustainNote) {
+			// `Note.hx:199-232`'s -50/-163 offsets land the pair (one lane
+			// apart, 112px at the default note scale) on top of each other - both
+			// types are the same size, so they stack into one projectile.  `Note.
+			// offset` cancels in this engine (see the header), and this engine draws
+			// a strum-relative note centred on its strum, so the nudges go through
+			// `mmBulletFrameOffset()` (see it for the exact arithmetic).
+			n.frameOffset.x = mmBulletFrameOffset(event.noteType == 'Bullet Bill' ? 50 : 163, n.scale.x, n.frameWidth);
+			// `Note.hx:209/224`'s `offsetY += 10` (both types) plus the downscroll
+			// `offsetY -= height - 50`, converted for this engine's anchoring (see
+			// `mmBulletFrameOffsetY` - the mirrored camera anchors a downscroll note
+			// by its box *bottom*, so the strum's height is needed here).
+			n.frameOffset.y = mmBulletFrameOffsetY(n.height, mmBulletStrumHeight(event), n.scale.y, downscroll);
+		}
 	}
 	if (mmStage() == 'somari' && n.isSustainNote) n.alpha = 1;
-	// `Note.hx:325-336`: the pixel stages nudge their *sustains* sideways.  The
-	// engine's frame translation is `-frameOffset * scale`, so a source `x += d`
-	// is `frameOffset.x = -d / scale.x`.
-	if (n.isSustainNote && mmIsPixelStage() && n.scale.x != 0)
-		n.frameOffset.x = -mmPixelSustainOffset() / n.scale.x;
+	// A pixel hold's art does not fill its sheet cell, so its art centre sits
+	// off the frame centre; pull it back on with the frame translation
+	// (`-frameOffset * scale`, see `mmPixelSustainArtShift`).  The source's own
+	// scroll-dependent `offsetX` nudge is deliberately not applied - same
+	// reference, same reason as there.
+	if (n.isSustainNote && mmIsPixelStage())
+		n.frameOffset.x = -mmPixelSustainArtShift();
 }
 
 // ---------------------------------------------------------------------------
@@ -397,15 +420,48 @@ function mmBulletFrameOffsetY(noteHeight:Float, strumHeight:Float, noteScale:Flo
 	return (anchor - offsetY) / noteScale;
 }
 
-// `Note.hx:325-336`: the pixel sustain's x nudge.  The source's `offsetX`
-// accumulates into `x` (`x += offsetX`, 375), moving the hold right by this many
-// pixels; the frame translation reproduces it as `frameOffset.x = -delta /
-// scale.x`, the same route the bullets take.
-function mmPixelSustainOffset():Float {
+// A pixel hold's whole placement, on this engine.  Two of the ENDS sheets pack
+// each 30px/25px piece into the left of a wider cell instead of filling it, so
+// the art centre sits left of the frame centre and the hold body hangs beside
+// its own head.  Measured off the art (alpha bbox per cell, 4 columns by 2
+// rows):
+//
+//   Virtual_NOTE_assetsENDS  240x12, 60x6 cells, art x[0-29]  -> 15px left of
+//                            centre, i.e. 15 * 3.5 = 52px on screen in Paranoia
+//   DS_NOTE_assetsENDS       204x12, 51x6 cells, art x[3-27]  -> 10px left of
+//                            centre (10 * 2.6 = 26px on screen in Piracy)
+//
+// Every other pixel sheet fills its frame (GB/NES/the typed ENDS sheets are
+// within half a pixel of centred), so they need nothing - which is why the
+// reference port applies this correction only on `virtual`.  The value is in
+// *frame* pixels, the same unit as `frameOffset` itself, so it is not divided by
+// the live scale.
+//
+// Why this is the *only* hold correction, and the source's scroll-dependent
+// `offsetX` nudge is dropped:
+//
+//   Psych places a note's sprite-box left edge at `strum.x + offsetX`
+//   (`PlayState.hx:8275-8286`) and gives the sustain sheet the same 60px/51px
+//   cell, so its `offsetX` (+4/-100 virtual, -15/+30 piracy, +30 otherwise) is
+//   really a sprite-placement constant there.  This engine instead *centres* a
+//   strum-relative note's frame on its strum - `Strum.updateNotePos`:
+//   `x = (strum.width - note.width) / 2`, then `Note.draw` re-anchors the sprite
+//   to the strum and carries the logical position in `frameOffset` - so the
+//   frame is already centred and the only thing out of place is the art inside
+//   it.  Re-applying the source's nudge on top drags the body a further ~100px
+//   off its head on virtual downscroll (the scroll the mod's charts play on),
+//   which is exactly the "holds are off to the side" this was chasing.
+//
+// Derivation, for the record: with the sprite drawn centred, the hold art
+// centre lands at `strumCentre + scale * (artCentreFrame - cellWidth/2 -
+// frameOffset)`, so aligning it needs `frameOffset = artCentreFrame -
+// cellWidth/2 = -(cell centre - art centre)` - the shift below, independent of
+// the strum width and of the zoom.
+function mmPixelSustainArtShift():Float {
 	var songStage:String = mmStage();
-	if (songStage == 'virtual') return downscroll ? -100 : 4;
-	if (songStage == 'piracy') return downscroll ? -15 : 30;
-	return 30; // landstage / somari (the source's `else`)
+	if (songStage == 'virtual') return 15;
+	if (songStage == 'piracy') return 10;
+	return 0;
 }
 
 // `reloadNote`'s prefix - the part of the type's skin name before
