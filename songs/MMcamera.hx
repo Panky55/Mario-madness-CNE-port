@@ -547,6 +547,34 @@ function mmPosFor(t) {
 	return mmDadPos;
 }
 
+// PlayState.hx:8060-8063 - Abandoned's camera rides the fountain:
+//
+//     if (dad.curCharacter == 'luigi_fountain' || dad.curCharacter == 'luigi_fountain3d')
+//         DAD_CAM_Y = (dadGroup.y / 2) + ((dad.animation.curAnim.name == 'Hey') ? 200 : 125);
+//
+// so the stage JSON's own opponent camY - 50, exactly what this script's
+// `wetworld` row carries - is dead for that song and the framing swings with
+// case 17's 100px tween. The group's y is readable here as the live opponent's
+// own `y`: this port stores the group's y on the character untouched
+// (wetworld.hx's `mmGroupY` - y carries no side factor) and case 17 parks the
+// character on the group every frame. The 'Hey' branch can only ever fire for
+// the 3D Luigi: neither the 2D character's XML nor the source's own JSON
+// carries that animation. Only the *y* is written, so the row's x survives, and
+// the test is the source's own character check rather than a stage one.
+function mmFountainCam() {
+	if (mmDadPos == null) return;
+	var d = mmRoleChar(0);
+	if (d == null) d = dad;
+	if (d == null) return;
+	var cc = d.curCharacter;
+	if (cc != "luigi_fountain" && cc != "luigi_fountain3d") return;
+	var gy = d.y;
+	if (gy == null || gy != gy) return; // NaN
+	var ca = (d.animation == null) ? null : Reflect.field(d.animation, "curAnim");
+	var hey = (ca != null && Reflect.field(ca, "name") == "Hey");
+	mmDadPos[1] = (gy / 2) + (hey ? 200 : 125);
+}
+
 function mmZoomFor(t) {
 	if (t == 1) return mmBfZoom;
 	if (t == 2) return mmGfZoom;
@@ -936,6 +964,10 @@ function mmApply() {
 				FlxG.camera.zoom = FlxG.camera.zoom + (z - FlxG.camera.zoom) * mmZoomLerp();
 		}
 	}
+	// Abandoned's fountain row (PlayState.hx:8060-8063). The source recomputes
+	// DAD_CAM_Y *below* the block above, so the write belongs here: a frame's
+	// camera still reads the value the previous frame produced.
+	mmFountainCam();
 }
 
 // Is CnE itself lerping camGame.zoom toward defaultCamZoom this frame?
