@@ -48,7 +48,12 @@
 function mmSwapIcon(index:Int, c) {
 	var ic = (index == 0) ? iconP1 : ((index == 1) ? iconP2 : null);
 	if (ic == null || c == null) return;
-	if (!Reflect.hasField(ic, "setIcon") || !Reflect.hasField(c, "getIcon")) return;
+	// `Reflect.hasField` answers *false* for every member of a class instance on
+	// the cpp build - the guard was written against --interp's answer, so in the
+	// shipped game no swap ever moved the icon (iconP2 kept `luigi-fake`'s
+	// 'fake-mrl' past Overdue's 24.00s swap to `luigi-toolate`). `Reflect.field`
+	// resolves the member on both targets; see PORT_NOTES.md.
+	if (Reflect.field(ic, "setIcon") == null || Reflect.field(c, "getIcon") == null) return;
 	var n = c.getIcon();
 	if (n != null && n != "") ic.setIcon(n);
 }

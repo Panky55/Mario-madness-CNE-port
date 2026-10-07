@@ -4,6 +4,8 @@
 function onPlayerHit(event) {
 	if (event.noteType != "Coin Note") return;
 	FlxG.sound.play(Paths.sound("refill"));
-	if (Reflect.hasField(PlayState.instance, "onCoinNote"))
+	// `Reflect.hasField` is false for every member of a class *instance* on the
+	// cpp build, so this guard was dead there (see PORT_NOTES.md).
+	if (Reflect.field(PlayState.instance, "onCoinNote") != null)
 		Reflect.callMethod(PlayState.instance, Reflect.field(PlayState.instance, "onCoinNote"), []);
 }

@@ -60,7 +60,7 @@ function mmCam(which:String, args:Array<Dynamic>):Dynamic {
 }
 
 function mmDownscroll():Bool {
-	if (PlayState.instance != null && Reflect.hasField(PlayState.instance, "downscroll"))
+	if (PlayState.instance != null && Reflect.field(PlayState.instance, "downscroll") != null)
 		return Reflect.field(PlayState.instance, "downscroll") == true;
 	return false;
 }

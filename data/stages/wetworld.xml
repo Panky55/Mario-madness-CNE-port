@@ -1,5 +1,7 @@
 <!DOCTYPE codename-engine-stage>
 <stage startCamPosX="450" startCamPosY="50" zoom="1.2" name="wetworld" folder="">
+	<sprite name="fondaso2" sprite="mario/abandoned/Wall and buildings" x="-800" y="-620" scale="0.75" updateHitbox="true"/>
+	<sprite name="atra2" sprite="mario/abandoned/Middle" x="-800" y="-620" scale="0.75" updateHitbox="true"/>
 	<sprite name="fondaso" sprite="mario/abandoned/fondo" x="-800" y="-600" scale="1.5" updateHitbox="true" visible="false">
 		<property name="visible" type="bool" value="false"/>
 	</sprite>
@@ -9,8 +11,6 @@
 	<sprite name="adel" sprite="mario/abandoned/adelante" x="-800" y="-600" scale="1.5" updateHitbox="true" visible="false">
 		<property name="visible" type="bool" value="false"/>
 	</sprite>
-	<sprite name="fondaso2" sprite="mario/abandoned/Wall and buildings" x="-800" y="-620" scale="0.75" updateHitbox="true"/>
-	<sprite name="atra2" sprite="mario/abandoned/Middle" x="-800" y="-620" scale="0.75" updateHitbox="true"/>
 	<sprite name="adel2" sprite="mario/abandoned/Front BG" x="-800" y="-620" scale="0.75" updateHitbox="true"/>
 	<girlfriend x="40" y="130"/>
 	<dad x="300" y="60"/>

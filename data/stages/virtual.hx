@@ -141,17 +141,23 @@ var mmWinTween = null;                    // running mmWinBox tween, if any
 // manager, and a resize also reallocates the GL framebuffer the engine then has
 // to rebuild its camera buffers around. The source does both on every frame of
 // the desktop dance (PlayState.hx 7622-7630) and gets away with it on its own
-// native target; in this port it made the song's FPS sag and recover with each
-// of the two resize bursts - the 1.6s grow at step 1008 and the 1s shrink on
-// 'Triggers Paranoia' 4. So the box is only pushed when it has actually moved,
-// and a *resize* is additionally rate-limited: 20Hz over 1.6s is ~32 resizes
-// instead of ~96 and looks identical, because the size tween is what is
-// driving it frame to frame anyway.
+// native target; in this port it made the song's FPS sag - with each of the two
+// resize bursts (the 1.6s grow at step 1008 and the 1s shrink on 'Triggers
+// Paranoia' 4), and through the whole ~64s dance itself, whose ping-pongs push
+// a move nearly every frame and the manager recomposes on every call. So the
+// box is only pushed when it has actually moved, and each half is rationed on
+// its own: a *resize* to 20Hz (~32 instead of ~96 over 1.6s, identical because
+// the size tween is what drives it frame to frame) and the dance's *move* to
+// ~30Hz - the window still walks every position the tween computes, the
+// manager just hears about them a third less often.
 // - mmWinApplied is the geometry the window was last told about.
 // - mmWinResizeAt is the time (s) before the next resize becomes allowed.
+// - mmWinMoveAt is the time (s) before the next dance move becomes allowed.
 var mmWinApplied = {x: -1, y: -1, w: -1, h: -1};
 var mmWinResizeAt:Float = 0;
 var mmWinResizeEvery:Float = 0.05;
+var mmWinMoveAt:Float = 0;
+var mmWinMoveEvery:Float = 1.0 / 30.0;    // ~30Hz, the dance's move rate
 var mmWinDt:Float = 0;                    // last frame's elapsed, for the above
 
 function postCreate() {
@@ -299,11 +305,13 @@ function mmTriggerValue2(event):String {
 	return Std.string(p[1]);
 }
 
-// Is `field` readable off `obj`? `Reflect.field` throws on cpp for a name that
-// is not there (and this engine's scripts cannot try/catch), so every read of a
-// property the script globals do not spell out goes through this first.
+// Is `field` readable off `obj`? `Reflect.field` returns null - it does not
+// throw - for a name the object does not have (see PORT_NOTES.md), so every
+// read of a property the script globals do not spell out goes through this
+// first. The companion check that matters is the *write* side: `Reflect.
+// setProperty` does throw on a missing name.
 function mmReadable(obj:Dynamic, field:String):Bool {
-	return obj != null && Reflect.hasField(obj, field) && Reflect.field(obj, field) != null;
+	return obj != null && Reflect.field(obj, field) != null;
 }
 
 // The screen the window sits on, in pixels. CnE's script globals expose `window`
@@ -355,7 +363,9 @@ function mmWindowScreen():Array<Float> {
 // (`window.width = Capabilities.screenResolutionX / 1.5` and
 // `window.x = display.bounds.width / 6`, that second one being centring when
 // the monitor starts at 0,0). What the window had before is remembered for
-// destroy().
+// destroy(). The dance's home is this box's own corner (stepHit()), which is
+// what gives the source's position-proportional ping-pongs their amplitude: a
+// consistent, centred corner instead of wherever the player's window sat.
 //
 // The source's fullscreen round-trip (`fullscreen = true; fsX = width; fsY =
 // height; fullscreen = false`) is replaced by reading the monitor size
@@ -365,14 +375,17 @@ function mmWindowInit() {
 	mmWinOk = false;
 	if (window == null) return;
 
+	window.fullscreen = false;
+	window.maximized = false;
+	window.resizable = false;
+
+	// The ogwin* readings are the geometry the player had before the shrink,
+	// taken after the flags (2378-2384) so a fullscreen launch records the
+	// windowed rect the flags restored.
 	mmWinOgX = Std.int(window.x);
 	mmWinOgY = Std.int(window.y);
 	mmWinOgW = Std.int(window.width);
 	mmWinOgH = Std.int(window.height);
-
-	window.fullscreen = false;
-	window.maximized = false;
-	window.resizable = false;
 
 	var screen = mmWindowScreen();
 	if (screen == null) return;
@@ -403,8 +416,9 @@ function mmWindowInit() {
 // update() (7626-7630), which is what makes the box tweens move *and* resize the
 // window. Frames where the box has not changed are skipped, and a resize that
 // has changed is held back until mmWinResizeEvery has passed (see
-// mmWinApplied). On a held-back frame the move is dropped with it, because
-// during a grow or a shrink both halves travel together.
+// mmWinApplied). A held-back resize no longer drops the move with it - the
+// position lands every frame, so a grow or shrink glides instead of sticking
+// and only the framebuffer-allocating half is rationed.
 function mmWinApply() {
 	if (window == null || !mmWinOk) return;
 
@@ -418,16 +432,22 @@ function mmWinApply() {
 	if (nw != mmWinApplied.w || nh != mmWinApplied.h) {
 		// The expensive half: a resize reallocates the framebuffer.
 		if (mmWinResizeAt > 0) mmWinResizeAt -= mmWinDt;
-		if (mmWinResizeAt > 0) return;
+		if (mmWinResizeAt > 0) {
+			// Rationed this frame: the resize waits, the move does not.
+			window.move(nx, ny);
+			mmWinApplied.x = nx;
+			mmWinApplied.y = ny;
+			return;
+		}
 		mmWinResizeAt = mmWinResizeEvery;
+		window.resize(nw, nh);
+		mmWinApplied.w = nw;
+		mmWinApplied.h = nh;
 	}
 
-	window.resize(nw, nh);
 	window.move(nx, ny);
 	mmWinApplied.x = nx;
 	mmWinApplied.y = ny;
-	mmWinApplied.w = nw;
-	mmWinApplied.h = nh;
 }
 
 // The same push with the checks bypassed, for the calls that have to land
@@ -441,19 +461,32 @@ function mmWinApplyNow() {
 	mmWinApplied.w = Std.int(mmWinBox.w);
 	mmWinApplied.h = Std.int(mmWinBox.h);
 	mmWinResizeAt = mmWinResizeEvery;
+	mmWinMoveAt = mmWinMoveEvery;
 }
 
 // The source's `startwindow` branch (7624): position only. The window keeps the
 // same size for the whole desktop dance, so asking the window manager to resize
 // it on every frame of a 60fps ping-pong would only make it stutter. This is
 // the half that runs for the ~64s between steps 320 and 935, so it also skips
-// the stretches where the dance has left the box sitting still.
+// the stretches where the dance has left the box sitting still - and it holds
+// what is left to mmWinMoveEvery (~30Hz): an unrestricted ping-pong is a
+// synchronous round trip to the window manager nearly every frame, and it
+// recomposes on every call, which is what sagged the FPS through the whole
+// dance. The tween math is untouched; a held-back push simply carries the
+// box's latest position, so the window walks the same path at a third fewer
+// calls.
 function mmWinPushMove() {
 	if (window == null || !mmWinOk) return;
 
 	var nx = Std.int(mmWinBox.x);
 	var ny = Std.int(mmWinBox.y);
 	if (nx == mmWinApplied.x && ny == mmWinApplied.y) return;
+
+	if (mmWinMoveAt > 0) {
+		mmWinMoveAt -= mmWinDt;
+		if (mmWinMoveAt > 0) return;
+	}
+	mmWinMoveAt = mmWinMoveEvery;
 
 	window.move(nx, ny);
 	mmWinApplied.x = nx;
@@ -537,7 +570,10 @@ function mmWindowShrink() {
 // measured from `changex/changey`/`ogwin*`, and those are all the same reading -
 // `winx = window.x; ... changex = winx;` at create(), `ogwinX = window.x` a few
 // lines later - i.e. wherever the window sits for the song, which in this port
-// is the small box. So homeX/homeY is the small box's own corner.
+// is the small box. So homeX/homeY is the small box's own corner, and the
+// source's position-proportional ping-pongs run from a big, consistent corner:
+// the 336 pair sweeps 1.25 * homeX in x (homeX/4 to homeX + homeX/2) and
+// 0.75 * homeY + 0.25 * homeX in y - 400px and 215px on a 1080p monitor.
 //
 // 320 kicks the window around the desktop and starts the per-frame moves, 332
 // starts the slide to a quarter of its home position, 336 cancels that slide and
@@ -640,8 +676,10 @@ function update(elapsed:Float) {
 	// moved to the box every frame, and while `startresize` is set it is also
 	// resized - that per-frame push is what animates the desktop dance and the
 	// grow/shrink tweens. Both pushes skip frames where the box has not actually
-	// moved, and mmWinApply additionally rate-limits the framebuffer-allocating
-	// resize, so a stall in the window manager cannot drain the frame budget.
+	// moved; mmWinApply additionally rate-limits the framebuffer-allocating
+	// resize while the move still lands every frame, and mmWinPushMove holds
+	// the dance's moves to ~30Hz, so a stall in the window manager cannot
+	// drain the frame budget.
 	mmWinDt = elapsed;
 	if (mmWinResize) mmWinApply();
 	else if (mmWinStart) mmWinPushMove();
@@ -792,7 +830,10 @@ function onEvent(event) {
 			// Reflect.hasField("changeIcon") guard was silently dead and the icon never
 			// moved.
 			var b2 = mmMem(1);
-			if (b2 != null && iconP1 != null && Reflect.hasField(iconP1, "setIcon") && Reflect.hasField(b2, "getIcon"))
+			// `Reflect.hasField` is false for every member of a class *instance* on
+			// the cpp build, so the guard stayed dead there as well (see
+			// PORT_NOTES.md); `Reflect.field` resolves the member on both targets.
+			if (b2 != null && iconP1 != null && Reflect.field(iconP1, "setIcon") != null && Reflect.field(b2, "getIcon") != null)
 				iconP1.setIcon(b2.getIcon());
 			// The source spends this trigger on the ndll calls that are not ported
 			// (it hides every other window and swaps the desktop wallpaper to

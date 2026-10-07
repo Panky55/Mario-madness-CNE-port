@@ -761,7 +761,7 @@ function mmBeat():Float {
 // property, so read it defensively - the same idiom allfinal.hx, exesequel.hx
 // and hatebg.hx use.
 function mmDownScroll():Bool {
-	if (PlayState.instance == null || !Reflect.hasField(PlayState.instance, "downscroll")) return false;
+	if (PlayState.instance == null || Reflect.field(PlayState.instance, "downscroll") == null) return false;
 	return Reflect.field(PlayState.instance, "downscroll") == true;
 }
 
@@ -770,8 +770,11 @@ function mmCenterX(spr) {
 }
 
 function mmGetIcon(p2:Bool) {
-	for (n in (p2 ? ["iconP2", "icoP2"] : ["iconP1", "icoP1"]))
-		if (Reflect.hasField(PlayState.instance, n)) return Reflect.field(PlayState.instance, n);
+	if (PlayState.instance == null) return null;
+	for (n in (p2 ? ["iconP2", "icoP2"] : ["iconP1", "icoP1"])) {
+		var v = Reflect.field(PlayState.instance, n);
+		if (v != null) return v;
+	}
 	return null;
 }
 

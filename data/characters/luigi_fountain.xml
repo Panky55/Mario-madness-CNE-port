@@ -1,12 +1,15 @@
 <!DOCTYPE codename-engine-character>
 <character sprite="Fountain_Luigi_2D_Assets" y="-150" isPlayer="false" icon="wdwluigi" color="#71A30D" scale="0.5" camx="-45" camy="420" holdTime="4">
+	<!-- Psych's anim offsets are world-space pixels; this engine applies them in frame space
+	     (FunkinSprite.playAnim -> frameOffset, translated before the sprite scale), so every
+	     offset below is the source's value / 0.5 (this character's scale). -->
 	<anim name="idle" anim="fountain idle" fps="24" loop="false"/>
-	<anim name="singLEFT" anim="fountain left" x="100" y="-30" fps="24" loop="false"/>
-	<anim name="singRIGHT" anim="fountain right" x="40" y="-65" fps="24" loop="false"/>
-	<anim name="singDOWN" anim="fountain down" x="-1" y="-100" fps="24" loop="false"/>
-	<anim name="singUP" anim="fountain up" x="-5" y="90" fps="24" loop="false"/>
-	<anim name="singLEFT-alt" anim="fountain alt left" x="50" y="-10" fps="24" loop="false"/>
-	<anim name="singRIGHT-alt" anim="fountain alt right" x="-20" y="-3" fps="24" loop="false"/>
-	<anim name="singDOWN-alt" anim="fountain alt down" x="5" y="-25" fps="24" loop="false"/>
-	<anim name="singUP-alt" anim="fountain alt up" x="10" y="40" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="fountain left" x="200" y="-60" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="fountain right" x="80" y="-130" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="fountain down" x="-2" y="-200" fps="24" loop="false"/>
+	<anim name="singUP" anim="fountain up" x="-10" y="180" fps="24" loop="false"/>
+	<anim name="singLEFT-alt" anim="fountain alt left" x="100" y="-20" fps="24" loop="false"/>
+	<anim name="singRIGHT-alt" anim="fountain alt right" x="-40" y="-6" fps="24" loop="false"/>
+	<anim name="singDOWN-alt" anim="fountain alt down" x="10" y="-50" fps="24" loop="false"/>
+	<anim name="singUP-alt" anim="fountain alt up" x="20" y="80" fps="24" loop="false"/>
 </character>

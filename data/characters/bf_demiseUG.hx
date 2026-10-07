@@ -34,6 +34,31 @@ function postCreate() {
 	PlayState.instance.insert(i, legs);
 }
 
+// ---------------------------------------------------------------------------
+// child space vs this engine's node space
+// ---------------------------------------------------------------------------
+// The source's rig writes are *child-space* - Psych bakes the character's own
+// `position` into its x/y when it joins the group (`startCharacterPos`), so
+// `whoisbf.y = defaultBoyfriendY + 270` is the sprite's absolute y, and the
+// leg/arm sprites are parked straight on `whoisbf.x` / `whoisbf.y`. This engine
+// keeps that position in `Character.globalOffset` and applies it at draw
+// (`Character.playAnim` leaves `offset` = `globalOffset` mirrored by
+// `isPlayer != playerOffsets`), so the sprite renders at `x - k * globalOffset.x`
+// / `y + globalOffset.y`: the legs and arm have to be parked on that pair and
+// the body's writes written back through it. pico_run.hx carries the full
+// derivation (bf_demiseUG's own `y`="250" is the size of the error).
+function mmSideK():Float {
+	return (isPlayer != playerOffsets) ? 1 : -1;
+}
+
+function mmChildX():Float {
+	return x - mmSideK() * globalOffset.x;
+}
+
+function mmNodeY(childY:Float):Float {
+	return childY - globalOffset.y;
+}
+
 function update(elapsed:Float) {
 	if (legs == null || arm == null) return;
 
@@ -50,8 +75,11 @@ function update(elapsed:Float) {
 
 	legs.color = color;
 	arm.color = color;
-	legs.x = x; legs.y = y;
-	arm.x = x; arm.y = y;
+	// The pair the source copies onto the legs and arm (child space).
+	var cx:Float = mmChildX();
+	var cy:Float = y + globalOffset.y;
+	legs.x = cx; legs.y = cy;
+	arm.x = cx; arm.y = cy;
 
 	var anim = getAnimName();
 	var f = legs.animation.frameIndex;
@@ -59,18 +87,18 @@ function update(elapsed:Float) {
 	if (anim != null && anim != "idle") {
 		arm.visible = false;
 		switch (f) {
-			case 31: y = baseY + 270;
-			case 33: y = baseY + 270 + 3.675;
-			case 35: y = baseY + 270 + 7.35;
-			case 37: y = baseY + 270 + 1.125;
-			case 39: y = baseY + 270 + 2.525;
-			case 41: y = baseY + 270 + 4.6;
-			case 43: y = baseY + 270 + 6.3;
-			case 45: y = baseY + 270 + 1.575;
+			case 31: y = mmNodeY(baseY + 270);
+			case 33: y = mmNodeY(baseY + 270 + 3.675);
+			case 35: y = mmNodeY(baseY + 270 + 7.35);
+			case 37: y = mmNodeY(baseY + 270 + 1.125);
+			case 39: y = mmNodeY(baseY + 270 + 2.525);
+			case 41: y = mmNodeY(baseY + 270 + 4.6);
+			case 43: y = mmNodeY(baseY + 270 + 6.3);
+			case 45: y = mmNodeY(baseY + 270 + 1.575);
 		}
 	} else {
 		angle = 0;
-		y = baseY + 230;
+		y = mmNodeY(baseY + 230);
 		arm.visible = true;
 	}
 }

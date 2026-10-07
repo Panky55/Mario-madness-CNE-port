@@ -68,7 +68,7 @@ function mmHudY(s, up:Float, down:Float):Float {
 // this build. Keep the optional state lookup; a missing field reads false.
 function mmMiddleScroll():Bool {
 	var ps = PlayState.instance;
-	if (ps != null && Reflect.hasField(ps, "middleScroll"))
+	if (ps != null && Reflect.field(ps, "middleScroll") != null)
 		return Reflect.field(ps, "middleScroll") == true;
 	return false;
 }

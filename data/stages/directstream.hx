@@ -76,7 +76,7 @@ function onCountdown(event) {
 // `hasDownScroll` (2210). PlayState.downscroll is a get/set property, so read it
 // defensively - the same idiom allfinal.hx/exesequel.hx/hatebg.hx use.
 function mmDownScroll():Bool {
-	if (PlayState.instance == null || !Reflect.hasField(PlayState.instance, "downscroll")) return false;
+	if (PlayState.instance == null || Reflect.field(PlayState.instance, "downscroll") == null) return false;
 	return Reflect.field(PlayState.instance, "downscroll") == true;
 }
 

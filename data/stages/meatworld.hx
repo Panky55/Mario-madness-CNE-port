@@ -317,7 +317,12 @@ function mmPlaceGroup(c, gx:Float, gy:Float) {
 function mmSwapIcon(index:Int, c) {
 	var ic = (index == 0) ? iconP1 : ((index == 1) ? iconP2 : null);
 	if (ic == null || c == null) return;
-	if (!Reflect.hasField(ic, "setIcon") || !Reflect.hasField(c, "getIcon")) return;
+	// `Reflect.hasField` answers *false* for every member of a class instance on
+	// the cpp build - methods, vars and properties alike; only anonymous-structure
+	// fields and class statics answer true (see PORT_NOTES.md). The old guard was
+	// therefore dead in the shipped game and no swap ever touched the icon.
+	// `Reflect.field` resolves the member on both targets.
+	if (Reflect.field(ic, "setIcon") == null || Reflect.field(c, "getIcon") == null) return;
 	var n = c.getIcon();
 	if (n != null && n != "") ic.setIcon(n);
 }
@@ -389,11 +394,17 @@ function mmChangeChar(index:Int, name:String) {
 // that a build without it degrades to a logged no-op.
 function mmFireEvent(name:String, params:Array<Dynamic>) {
 	if (PlayState.instance == null) return;
-	if (!Reflect.hasField(PlayState.instance, "executeEvent")) {
+	// `Reflect.hasField` is false for every member of a class *instance* on the
+	// cpp build, so this guard dropped the event in the shipped game while still
+	// passing under --interp (see PORT_NOTES.md). Look the method up instead; the
+	// anonymous event handed to it is the `ChartEvent` shape, which is a typedef
+	// of an anonymous structure, so no type cast is involved.
+	var fn = Reflect.field(PlayState.instance, "executeEvent");
+	if (fn == null) {
 		trace("[meatworld] no PlayState.executeEvent - dropped event '" + name + "'");
 		return;
 	}
-	Reflect.callMethod(PlayState.instance, Reflect.field(PlayState.instance, "executeEvent"), [{name: name, time: 0, params: params}]);
+	Reflect.callMethod(PlayState.instance, fn, [{name: name, time: 0, params: params}]);
 }
 
 function mmMem(i:Int) {
@@ -428,6 +439,13 @@ var mmMeatFore = [];
 var mmMeatVisible = false;
 var mmPupilShifted:Bool = false;
 var mmBfHome = [0.0, 0.0]; // BF_X / BF_Y (the stage XML's own BF position)
+// The source's `boyfriendGroup.y`, which the muzzle-flash controller reads
+// (8019-8031). A group write is a `mmPlaceGroup` call here, so the value is
+// tracked alongside them: case 7 turns BF into `pico_run`, whose own rig drives
+// the sprite's y every frame (its running bob), and a *rigged* character's y is
+// no longer its group's - the rig parks the body on `defaultBoyfriendY + 500`
+// plus the leg-frame bob, `y` = that minus the character's own offset.
+var mmBfGroupY:Float = 0;
 
 function mmMeatAdd(list, s, id:Int, sx:Float, sy:Float, scl:Float, half:Float) {
 	if (s == null) return;
@@ -486,13 +504,24 @@ function mmFixMeat() {
 // `step` is *not* the source's `spacingX`. flixel-addons lays its tiles out at
 // `(frameWidth + spacingX) * scale` (`FlxBackdrop.drawComplex` - its doc calls
 // `spacingX` the "amount of spacing between tiles"), so the hallway's
-// `new FlxBackdrop(X, -1170)` - a 1584px frame with a *negative* gap - tiles
-// every 1584 - 1170 = 414px, not every 1170. At the old 1170 the copies stood
-// 1170 apart while each one only draws a ~412px-wide corridor slice (the idle
-// frame's opaque bbox), so the hallway read as isolated slivers snapping in and
-// out instead of one continuous corridor. mmHall measures the step off the
-// first copy it builds (`updateHitbox` has already folded the scale into
-// `width`).
+// intentional -1170 overlap on a 1584px frame is a 414px step, not a 1170px
+// one. At the old 1170 the copies stood 1170 apart while each one only draws a
+// ~412px-wide corridor slice (the idle frame's opaque bbox), so the hallway
+// read as isolated slivers snapping in and out instead of one continuous
+// corridor. mmHall measures the step off the first copy it builds
+// (`updateHitbox` has already folded the scale into `width`).
+//
+// Note for anyone re-deriving this from the fork: `new FlxBackdrop(X, -1170)`
+// does *not* pass -1170 as the spacing. The constructor is
+// `(?graphic, repeatAxes, spacingX, spacingY)` - the same file's
+// `new FlxBackdrop(Paths.image('mario/MX/demise/1/Demise_BG_BG1'), X, 800)` and
+// this stage's own foreground `..., X, 1545` settle the order - so in the fork
+// `X` lands in `graphic` and -1170 in `repeatAxes`, leaving `spacing = (0, 0)`
+// and a nominal step of `frameWidth * scale` (1584). The -1170 is clearly the
+// author's *intent* (the corridor slice is 412px wide, i.e. exactly the 414px
+// step, and Backdroptest.hx tunes `spacing.set(-216/-124/-1196/-1016, 0)` per
+// pose next to the same constructor), and it is what makes the corridor
+// continuous - so the port keeps the 414px step. See PORT_NOTES.md.
 var mmHalls = [];
 var mmHallAtlas = null;
 var mmHallTLL1 = null;
@@ -539,7 +568,12 @@ function mmHall(asset:String, atlas:Bool, anim:String, sing:String, spacing:Floa
 	var probe = mmHallMake(asset, atlas, anim, sing, scl, col, colourSet, x, y);
 	var step:Float = probe.width + spacing * scaleV;
 	if (step <= 1) step = probe.width;
-	var need:Int = Std.int(Math.ceil(6000 / step)) + 1;
+	// One tile more than the 6000px floor: a row is laid out *centred* on the
+	// view (see update()), and a copy's art does not start at its frame's left
+	// edge (the idle `tll` frame's opaque content starts 604px in - measured
+	// from the sheet), so the extra tile is the margin that keeps the left of the
+	// screen covered at this chart's 0.25 zoom as well.
+	var need:Int = Std.int(Math.ceil(6000 / step)) + 2;
 	if (need < 3) need = 3;
 	var sprs = [probe];
 	for (i in 1...need) sprs.push(mmHallMake(asset, atlas, anim, sing, scl, col, colourSet, x + i * step, y));
@@ -554,9 +588,24 @@ function mmHallAlpha(g, a:Float, sec:Float) {
 }
 
 // Every copy plays the same animation from the same call, so they stay in step.
+// This *forced* form is the source's idle restore (7760), which really does
+// restart on every one of its frames - pico's own rig skips the frame sync there
+// for the same reason.
 function mmHallPlay(g, anim:String) {
 	if (g == null || anim == null || anim == "") return;
 	for (s in g.sprs) s.animation.play(anim, true);
+}
+
+// 8584: `hallTLL1.animation.play(animToPlay)` - with **no** `force`, so the
+// pose only changes when the note's direction does. Using the forced form here
+// restarted the pose on every single note, which snapped the hallway Luigi back
+// to frame 0 (and, on a run of same-direction notes, held him frozen there).
+function mmHallPose(g, anim:String) {
+	if (g == null || anim == null || anim == "") return;
+	for (s in g.sprs) {
+		var ca = s.animation.curAnim;
+		if (ca == null || ca.name != anim) s.animation.play(anim);
+	}
 }
 
 // The source's `animToPlay` (8405-8416), which the hallway reuses at 8584.
@@ -577,6 +626,43 @@ function mmHallPlace(g, y:Float, sf:Float) {
 		s.y = y;
 		if (sf != 0) s.scrollFactor.set(sf, sf);
 	}
+}
+
+// The world x the screen's centre sits at *for this row*.
+//
+// Flixel's own mouse converter pins the convention down: `FlxPointer.
+// getScreenPosition` turns a screen pixel back into the world with
+// `screen / camera.zoom + camera.scroll.x`, so a sprite with scroll factor
+// `sf` draws at `(x - camera.scroll.x * sf) * camera.zoom`. The world x at the
+// left edge of the view is therefore `camera.scroll.x * sf`, and the centre is
+// half a view further along - `camera.width / 2 / camera.zoom` - which is the
+// same value the engine draws the row with.
+//
+// This replaced a read of the engine's `getScreenPosition` off one of the row's
+// own copies. That version cancelled the camera's offsets, but it also fed the
+// row's *previous* x back into the next frame's anchor: the anchor came out as
+// `p.x + (width / 2 - (p.x - scroll * sf) * zoom) / zoom`, which is only stable
+// while that screen position is the post-zoom one. A build that answers with an
+// unzoomed (or otherwise rescaled) position - or that cannot answer at all -
+// turns the anchor into `p.x * (1 - 1 / zoom) + ...`: an unstable map about a
+// fixed point, so the corridor's x oscillates and then diverges instead of
+// settling, and the rows leave the screen a few frames after case 7 faded them
+// in. (That is the shape of "the hallway is not visible at all".) The scroll form
+// has no such feedback, and it keeps the foreground row's 1.4 scroll factor
+// applied. A camera whose `scroll` cannot be read returns null, which is the old
+// fixed window - the row stays where it is rather than being parked off screen.
+function mmHallViewCentre(g):Dynamic {
+	if (camGame == null || g == null || g.sprs.length < 1) return null;
+	var p = g.sprs[0];
+	var z:Float = camGame.zoom;
+	if (!(z > 0)) z = 1; // missing, 0 or NaN all mean "no zoom"
+	var sf:Float = (p != null) ? p.scrollFactor.x : 1;
+	var scrub = Reflect.field(camGame, "scroll");
+	var sx = (scrub != null) ? Reflect.field(scrub, "x") : null;
+	if (sx == null) return null;
+	var vc:Float = sx * sf + camGame.width * 0.5 / z;
+	if (vc != vc) return null; // NaN: leave the row on the fixed window
+	return vc;
 }
 
 // ----------------------------------------------------------------------------
@@ -799,7 +885,8 @@ function mmAltBuild() {
 // mmAltTick can tell how far the track has drifted; the audio plays either way.
 function mmAltRegister(s) {
 	var grp = Reflect.field(FlxG.sound, "list");
-	if (grp == null || !Reflect.hasField(grp, "add")) return;
+	// Instance-member guards answer false on cpp (see PORT_NOTES.md).
+	if (grp == null || Reflect.field(grp, "add") == null) return;
 	Reflect.callMethod(grp, Reflect.field(grp, "add"), [s]);
 }
 
@@ -880,9 +967,15 @@ function mmGameOver() {
 		boyfriend.gameOverCharacter = "picodeath";
 	var ps = PlayState.instance;
 	if (ps == null) return;
-	if (Reflect.hasField(ps, "lossSFX") && Assets.exists(Paths.sound("TOOPOOP_LUIGI")))
+	// Neither lookup may use `Reflect.hasField`: it answers false for every
+	// member of a class *instance* on the cpp build, so this stage's death sound
+	// and loop were never written at all (see PORT_NOTES.md). Both fields exist
+	// on this engine's PlayState, and `Reflect.setProperty` really does throw on
+	// a name the object does not have, so the `Reflect.field` test is what keeps
+	// the write safe on a build that drops either one.
+	if (Reflect.field(ps, "lossSFX") != null && Assets.exists(Paths.sound("TOOPOOP_LUIGI")))
 		Reflect.setProperty(ps, "lossSFX", "TOOPOOP_LUIGI");
-	if (Reflect.hasField(ps, "gameOverSong") && Assets.exists(Paths.music("overdueGameover")))
+	if (Reflect.field(ps, "gameOverSong") != null && Assets.exists(Paths.music("overdueGameover")))
 		Reflect.setProperty(ps, "gameOverSong", "overdueGameover");
 }
 
@@ -895,7 +988,10 @@ function postCreate() {
 
 	// The two fighters are at the stage XML's own position now, before any case
 	// moves them: that pair is the source's BF_X/BF_Y for case 7.
-	if (boyfriend != null) mmBfHome = [mmGroupX(boyfriend), mmGroupY(boyfriend)];
+	if (boyfriend != null) {
+		mmBfHome = [mmGroupX(boyfriend), mmGroupY(boyfriend)];
+		mmBfGroupY = mmBfHome[1];
+	}
 
 	mmFixMeat();
 
@@ -949,8 +1045,27 @@ function update(elapsed:Float) {
 	for (g in mmHalls) {
 		g.t -= g.v * elapsed;
 		while (g.t <= -g.tile) g.t += g.tile;
+		// Re-anchor the row on what the camera can see, which is what the
+		// source's FlxBackdrop itself does: it lays its tiles out against the
+		// camera's view (mod the step) and draws only as many as that view
+		// needs, so it cannot leave a bare edge wherever the camera sits.
+		// This stand-in used to keep every copy in one fixed window starting at
+		// world x 0 - and at this chart's 0.35 zoom the view reaches past that
+		// window's left edge, so the corridor was simply missing there. Shifting
+		// a row by whole steps is invisible (the art repeats with the step), so
+		// the phase `t` - and therefore the slide - is preserved exactly.
+		// The row is centred on the view (rather than anchored on its left
+		// edge) so the frame's own transparent lead-in cannot bare the left of
+		// the screen - see mmHallViewCentre.
+		var vc = mmHallViewCentre(g);
 		var i:Int = 0;
-		for (s in g.sprs) { s.x = i * g.tile + g.t; i += 1; }
+		if (vc == null) {
+			for (s in g.sprs) { s.x = i * g.tile + g.t; i += 1; }
+		} else {
+			var rowLen:Float = g.sprs.length * g.tile;
+			var start:Float = g.t + Math.floor((vc - rowLen * 0.5 - g.t) / g.tile) * g.tile;
+			for (s in g.sprs) { s.x = start + i * g.tile; i += 1; }
+		}
 	}
 	// 7759-7763: while dad is idle the hallway is put back on its idle loop.
 	// (`force` is the source's own `play('idle', true)`, so the anim restarts on
@@ -967,13 +1082,15 @@ function postUpdate(elapsed) {
 	// The camEst layer: placed once (and re-placed until camHUD is in the list),
 	// then kept at camHUD's size - exeport.hx/promoshow.hx do the same.
 	mmEstBelowHud();
-	mmEstSize();
-
-	// 8019-8031: gunShotPico rides BF, iconGF rides the player's icon.
+	mmEstSize();	// 8019-8031: gunShotPico rides BF, iconGF rides the player's icon.
+	// The source's pair is `boyfriendGroup.x/.y`; x is still the group's (no rig
+	// writes the body's x), but y comes from mmBfGroupY because case 7's
+	// `pico_run` rig drives the live sprite's own y every frame - reading it here
+	// would ride the running bob (270px) instead of the group.
 	var bGun = mmBfChar();
 	if (gunShotPico != null && bGun != null) {
 		gunShotPico.x = mmGroupX(bGun) - 210;
-		gunShotPico.y = mmGroupY(bGun) + 180;
+		gunShotPico.y = mmBfGroupY + 180;
 	}
 	if (mmIconGF != null && mmIconGFAdded) {
 		if (iconP1 != null) {
@@ -1026,7 +1143,7 @@ function onNoteHit(event) {
 	if (d == null || d.curCharacter != "luigi-toolate") return;
 	// 8581-8585: the poison, and the hallway onto the note's own pose.
 	if (mmPoison > 0 && health >= 0.2) health -= mmPoison;
-	mmHallPlay(mmHallTLL1, mmSingName(event.direction));
+	mmHallPose(mmHallTLL1, mmSingName(event.direction));
 }
 
 // 15275-15296: a *missed* 'Bullet' note costs a round. `ammo` is PlayState's
@@ -1145,6 +1262,7 @@ function onEvent(event) {
 			// character: this case is at 84.71s, an hour after the chart swapped
 			// both lines, so the globals name the objects the swaps removed.
 			mmPlaceGroup(mmBfChar(), 950, 200);
+			mmBfGroupY = 200; // `boyfriendGroup.setPosition(950, 200)`
 			mmPlaceGroup(mmDadChar(), -250, 225);
 			for (m in mmMeatWorld) m.s.alpha = 1;
 			for (m in mmMeatFore) {
@@ -1212,6 +1330,7 @@ function onEvent(event) {
 			// swap replaced, so the old write moved an object that is no longer
 			// in the game and Pico stayed at the stage node.
 			mmPlaceGroup(mmBfChar(), mmBfHome[0] - 150, mmBfHome[1]);
+			mmBfGroupY = mmBfHome[1]; // `boyfriendGroup.setPosition(BF_X - 150, BF_Y)`
 
 			mmHallAlpha(mmHallTLL1, 1, 0.2);
 			mmHallAlpha(mmHallTLL2, 1, 0.2);

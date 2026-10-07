@@ -37,6 +37,6 @@ function onEvent(event) {
 	Reflect.setProperty(target, "idleSuffix", suffix);
 	// `recalculateDanceIdle` is not in the engine (see the header); the guard
 	// keeps the call working if a future build adds it.
-	if (Reflect.hasField(target, "recalculateDanceIdle"))
+	if (Reflect.field(target, "recalculateDanceIdle") != null)
 		Reflect.callMethod(target, Reflect.field(target, "recalculateDanceIdle"), []);
 }

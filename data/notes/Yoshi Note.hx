@@ -30,6 +30,8 @@ function onNoteHit(event) {
 		}
 	}
 
-	if (Reflect.hasField(PlayState.instance, "onYoshiNote"))
+	// `Reflect.hasField` is false for every member of a class *instance* on the
+	// cpp build, so this guard was dead there (see PORT_NOTES.md).
+	if (Reflect.field(PlayState.instance, "onYoshiNote") != null)
 		Reflect.callMethod(PlayState.instance, Reflect.field(PlayState.instance, "onYoshiNote"), [event.direction]);
 }

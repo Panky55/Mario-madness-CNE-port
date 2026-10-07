@@ -116,7 +116,7 @@ function mmMoveBgStars(mode:String) {
 // `PlayState.downscroll` is a get/set property, so read it defensively (the
 // same helper piracy.hx/exesequel.hx carry).
 function mmDownscroll():Bool {
-	if (PlayState.instance != null && Reflect.hasField(PlayState.instance, "downscroll"))
+	if (PlayState.instance != null && Reflect.field(PlayState.instance, "downscroll") != null)
 		return Reflect.field(PlayState.instance, "downscroll") == true;
 	return false;
 }

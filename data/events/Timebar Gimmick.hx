@@ -41,7 +41,11 @@ function onEvent(event) {
 	if (mmTimebarSong() != "demise") return;
 
 	var ps = PlayState.instance;
-	var bar = (ps != null && Reflect.hasField(ps, "timeBar")) ? Reflect.field(ps, "timeBar") : null;
+	if (ps == null) return;
+	// `Reflect.hasField` is false for every member of a class *instance* on the
+	// cpp build, so this read was dead there (see PORT_NOTES.md); `Reflect.field`
+	// resolves it on both targets and is null when the state has no time bar.
+	var bar = Reflect.field(ps, "timeBar");
 	if (bar == null) return;
 
 	for (t in mmTimebarShakes) t.cancel();

@@ -1,9 +1,12 @@
 <!DOCTYPE codename-engine-character>
 <character sprite="Abandoned_Luigi_3D_AssetsFINAL" y="-150" isPlayer="false" icon="wdwluigi3D" color="#03DD00" scale="0.5" camx="-45" camy="420" holdTime="4">
-	<anim name="idle" anim="Idle" x="210" y="60" fps="24" loop="false"/>
-	<anim name="singRIGHT" anim="Right" x="180" y="55" fps="24" loop="false"/>
-	<anim name="singDOWN" anim="Down" x="180" y="-60" fps="24" loop="false"/>
-	<anim name="singUP" anim="Up" x="205" y="85" fps="24" loop="false"/>
-	<anim name="singLEFT" anim="Left" x="200" y="40" fps="24" loop="false"/>
-	<anim name="Hey" anim="Laugh" x="200" y="81" fps="24" loop="false" indices="0,1,2,3,4,5,6,7,8,8,8,8,8,8,8,8"/>
+	<!-- Psych's anim offsets are world-space pixels; this engine applies them in frame space
+	     (FunkinSprite.playAnim -> frameOffset, translated before the sprite scale), so every
+	     offset below is the source's value / 0.5 (this character's scale). -->
+	<anim name="idle" anim="Idle" x="420" y="120" fps="24" loop="false"/>
+	<anim name="singRIGHT" anim="Right" x="360" y="110" fps="24" loop="false"/>
+	<anim name="singDOWN" anim="Down" x="360" y="-120" fps="24" loop="false"/>
+	<anim name="singUP" anim="Up" x="410" y="170" fps="24" loop="false"/>
+	<anim name="singLEFT" anim="Left" x="400" y="80" fps="24" loop="false"/>
+	<anim name="Hey" anim="Laugh" x="400" y="162" fps="24" loop="false" indices="0,1,2,3,4,5,6,7,8,8,8,8,8,8,8,8"/>
 </character>

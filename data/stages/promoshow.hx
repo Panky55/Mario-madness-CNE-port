@@ -300,7 +300,10 @@ function mmPreloadAll() {
 function mmSwapIcon(index:Int, c) {
 	var ic = (index == 0) ? iconP1 : ((index == 1) ? iconP2 : null);
 	if (ic == null || c == null) return;
-	if (!Reflect.hasField(ic, "setIcon") || !Reflect.hasField(c, "getIcon")) return;
+	// `Reflect.hasField` answers false for every member of a class *instance* on
+	// the cpp build, so this guard was dead in the shipped game (see
+	// PORT_NOTES.md). `Reflect.field` resolves the member on both targets.
+	if (Reflect.field(ic, "setIcon") == null || Reflect.field(c, "getIcon") == null) return;
 	var n = c.getIcon();
 	if (n != null && n != "") ic.setIcon(n);
 }
@@ -465,7 +468,7 @@ function onEvent(event) {
 				d5.playAnim("depression", true);
 				// 13093: `dad.idleSuffix = '-alt'`.
 				Reflect.setProperty(d5, "idleSuffix", "-alt");
-				if (Reflect.hasField(d5, "recalculateDanceIdle"))
+				if (Reflect.field(d5, "recalculateDanceIdle") != null)
 					Reflect.callMethod(d5, Reflect.field(d5, "recalculateDanceIdle"), []);
 			}
 			// `extraTween` in the source - stored so case 6 can cancel it.
@@ -582,7 +585,7 @@ function mmTvMountAll(s) {
 // build that cannot read it seeds 0, which is the old behaviour.
 function mmProcessTime():Float {
 	var game = Reflect.field(FlxG, "game");
-	if (game == null || !Reflect.hasField(game, "ticks")) return 0;
+	if (game == null || Reflect.field(game, "ticks") == null) return 0;
 	var ms:Dynamic = Reflect.field(game, "ticks");
 	return (ms == null) ? 0 : ms / 1000.0;
 }

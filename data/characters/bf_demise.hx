@@ -34,6 +34,42 @@ function postCreate() {
 	PlayState.instance.insert(i, legs);
 }
 
+// ---------------------------------------------------------------------------
+// child space vs this engine's node space
+// ---------------------------------------------------------------------------
+// The source's rig writes are *child-space*: Psych bakes a character's own
+// `position` into its x/y when it is added to the group (`startCharacterPos`),
+// so `whoisbf.y = defaultBoyfriendY + 270` is the sprite's absolute y and the
+// leg/arm sprites - which live outside the group - are parked straight on
+// `whoisbf.x` / `whoisbf.y` (bf_demise.lua's `setProperty('bflegs.x',
+// getProperty(whoisbf .. '.x'))`).
+//
+// This engine keeps that position in `Character.globalOffset` and applies it at
+// *draw*: `Character.playAnim` ends in
+//     offset.set(globalOffset.x * (isPlayer != playerOffsets ? 1 : -1),
+//                -globalOffset.y)
+// so the sprite renders at `x - k * globalOffset.x` / `y + globalOffset.y`,
+// k = (isPlayer != playerOffsets) ? 1 : -1 - what the source calls
+// `whoisbf.y` is `y + globalOffset.y` here, and a script writing the character's
+// y (this rig does) writes the *node*. Putting the source's child-space value
+// there moved the body `globalOffset.y` px away from the legs it sits on
+// (bf_demise's own `y`="230").
+//
+// So the two plain sprites are parked on the child pair and the body's writes go
+// through mmNodeY. pico_run.hx carries the full derivation; allfinal.hx's
+// mmPlaceWorld / promoshow.hx's helpers are the same rule.
+function mmSideK():Float {
+	return (isPlayer != playerOffsets) ? 1 : -1;
+}
+
+function mmChildX():Float {
+	return x - mmSideK() * globalOffset.x;
+}
+
+function mmNodeY(childY:Float):Float {
+	return childY - globalOffset.y;
+}
+
 function update(elapsed:Float) {
 	if (legs == null || arm == null) return;
 
@@ -50,8 +86,14 @@ function update(elapsed:Float) {
 		baseY = y;
 	}
 
-	legs.x = x; legs.y = y;
-	arm.x = x; arm.y = y;
+	// The pair the source is copying onto the legs and arm - the character's own
+	// child-space x/y (`mmChildX()` / `y + globalOffset.y`) - this frame's write
+	// to the body still to come, so it is the previous frame's pair exactly as in
+	// the lua.
+	var cx:Float = mmChildX();
+	var cy:Float = y + globalOffset.y;
+	legs.x = cx; legs.y = cy;
+	arm.x = cx; arm.y = cy;
 
 	var anim = getAnimName();
 	var f = legs.animation.frameIndex;
@@ -59,18 +101,18 @@ function update(elapsed:Float) {
 	if (anim != null && anim != "idle") {
 		arm.visible = false;
 		switch (f) {
-			case 31: y = baseY + 270;
-			case 33: y = baseY + 270 + 3.675;
-			case 35: y = baseY + 270 + 7.35;
-			case 37: y = baseY + 270 + 1.125;
-			case 39: y = baseY + 270 + 2.525;
-			case 41: y = baseY + 270 + 4.6;
-			case 43: y = baseY + 270 + 6.3;
-			case 45: y = baseY + 270 + 1.575;
+			case 31: y = mmNodeY(baseY + 270);
+			case 33: y = mmNodeY(baseY + 270 + 3.675);
+			case 35: y = mmNodeY(baseY + 270 + 7.35);
+			case 37: y = mmNodeY(baseY + 270 + 1.125);
+			case 39: y = mmNodeY(baseY + 270 + 2.525);
+			case 41: y = mmNodeY(baseY + 270 + 4.6);
+			case 43: y = mmNodeY(baseY + 270 + 6.3);
+			case 45: y = mmNodeY(baseY + 270 + 1.575);
 		}
 	} else {
 		angle = 0;
-		y = baseY + 230;
+		y = mmNodeY(baseY + 230);
 		arm.visible = true;
 	}
 }

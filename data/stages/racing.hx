@@ -70,7 +70,10 @@ var mmRedS = null;   // 'modstuff/shellmk' - the shell that flies at iconP1
 function mmSwapIcon(index:Int, c) {
 	var ic = (index == 0) ? iconP1 : ((index == 1) ? iconP2 : null);
 	if (ic == null || c == null) return;
-	if (!Reflect.hasField(ic, "setIcon") || !Reflect.hasField(c, "getIcon")) return;
+	// `Reflect.hasField` answers false for every member of a class *instance* on
+	// the cpp build, so this guard was dead in the shipped game (see
+	// PORT_NOTES.md). `Reflect.field` resolves the member on both targets.
+	if (Reflect.field(ic, "setIcon") == null || Reflect.field(c, "getIcon") == null) return;
 	var n = c.getIcon();
 	if (n != null && n != "") ic.setIcon(n);
 }
@@ -242,7 +245,7 @@ function mmShellHit() {
 // tween lands on the state's instance value rather than the static chart data.
 function mmSongSpeed(target:Float) {
 	var ps = PlayState.instance;
-	if (ps == null || !Reflect.hasField(ps, "scrollSpeed")) return;
+	if (ps == null || Reflect.field(ps, "scrollSpeed") == null) return;
 	FlxTween.tween(ps, {scrollSpeed: target}, 16);
 }
 
@@ -409,8 +412,9 @@ function onEvent(event) {
 			// (`HealthIcon.hx`), and the mod ships `images/icons/icon-bfr.png` /
 			// `icon-race.png`.
 			if (mmIsRaceOld()) {
-				if (Reflect.hasField(iconP1, "setIcon")) iconP1.setIcon("icon-bfr");
-				if (Reflect.hasField(iconP2, "setIcon")) iconP2.setIcon("icon-race");
+				// Instance-member guards are false on cpp (see PORT_NOTES.md).
+				if (Reflect.field(iconP1, "setIcon") != null) iconP1.setIcon("icon-bfr");
+				if (Reflect.field(iconP2, "setIcon") != null) iconP2.setIcon("icon-race");
 			}
 			// 11555-11567: once the box is down, 'race' bounces out and back. The
 			// source's `upDad` sentinel resolves to dad.x (just parked at 50).

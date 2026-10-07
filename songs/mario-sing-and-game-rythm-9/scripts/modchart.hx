@@ -58,7 +58,7 @@ function mmPublish(songName) {
 // (see starman-slaughter's copy for why the branch is dead in CNE).
 function mmMiddleScroll() {
 	var ps = PlayState.instance;
-	if (ps != null && Reflect.hasField(ps, 'middleScroll'))
+	if (ps != null && Reflect.field(ps, 'middleScroll') != null)
 		return Reflect.field(ps, 'middleScroll') == true;
 	return false;
 }

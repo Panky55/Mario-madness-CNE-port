@@ -79,7 +79,7 @@ function mmTvMountAll(s) {
 // build that cannot read it seeds 0, which is the old behaviour.
 function mmProcessTime():Float {
 	var game = Reflect.field(FlxG, "game");
-	if (game == null || !Reflect.hasField(game, "ticks")) return 0;
+	if (game == null || Reflect.field(game, "ticks") == null) return 0;
 	var ms:Dynamic = Reflect.field(game, "ticks");
 	return (ms == null) ? 0 : ms / 1000.0;
 }

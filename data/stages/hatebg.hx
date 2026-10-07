@@ -33,7 +33,7 @@ var mmLavaTween = null;
 
 function mmDownScroll():Bool {
 	if (PlayState.instance == null) return false;
-	if (!Reflect.hasField(PlayState.instance, "downscroll")) return false;
+	if (Reflect.field(PlayState.instance, "downscroll") == null) return false;
 	return Reflect.field(PlayState.instance, "downscroll") == true;
 }
 
@@ -580,7 +580,7 @@ function mmIhyCapePlay(name:String) {
 
 function mmBfAnimName():String {
 	if (boyfriend == null || boyfriend.animation == null) return null;
-	if (!Reflect.hasField(boyfriend.animation, "curAnim")) return null;
+	if (Reflect.field(boyfriend.animation, "curAnim") == null) return null;
 	var ca = boyfriend.animation.curAnim;
 	return (ca == null) ? null : Reflect.field(ca, "name");
 }
@@ -790,7 +790,7 @@ function mmOgnSilhouettes() {
 
 function mmOgnAttachShader(char, sh):Bool {
 	if (char == null || sh == null) return false;
-	if (!Reflect.hasField(char, "shader")) {
+	if (Reflect.field(char, "shader") == null) {
 		mmOgnLog("OGN: this build has no sprite shader field, silhouette skipped");
 		return false;
 	}

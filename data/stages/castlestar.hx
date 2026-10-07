@@ -159,7 +159,7 @@ function mmAltIdle(suffix:String) {
 	var d = mmDadChar();
 	if (d == null) return;
 	Reflect.setProperty(d, "idleSuffix", suffix);
-	if (Reflect.hasField(d, "recalculateDanceIdle"))
+	if (Reflect.field(d, "recalculateDanceIdle") != null)
 		Reflect.callMethod(d, Reflect.field(d, "recalculateDanceIdle"), []);
 }
 

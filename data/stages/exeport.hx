@@ -450,9 +450,9 @@ function mmMidsongVideo() {
 		// Both spellings of the end callback, each guarded: `Reflect.setField` on a
 		// field the class does not have throws on cpp, and that would land in the
 		// catch below and throw away a perfectly good sprite.
-		if (Reflect.hasField(mmVid, "onEndReached"))
+		if (Reflect.field(mmVid, "onEndReached") != null)
 			Reflect.setField(mmVid, "onEndReached", function() { mmVidDone(); });
-		if (Reflect.hasField(mmVid, "finishCallback"))
+		if (Reflect.field(mmVid, "finishCallback") != null)
 			Reflect.setField(mmVid, "finishCallback", function() { mmVidDone(); });
 	} catch (e:Dynamic) {
 		trace("[MM exeport] case 7: the video sprite could not be built - " + Std.string(e));
@@ -464,7 +464,7 @@ function mmMidsongVideo() {
 function mmPlayMidsongVideo() {
 	var vid = mmMidsongVideo();
 	if (vid == null) return;
-	if (!Reflect.hasField(vid, "load")) {
+	if (Reflect.field(vid, "load") == null) {
 		trace("[MM exeport] case 7: the video sprite has no load() - the mid-song video is skipped");
 		mmVidDone();
 		return;
@@ -655,7 +655,7 @@ var mmCanDodge:Bool = false;
 function mmStateFlag(name:String):Bool {
 	var st = PlayState.instance;
 	if (st == null) return false;
-	return Reflect.hasField(st, name) && Reflect.field(st, name) == true;
+	return Reflect.field(st, name) == true;
 }
 
 function mmDodgeBlocked():Bool {
@@ -891,7 +891,11 @@ function mmPlaceGroup(c, gx:Float, gy:Float) {
 function mmSwapIcon(index:Int, c) {
 	var ic = (index == 0) ? iconP1 : ((index == 1) ? iconP2 : null);
 	if (ic == null || c == null) return;
-	if (!Reflect.hasField(ic, "setIcon") || !Reflect.hasField(c, "getIcon")) return;
+	// `Reflect.hasField` answers *false* for every member of a class instance on
+	// the cpp build, so the old guard was dead in the shipped game and no swap
+	// ever touched the icon (see PORT_NOTES.md). `Reflect.field` resolves the
+	// member on both targets.
+	if (Reflect.field(ic, "setIcon") == null || Reflect.field(c, "getIcon") == null) return;
 	var n = c.getIcon();
 	if (n != null && n != "") ic.setIcon(n);
 }
@@ -944,11 +948,16 @@ function mmChangeChar(index:Int, name:String) {
 // instead of taking the song down mid-run.
 function mmFireEvent(name:String, params:Array<Dynamic>) {
 	if (PlayState.instance == null) return;
-	if (!Reflect.hasField(PlayState.instance, "executeEvent")) {
+	// `Reflect.hasField` is false for every member of a class *instance* on the
+	// cpp build, so this guard dropped the event in the shipped game while still
+	// passing under --interp (see PORT_NOTES.md); the 'Show Song' title card never
+	// came back. `Reflect.field` resolves the method on both targets.
+	var fn = Reflect.field(PlayState.instance, "executeEvent");
+	if (fn == null) {
 		trace("[MM exeport] no PlayState.executeEvent - dropped event '" + name + "'");
 		return;
 	}
-	Reflect.callMethod(PlayState.instance, Reflect.field(PlayState.instance, "executeEvent"), [{name: name, time: 0, params: params}]);
+	Reflect.callMethod(PlayState.instance, fn, [{name: name, time: 0, params: params}]);
 }
 
 // ---------------------------------------------------------------------------

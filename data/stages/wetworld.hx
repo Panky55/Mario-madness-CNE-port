@@ -13,18 +13,24 @@
 // allfinal.hx's `mmEst` and hatebg.hx's `mmOgnCamera` use). Their creation order
 // is the source's own (4026-4135: fondaso ... thefog, flood, blackBarThingie,
 // redTVStat, redTV, luigilaugh, redStat), because that is what decides who draws
-// over whom - the curtain in particular is added *before* the TV, so the static
-// fades in on top of the black.
+// over whom - the curtain in particular is added *after* the water and *before*
+// the two TV feeds, so the water starts hidden behind the black plate (the song
+// opens on a black screen) and the static fades in on top of it. The whole
+// `postCreate` below has to keep that order; see the note there.
+//   4027       `gfGroup.visible = false;` - she is not in this song at all.
 //
 // Stage-level behaviour that comes with the case:
 //   4025-4026  `noCount = true; noHUD = true;` -> the engine's READY/SET/GO are
 //              dropped (onCountdown cancelled) and camHUD starts at alpha 0 (the
 //              chart's own 'Ocultar HUD' 2 brings it back at 12.8s).
-//   4311-4317  `add(fondaso2); add(atra2); add(fondaso); add(atra);` then
-//              `add(adel); add(adel2);` - all before the character groups, so
-//              the XML's order is right as it stands. `fondaso2`/`atra2`/
-//              `adel2` are the 2D versions the stage loads on; the 3D pair
-//              (`fondaso`/`atra`/`adel`) is hidden and revealed at case 10.
+//   4090-4093  `add(fondaso2); add(atra2); add(fondaso); add(atra);` - the 2D
+//              pair the stage loads on, then the 3D pair above it, hidden until
+//              case 10 (which shows the 3D set without hiding the 2D one, so
+//              the two must keep this order). The XML lists them the same way.
+//   4312-4341  `add(dadGroup)` (4312) ... `add(adel); add(adel2);` (4316-4317)
+//              ... `add(boyfriendGroup)` (4341): the two front plates sit
+//              between the fighters, over dad and under BF, so postCreate
+//              re-seats them there (the XML only parks them at the bottom).
 //   6678       a second instrumental (`wetworldinstALT`) that the flood crossfades
 //              in, and 7394-7425 the flood itself: it rises, drains health and
 //              ducks the inst/vocals against it. All of it is ported in
@@ -217,6 +223,77 @@ function mmMem(i:Int) {
 function mmDadChar() { return mmMem(0); }
 function mmBfChar() { return mmMem(1); }
 
+// `dadGroup` / `boyfriendGroup` do not exist here, so the source's group position
+// has to be recovered from, and written back to, the character. Character.playAnim
+// ends in
+//     offset.set(globalOffset.x * (isPlayer != playerOffsets ? 1 : -1),
+//                -globalOffset.y)
+// so the sprite *renders* at `stored.x - k * globalOffset.x` / `stored.y +
+// globalOffset.y` with k = (isPlayer != playerOffsets) ? 1 : -1, while the source
+// renders it at `group + position` - the same derivation data/stages/forest.hx,
+// allfinal.hx and data/events/Change Character.hx document, i.e.
+//     stored.x = groupX + (k + 1) * globalOffset.x
+//     stored.y = groupY                     (y carries no k)
+// Both characters here are on the "already agrees" side (k = -1: the boyfriend
+// node inherits getDefaultPos("boyfriend").flip = true, which is the isPlayer the
+// engine builds him with, and both characters' XMLs carry the matching
+// isPlayer - 'true' for the BF pair, 'false' for the two fountain Luigis), for
+// which the two coincide - the helpers keep it exact regardless.
+function mmSideK(c):Float {
+	if (c == null) return 1;
+	return (c.isPlayer != c.playerOffsets) ? 1 : -1;
+}
+
+function mmGroupX(c):Float {
+	if (c == null) return 0;
+	return c.x - (mmSideK(c) + 1) * c.globalOffset.x;
+}
+
+function mmGroupY(c):Float {
+	return (c == null) ? 0 : c.y;
+}
+
+// Where the source's `group` puts `c` (the group x/y writes).
+function mmPlaceGroup(c, gx:Float, gy:Float) {
+	if (c == null) return;
+	c.x = gx + (mmSideK(c) + 1) * c.globalOffset.x;
+	c.y = gy;
+}
+
+// ---------------------------------------------------------------------------
+// case 17's swing (13271-13274)
+// ---------------------------------------------------------------------------
+// `enemyY = dadGroup.y; extraTween.push(FlxTween.tween(dadGroup, {y: enemyY -
+// 100}, 8, {ease: quadInOut, type: PINGPONG}))` - the fountain scene's whole
+// framing drifts 100px down and back, forever, from 1.6s. The source's tween
+// sits on the *group*, which keeps carrying whatever character the group holds,
+// so case 10 (106.7s) drops the 3D Luigi into it mid-swing.
+//
+// A ported character has no group, and the tween cannot just be rebuilt on it at
+// the swap: the engine's PINGPONG re-anchors on the value the tween is created
+// at, so a restart mid-swing would leave Luigi swinging a few pixels instead of
+// a hundred. The swing therefore runs on a bare proxy holding the group's y (the
+// same `{x, y}` object songs/MMcamera.hx tweens) and the live character is parked
+// on it every frame in update() - which is the source's own "the group moves, the
+// character rides it", and makes the swap a no-op for the swing.
+var mmPingOn:Bool = false;
+var mmEnemyY:Float = 0;
+var mmSwing = {"y": 0.0};   // dadGroup.y, as case 17 tweens it
+var mmPingTween = null;
+
+function mmPingStart(dy:Float) {
+	mmPingOn = true;
+	mmSwing.y = mmEnemyY;
+	if (mmPingTween != null) mmPingTween.cancel();
+	mmPingTween = FlxTween.tween(mmSwing, {y: mmEnemyY + dy}, 8, {ease: FlxEase.quadInOut, type: FlxTween.PINGPONG});
+}
+
+function mmPingApply() {
+	if (!mmPingOn) return;
+	var d = mmDadChar();
+	if (d != null) d.y = mmSwing.y;
+}
+
 // Same swap as data/events/Change Character.hx; the two triggers the chart does
 // not send itself (case 10's pair) call this directly.
 function mmChangeChar(index:Int, name:String) {
@@ -232,10 +309,31 @@ function mmChangeChar(index:Int, name:String) {
 	var old = member.characters[0];
 	if (old.curCharacter == name) return;
 	var isPlayer = old.isPlayer;
+	// The source's swap-in is not repositioned at all: 'Change Character' picks it
+	// out of dadMap/boyfriendMap (6081-6122), where it was built *inside* the
+	// group, so it sits at `group + its own position`, and the group's own tweens
+	// keep moving it. The node applyCharStuff parks it on is only the group's
+	// position while the group still sits at its default - and case 17 has been
+	// swinging this group since 1.6s, so case 10's 3D Luigi arrived up to 100px
+	// low and then stopped moving entirely (the tween kept driving the character
+	// the swap had replaced).
+	var gx:Float = mmGroupX(old);
+	var gy:Float = mmGroupY(old);
+	var oldIndex:Int = members.indexOf(old);
+
 	remove(old);
 	member.characters.remove(old);
 	var fresh = new Character(0, 0, name, isPlayer);
 	if (stage != null) stage.applyCharStuff(fresh, member.data.position, 0);
+	// ...written back through the fresh character's own k/offset, which may differ
+	// from the old one's (see the note above).
+	mmPlaceGroup(fresh, gx, gy);
+	// The source's group keeps its z-position across a swap, so the swap-in goes
+	// back to the outgoing character's draw slot instead of the node's.
+	if (oldIndex >= 0) {
+		remove(fresh);
+		insert(oldIndex, fresh);
+	}
 	// The source's death character is a global (GameOverSubstate.characterName) and
 	// survives a swap; this port keeps it on the character (see songs/MMcamera.hx's
 	// game-over table), so the current one has to ride across.
@@ -365,6 +463,9 @@ function onNoteHit(event) {
 }
 
 function update(elapsed:Float) {
+	// case 17's swing owns the opponent's y for the whole song, so it is applied
+	// before anything below can bail out.
+	mmPingApply();
 	if (mmFlood == null) return;
 	if (mmFlooding) {
 		if (mmFlood.y < 660)
@@ -422,7 +523,7 @@ function mmAltBuild() {
 // way.
 function mmAltRegister(s) {
 	var grp = Reflect.field(FlxG.sound, "list");
-	if (grp == null || !Reflect.hasField(grp, "add")) return;
+	if (grp == null || Reflect.field(grp, "add") == null) return;
 	Reflect.callMethod(grp, Reflect.field(grp, "add"), [s]);
 }
 
@@ -533,7 +634,7 @@ function mmTvMountAll(s) {
 // build that cannot read it seeds 0, which is the old behaviour.
 function mmProcessTime():Float {
 	var game = Reflect.field(FlxG, "game");
-	if (game == null || !Reflect.hasField(game, "ticks")) return 0;
+	if (game == null || Reflect.field(game, "ticks") == null) return 0;
 	var ms:Dynamic = Reflect.field(game, "ticks");
 	return (ms == null) ? 0 : ms / 1000.0;
 }
@@ -573,14 +674,41 @@ function onCountdown(event) {
 }
 
 function postCreate() {
-	mmGetRedTV();
-	mmGetRedTVStat();
+	// The camEst layers in the source's own `add()` order (4094-4135). It is
+	// load-bearing in both directions: the black plate is added *after* `flood`
+	// and *before* the two redTV feeds, which is what keeps the water off screen
+	// for the song's first forty seconds (they are rebuilt here at y 720 with
+	// `mmFlooding` false, but camEst starts the song at 0.5 zoom, and scaling
+	// about the camera's centre lifts the top of the 845px frame to screen y 540
+	// - so without the curtain over it the wave is visible from the first frame)
+	// and what puts the static on top of the black instead of under it.
 	mmGetFog();
+	mmGetFlood();
 	mmGetBlackBar();
+	mmGetRedTVStat();
+	mmGetRedTV();
 	mmGetLuigiLaugh();
 	mmGetRedStat();
-	mmGetFlood();
+	// 4137-4143: built but not added - case 7 is the only `add()`.
 	mmGetWarningPopup();
+
+	// 4027: `gfGroup.visible = false` - GF is not in this song.
+	if (gf != null) gf.visible = false;
+
+	// 4316-4317: the source adds the front plates between the opponent and the
+	// player - `add(gfGroup)` 4300, `add(dadGroup)` 4312, `add(adel)` 4316,
+	// `add(adel2)` 4317, `add(boyfriendGroup)` 4341 - so they draw over dad and
+	// under BF. The XML's own order parks them at the bottom of the world, whose
+	// one visible consequence is dad standing in front of the foreground art;
+	// they are re-seated the way superbad.hx re-seats its curtain.
+	if (dad != null && adel != null && adel2 != null) {
+		remove(adel, true);
+		remove(adel2, true);
+		var at:Int = members.indexOf(dad);
+		at = (at < 0) ? 0 : at + 1;
+		insert(at, adel);
+		insert(at + 1, adel2);
+	}
 
 	// `noHUD = true` (4026).
 	if (camHUD != null) camHUD.alpha = 0;
@@ -616,6 +744,22 @@ function onEvent(event) {
 		if (adel2 != null) FlxTween.tween(adel2, {alpha: bfOn ? 1 : 0}, 0.13);
 		var b = mmBfChar();
 		if (b != null) FlxTween.tween(b, {alpha: bfOn ? 1 : 0}, 0.13);
+		return;
+	}
+
+	if (event.event.name == "setProperty") {
+		// The chart writes `blackBarThingie.alpha = 0` at 185.07s, one beat after
+		// case 1 starts draining the flood, and it is what takes the curtain case
+		// 13 raised (183.87s) back down for the song's last seventeen seconds -
+		// without it the picture stays black from 184s to the end. The source's
+		// `blackBarThingie` is a PlayState field; here the curtain is this
+		// script's own sprite, so data/events/setProperty.hx's generic walk
+		// (which looks for `blackBarThingie` on PlayState, finds nothing and
+		// returns) cannot reach it and the write has to be taken here.
+		if (Std.string(event.event.params[0]) == "blackBarThingie.alpha") {
+			var v:Float = Std.parseFloat(Std.string(event.event.params[1]));
+			if (!Math.isNaN(v)) mmGetBlackBar().alpha = v;
+		}
 		return;
 	}
 
@@ -734,11 +878,12 @@ function onEvent(event) {
 			mmGetRedStat().alpha = 0.8;
 
 		case 17:
-			// The whole 3D stage drifts down and back.
+			// 13271-13274: the whole 3D stage drifts down and back, around the group
+			// y the trigger catches. See mmPingStart for why the swing rides a proxy.
 			var d17 = mmDadChar();
 			if (d17 != null) {
-				var enemyY:Float = d17.y;
-				FlxTween.tween(d17, {y: enemyY - 100}, 8, {ease: FlxEase.quadInOut, type: FlxTween.PINGPONG});
+				mmEnemyY = mmGroupY(d17);
+				mmPingStart(-100);
 			}
 	}
 }

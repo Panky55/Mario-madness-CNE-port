@@ -634,7 +634,10 @@ function mmSingName(dir:Int):String {
 function mmSwapIcon(index:Int, c) {
 	var ic = (index == 0) ? iconP1 : ((index == 1) ? iconP2 : null);
 	if (ic == null || c == null) return;
-	if (!Reflect.hasField(ic, "setIcon") || !Reflect.hasField(c, "getIcon")) return;
+	// `Reflect.hasField` answers false for every member of a class *instance* on
+	// the cpp build, so this guard was dead in the shipped game (see
+	// PORT_NOTES.md). `Reflect.field` resolves the member on both targets.
+	if (Reflect.field(ic, "setIcon") == null || Reflect.field(c, "getIcon") == null) return;
 	var n = c.getIcon();
 	if (n != null && n != "") ic.setIcon(n);
 }
@@ -882,7 +885,7 @@ function mmAllStarsInit() {
 	}
 
 	mmDownscroll = false;
-	if (PlayState.instance != null && Reflect.hasField(PlayState.instance, "downscroll"))
+	if (PlayState.instance != null && Reflect.field(PlayState.instance, "downscroll") != null)
 		mmDownscroll = Reflect.field(PlayState.instance, "downscroll") == true;
 
 	mmFog1.visible = false;

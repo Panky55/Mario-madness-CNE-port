@@ -201,7 +201,7 @@ function mmChangeChar(index:Int, name:String) {
 // ---------------------------------------------------------------------------
 var mmDownscroll:Bool = false;
 function mmDownScroll():Bool {
-	if (PlayState.instance != null && Reflect.hasField(PlayState.instance, "downscroll"))
+	if (PlayState.instance != null && Reflect.field(PlayState.instance, "downscroll") != null)
 		return Reflect.field(PlayState.instance, "downscroll") == true;
 	return mmDownscroll;
 }
@@ -342,7 +342,7 @@ function update(elapsed:Float) {
 function onPlayerMiss(event) {
 	if (starmanGF == null) return;
 	var st = PlayState.instance;
-	if (st == null || !Reflect.hasField(st, "combo")) return;
+	if (st == null || Reflect.field(st, "combo") == null) return;
 	var n:Float = Std.parseFloat(Std.string(Reflect.field(st, "combo")));
 	if (n != n || n <= 5) return; // NaN or too low a combo
 	starmanGF.animation.play("sad");

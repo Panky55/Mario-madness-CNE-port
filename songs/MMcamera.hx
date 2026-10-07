@@ -416,11 +416,11 @@ function mmGameOverApply(row:String) {
 		boyfriend.gameOverCharacter = charName;
 	var ps = PlayState.instance;
 	if (ps == null) return;
-	if (loss != "" && Reflect.hasField(ps, "lossSFX") && Assets.exists(Paths.sound(loss)))
+	if (loss != "" && Reflect.field(ps, "lossSFX") != null && Assets.exists(Paths.sound(loss)))
 		Reflect.setProperty(ps, "lossSFX", loss);
 	if (loop != "") {
 		if (loop.indexOf("_#") >= 0) loop = loop.split("_#")[0] + "_" + FlxG.random.int(1, 24);
-		if (Reflect.hasField(ps, "gameOverSong") && Assets.exists(Paths.music(loop)))
+		if (Reflect.field(ps, "gameOverSong") != null && Assets.exists(Paths.music(loop)))
 			Reflect.setProperty(ps, "gameOverSong", loop);
 	}
 }
@@ -1408,7 +1408,21 @@ function mmDictatorTrigger(trigger:Int) {
 function mmOverdueTrigger(trigger:Int) {
 	switch (trigger) {
 		case 2:                                          // 20.21s (beat 2)
-			mmFollow = false;
+			// Source 13967-13970: `isCameraOnForcedPos = true;` +
+			// `tween(camFollowPos, {x: -80, y: 450}, 1.64, expoInOut)`. FOLLOWCHARS
+			// is **not** touched - the fork reads `isCameraOnForcedPos` nowhere (see
+			// the 'Camera Follow Pos' entry), so all the beat does is nudge
+			// camFollowPos towards (-80, 450) - meatworld's own DAD_CAM row - while
+			// the section lerp keeps pulling it back onto the live section's camera.
+			// Turning the follow *off* here is what froze the camera: the lock
+			// releases after its 1.64s, but with FOLLOWCHARS DOWN nothing ever put
+			// the camera back on a character, so it sat at (-80, 450) from 21.9s
+			// until case 4 (84.71s) - the reported "camera character focus is broken
+			// after Luigi goes into his monster form", with the meat/mouth slam of
+			// cases 3/4 as the part that finally put it right. Only case 14 turns the
+			// follow off (its own `FOLLOWCHARS = false; ZOOMCHARS = false;`, 14125)
+			// and case 4 turns it back on (13998) - which is the source's real, 1.34s
+			// camera window.
 			mmLockToDelay(-80, 450, 1.64, 0, FlxEase.expoInOut);
 		case 3:                                          // 84.32s
 			mmZoomDriveTo(0.75, 0.4, 0, FlxEase.cubeInOut);

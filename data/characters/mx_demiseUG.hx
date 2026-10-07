@@ -36,6 +36,25 @@ function postCreate() {
 	origin.set(833, 1003);
 }
 
+// ---------------------------------------------------------------------------
+// child space vs this engine's node space
+// ---------------------------------------------------------------------------
+// The source parks the leg/arm sprites on `whoismx.x` / `whoismx.y` - the
+// character's *child-space* pair (Psych bakes its own `position` into that x/y
+// at create), while this engine keeps the position in `Character.globalOffset`
+// and applies it at draw, so the pair here is `x - k * globalOffset.x` /
+// `y + globalOffset.y`. mx_demiseUG's position is (-930, -870); the body's own
+// writes need no conversion, because the lua spells them
+// `defaultOpponentX - 930` / `defaultOpponentY - 870` - the group's pair, which
+// is what the node x/y already hold. See pico_run.hx for the derivation.
+function mmSideK():Float {
+	return (isPlayer != playerOffsets) ? 1 : -1;
+}
+
+function mmChildX():Float {
+	return x - mmSideK() * globalOffset.x;
+}
+
 function update(elapsed:Float) {
 	if (legs == null || arm == null) return;
 
@@ -52,8 +71,10 @@ function update(elapsed:Float) {
 
 	legs.color = color;
 	arm.color = color;
-	legs.x = x; legs.y = y;
-	arm.x = x; arm.y = y;
+	var cx:Float = mmChildX();
+	var cy:Float = y + globalOffset.y;
+	legs.x = cx; legs.y = cy;
+	arm.x = cx; arm.y = cy;
 
 	var anim = getAnimName();
 	var f = legs.animation.frameIndex;

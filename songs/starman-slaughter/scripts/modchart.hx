@@ -49,7 +49,7 @@ function mmPublish(songName) {
 // (`port_templates/stage_triggers/realbg.hx`), so it follows along if it does.
 function mmMiddleScroll() {
 	var ps = PlayState.instance;
-	if (ps != null && Reflect.hasField(ps, 'middleScroll'))
+	if (ps != null && Reflect.field(ps, 'middleScroll') != null)
 		return Reflect.field(ps, 'middleScroll') == true;
 	return false;
 }
