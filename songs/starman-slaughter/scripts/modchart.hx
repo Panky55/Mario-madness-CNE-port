@@ -8,12 +8,19 @@
 //   middleScroll   both fields slide to the middle (`opponentSwap 0.5`, which
 //                  is each lane sitting halfway to the *other* field's lane)
 //                  and dad's field is hidden (`alpha 1` on player 1).
-//   otherwise      BOTH fields fade out at step 2048-2052.
+//   otherwise      that same field fades out over steps 2048-2052.
 //
-// `queueEase(2048, 2052, "alpha", 1, 1)` has five arguments: the numeric
-// fifth argument is style, while player keeps its default -1 (both fields).
-// The style falls back to linear. Keep the executed source behaviour, not a
-// guessed correction to the author's argument order.
+// `queueEase(2048, 2052, "alpha", 1, 1)` lands on ModManager's
+// `queueEase(step, endStep, modName, target, style:String = 'linear',
+// player:Int = -1, ?startVal:Float)` (ModManager.hx:246). The fifth slot is
+// indeed `style`, but the literal `1` is an Int and cannot be a String, so Haxe
+// binds it to the next parameter - `player` - and leaves style at 'linear'
+// (running that exact signature under `--interp` prints `style=linear
+// player=1`). The source therefore fades **player 1, dad's field**, the field
+// the middleScroll branch above hides, while bf's lane keeps playing to the
+// end: the chart's last two notes are on bf's line at 240.94s, past the step
+// 2052 the fade finishes on. Emitting `player -1` here - what this file used to
+// do - faded both fields and blanked those notes.
 //
 // The timeline is handed to `songs/MMmodfields.hx`, the port of the fork's
 // modifier framework: one array per queued call, `[startStep, endStep, name,
@@ -60,8 +67,9 @@ function create() {
 		sv('opponentSwap', 0.5, -1);
 		sv('alpha', 1, 1);
 	} else {
-		// 2048-2052: both fields fade out, with the source's style fallback.
-		qe(2048, 2052, 'alpha', 1, 'linear', -1);
+		// 2048-2052: dad's field fades out ('linear' is the default of the style
+		// slot the source's fifth argument skips - see the header).
+		qe(2048, 2052, 'alpha', 1, 'linear', 1);
 	}
 
 	mmPublish('starman slaughter');

@@ -276,6 +276,22 @@ function mmIconGFAdd():FlxSprite {
 // where "the world layer" is here.
 var mmBlackBar:FlxSprite = null;
 
+// ---------------------------------------------------------------------------
+// Stage sprite lookup
+// ---------------------------------------------------------------------------
+// A sprite the stage XML named (`<sprite name="..."/>`). The loader also hands
+// each of them to the stage script as a variable (`setStagesSprites`), but this
+// reads the stage's own map so that a lookup for a plate the XML may not carry
+// cannot abort the script. postCreate uses it to anchor the girlfriend's draw
+// slot on the plate the source's own index resolves to.
+function mmStageSprite(name:String) {
+	var st = PlayState.instance;
+	if (st == null || stage == null) return null;
+	var map = Reflect.field(stage, "stageSprites");
+	if (map == null) return null;
+	return map.get(name);
+}
+
 // The source's create-switch sprites are world sprites: on the state's draw list
 // below every character. Codename's `Stage` is not a group - `class Stage
 // extends FlxBasic`, and FlxBasic has no `add`/`remove`/`insert`, so a
@@ -362,19 +378,33 @@ function postCreate() {
 	}
 
 	// assets/preload/data/songData/starman-slaughter/script.lua (`onCreatePost`):
-	// `setObjectOrder('gfGroup', 7)` - the girlfriend is pushed down to draw index
-	// 7 of the state's list, which is *inside* this stage's backdrop, i.e. she is
-	// behind almost all of it until trigger 4 brings her pair in (that case is
-	// also where the source gives her 0.55). Codename has no `gfGroup`, and its
-	// draw list is the flat one the XML filled (stage sprites first, then the
-	// characters), so the same move is a `remove` + `insert` on the girl's own
-	// character - the shape allfinal.hx uses for its group reorders. Guarded on
-	// the index being inside the list, so a stage whose backdrop happens to be
-	// shorter than seven sprites still runs.
+	// `setObjectOrder('gfGroup', 7)`. In the source that 7 is the *floor* plate:
+	// its create() switch adds sky, castillo, fireL, fireR, platform0, starmanPOW,
+	// platform1 and then floor as members 0-7, so "index 7" means "directly
+	// behind SS_floor" - over the two pillar plates (SS_farplatforms and
+	// SS_midplatforms) and under the ground. Codename's list is one entry longer
+	// at the front, though: `camFollow` is added before the stage is
+	// (PlayState.hx:660-662), so the same numeric 7 lands on platform1
+	// (SS_midplatforms) and the starman Koopa was drawn *under* that pillar. The
+	// slot therefore comes off the plate the source's index resolves to instead
+	// of off a number - insert directly above `floor`, which is the source's own
+	// "7" wherever the engine's own members happen to sit. Codename has no
+	// `gfGroup`, and its draw list is the flat one the XML filled (stage sprites
+	// and the character markers, then the characters inserted at them), so the
+	// move is a `remove` + `insert` on the girl's own character - the shape
+	// allfinal.hx uses for its group reorders.
 	var gfo = mmGfChar();
 	if (gfo != null && members.indexOf(gfo) >= 0) {
 		remove(gfo);
-		insert((members.length >= 7) ? 7 : members.length, gfo);
+		// looked up *after* the splice: the plate's own index is the one the
+		// insert has to land on, and removing her can move it
+		var idx:Int = -1;
+		var flo = mmStageSprite("floor");
+		if (flo != null) idx = members.indexOf(flo);
+		// A backdrop without the plate falls back to the front, which is where
+		// the source's own index lands once it is past the end of the list.
+		if (idx < 0) idx = members.length;
+		insert(idx, gfo);
 	}
 
 	mmBlackBarSpr();
