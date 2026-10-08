@@ -61,9 +61,10 @@
 		<property name="visible" type="bool" value="false"/>
 		<anim name="clown car anim" anim="clown car anim" fps="24" loop="true"/>
 	</sprite>
-	<sprite name="funnylayer0" sprite="characters/YouCannotBeatUS_Bowser_Asset" x="600" y="100">
-		<anim name="Left" anim="Left" fps="24" loop="false"/>
-		<anim name="idle" anim="Idle" type="none" fps="24" loop="false"/>
+	<sprite name="funnylayer0" sprite="characters/YouCannotBeatUS_Bowser_Asset" x="600" y="100" visible="false">
+		<property name="visible" type="bool" value="false"/>
+		<anim name="idle" anim="Idle" fps="24" loop="false"/>
+		<anim name="Left" anim="Left" type="none" fps="24" loop="false"/>
 		<anim name="singUP" anim="Up" type="none" fps="24" loop="false"/>
 		<anim name="singDOWN" anim="Down" type="none" fps="24" loop="false"/>
 		<anim name="singLEFT" anim="Left" type="none" fps="24" loop="false"/>

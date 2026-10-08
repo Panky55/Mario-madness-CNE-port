@@ -201,8 +201,14 @@ function mmChangeChar(index:Int, name:String) {
 // ---------------------------------------------------------------------------
 var mmDownscroll:Bool = false;
 function mmDownScroll():Bool {
-	if (PlayState.instance != null && Reflect.field(PlayState.instance, "downscroll") != null)
-		return Reflect.field(PlayState.instance, "downscroll") == true;
+	// `PlayState.downscroll` is a get/set property over `camHUD.downscroll`; on
+	// cpp `Reflect.field` returns null for get/set properties (only
+	// `Reflect.getProperty`, which is what a script's field access compiles to,
+	// runs the getter), so read the property itself.
+	var d = (camHUD != null) ? camHUD.downscroll : null;
+	if (d != null) return d == true;
+	if (PlayState.instance != null && PlayState.instance.downscroll != null)
+		return PlayState.instance.downscroll == true;
 	return mmDownscroll;
 }
 

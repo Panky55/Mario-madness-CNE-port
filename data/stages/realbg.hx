@@ -12,9 +12,10 @@
 //   3231-3236   `fogblack` ('modstuff/126', a vignette) on camEst, alpha 1.
 //   3238-3253   `lifemetter` - the nine-frame Luigi life meter on camHUD,
 //               alpha 0, 2.2x, screen-centred.
-//   4675-4681   `blackBarThingie` - a 10x-scaled black plate on camEst created
-//               at **alpha 1**: the song opens on a black screen and trigger 3
-//               (5.33s) is what fades it off.
+//   4675-4681   `blackBarThingie` - a 10x-scaled black plate created at
+//               **alpha 1**: the song opens on a black screen and trigger 3
+//               (5.33s) is what fades it off. The source puts it on camEst; see
+//               the Layers note for why this port puts it on camGame.
 //   5836-5842   dad tinted 0xFF608B60, both icons hidden, enemyY = dad.y.
 //   7511-7516   the per-frame drive: the meter's `life<luigilife>` animation
 //               and the 1.7 health cap.
@@ -26,9 +27,16 @@
 //               hitting 0 kills the player.
 //
 // Layers: Psych's camEst sits *between* camGame and camHUD (below the notes and
-// the HUD), so the black plate and the fog go on a camera of this script's own
-// that is slid in at camHUD's index (the same shape somari.hx uses) rather than
-// into the world layer, which would put the HUD above the blackout anyway.
+// the HUD), and the fog goes on a camera of this script's own slid in under
+// camHUD. That camera now also re-asserts the order through
+// `FlxG.cameras.setOrder` (mmSyncCameraOrder, see the note below it): a
+// camera's flashSprite is a second half of its place that editing
+// `FlxG.cameras.list` by hand never moved, so the layer drew over camHUD - and
+// with it the falling notes - whatever the list said. The black plate itself
+// stays on camGame: the chart blacks out at 96s and 170.67s with notes already
+// falling, camGame is composited first under every mechanism there is, and the
+// only thing that reaches over the plate is this stage's own black vignette -
+// a black wash over black, so nothing is lost.
 //
 // Camera: data/songs/MMcamera.hx owns camFollow/defaultCamZoom for this stage
 // (isCameraOnForcedPos is never read in the fork, and camFollow is rewritten by
@@ -52,7 +60,15 @@ function mmCam(which:String, args:Array<Dynamic>):Dynamic {
 }
 
 function mmDownscroll():Bool {
-	return downscroll == true;
+	// `PlayState.downscroll` is a get/set property over `camHUD.downscroll`; on
+	// cpp `Reflect.field` returns null for get/set properties (only
+	// `Reflect.getProperty`, which is what a script's field access compiles to,
+	// runs the getter), so read the property itself rather than through Reflect.
+	var d = (camHUD != null) ? camHUD.downscroll : null;
+	if (d != null) return d == true;
+	if (PlayState.instance != null && PlayState.instance.downscroll != null)
+		return PlayState.instance.downscroll == true;
+	return false;
 }
 
 // Psych's HUD rows are already screen-space. CNE's HudCamera applies
@@ -105,6 +121,28 @@ function mmEstBelowHud() {
 	}
 	if (at < 0) { list.push(mmEstCam); return; }
 	list.insert(at, mmEstCam);
+	mmSyncCameraOrder(list);
+}
+
+// A camera's place is two things, and only one of them is `FlxG.cameras.list`:
+// its own flashSprite is its render surface, and it is that sprite, in the
+// display list, that decides what composites over what. Psych never has to
+// think about it - it adds camEst (826-836) *before* camHUD, so both halves land
+// right from the start - but this layer is built later, while the song loads,
+// and `FlxG.cameras.add` drops a fresh camera's flashSprite on top of everything
+// already mounted. Editing the list by hand - which the engine's own docs call
+// out as unsupported ("Do not edit directly, use `add` and `remove`") - moves
+// the list half only, so a layer that reads as "under camHUD" still drew over
+// camHUD: So Cool's chat block over the score/misses, Thalassophobia's blackout
+// over the falling notes. So re-assert the order through the engine's own
+// `setOrder`, from the list this helper just built.
+function mmSyncCameraOrder(list) {
+	if (list == null || list.length == 0) return;
+	var order:Array<FlxCamera> = [];
+	for (c in list) order.push(c);
+	// Two arguments only: flixel 5's own `Destroy` defaults to false, and the
+	// two-parameter form is what every version of this method has taken.
+	FlxG.cameras.setOrder(order, null);
 }
 
 // ---------------------------------------------------------------------------
@@ -125,7 +163,17 @@ function mmGetBlackBar():FlxSprite {
 		mmBlackBar = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		mmBlackBar.scale.set(10, 10);
 		mmBlackBar.scrollFactor.set(0, 0);
-		mmBlackBar.cameras = [mmEst()];
+		// The source puts it on camEst, which is above the world and the
+		// fighters but *below* camHUD - and camHUD is where the notes live
+		// (StrumLine carries its own notes into camHUD), so in the source the
+		// notes stay visible right through every blackout (the chart blacks out
+		// at 96s/170.67s while notes are falling). Pin it to camGame rather than
+		// this script's camEst layer: camGame is composited first under every
+		// mechanism, so the notes can never be covered whatever the camera list
+		// does. What draws over it is this stage's own black vignette - a black
+		// wash over black, so nothing is lost. 10x still covers the window at
+		// this chart's zooms.
+		mmBlackBar.cameras = [camGame];
 		mmBlackBar.alpha = 1;
 		add(mmBlackBar);
 	}
@@ -178,6 +226,14 @@ function mmGetLifeMeter() {
 		s.animation.addByPrefix("life" + i, "health " + i, 24, true);
 		i += 1;
 	}
+	// Play a full-size frame before the sprite is measured below. The atlas'
+	// `health 80000/70000/60000` entries are marked frameWidth 67 / frameHeight
+	// 68 over 268x272 art, and `updateHitbox` compensates the trim from that
+	// figure - measured on one of those the hitbox comes out a quarter of the
+	// art, which drags the drawn sprite up by ~220px (the source measures
+	// `lifemetter.width` only because flixel hands it a full-size frame, so its
+	// meter sits on its y). `life0` is `health 00000`: 268x272, no trim.
+	s.animation.play("life0", true);
 	s.cameras = [camHUD];
 	s.antialiasing = true; // BGSprite inherits the source's global preference
 	s.alpha = 0;
@@ -329,6 +385,10 @@ function mmFlash(color:Int, dur:Float) {
 	var spr = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, color);
 	spr.scale.set(10, 10);
 	spr.scrollFactor.set(0, 0);
+	// The source's camera flash is `FlxG.camera.flash`, i.e. camGame's own
+	// flash - it washes the world and the fighters and leaves the notes and the
+	// HUD readable on top of it, so the plate goes on camGame too.
+	spr.cameras = [camGame];
 	add(spr);
 	FlxTween.tween(spr, {alpha: 0}, dur, {onComplete: function(twn) { spr.destroy(); }});
 }

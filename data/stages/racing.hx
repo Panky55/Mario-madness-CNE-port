@@ -143,8 +143,20 @@ function mmIsRaceOld():Bool {
 // Psych's rows are physical HUD positions; CNE's HudCamera mirrors them with
 // height - y - sprite.height. Invert that once, including the actual hitbox,
 // so the source's downscroll placement isn't mirrored a second time.
+function mmDownScroll():Bool {
+	// `PlayState.downscroll` is a get/set property over `camHUD.downscroll`; on
+	// cpp `Reflect.field` returns null for get/set properties (only
+	// `Reflect.getProperty`, which is what a script's field access compiles to,
+	// runs the getter), so read the property itself rather than through Reflect.
+	var d = (camHUD != null) ? camHUD.downscroll : null;
+	if (d != null) return d == true;
+	if (PlayState.instance != null && PlayState.instance.downscroll != null)
+		return PlayState.instance.downscroll == true;
+	return false;
+}
+
 function mmHudY(s, up:Float, down:Float):Float {
-	if (!downscroll) return up;
+	if (!mmDownScroll()) return up;
 	var h:Float = (camHUD != null) ? camHUD.height : FlxG.height;
 	return h - down - s.height;
 }
@@ -290,6 +302,9 @@ function mmEst():FlxCamera {
 	return mmEstCam;
 }
 
+// (The list is only half of a camera's place: its own flashSprite in the
+// display list is the surface that composites, and `add` leaves a fresh one on
+// top of camHUD - which is what `mmSyncCameraOrder` below re-asserts.)
 function mmEstBelowHud() {
 	if (mmEstCam == null || mmEstPlaced) return;
 	var list = mmCamList();
@@ -308,6 +323,28 @@ function mmEstBelowHud() {
 	}
 	list.insert(at, mmEstCam);
 	mmEstPlaced = true;
+	mmSyncCameraOrder(list);
+}
+
+// A camera's place is two things, and only one of them is `FlxG.cameras.list`:
+// its own flashSprite is its render surface, and it is that sprite, in the
+// display list, that decides what composites over what. Psych never has to
+// think about it - it adds camEst (826-836) *before* camHUD, so both halves land
+// right from the start - but this layer is built later, while the song loads,
+// and `FlxG.cameras.add` drops a fresh camera's flashSprite on top of everything
+// already mounted. Editing the list by hand - which the engine's own docs call
+// out as unsupported ("Do not edit directly, use `add` and `remove`") - moves
+// the list half only, so a layer that reads as "under camHUD" still drew over
+// camHUD: So Cool's chat block over the score/misses, Thalassophobia's blackout
+// over the falling notes. So re-assert the order through the engine's own
+// `setOrder`, from the list this helper just built.
+function mmSyncCameraOrder(list) {
+	if (list == null || list.length == 0) return;
+	var order:Array<FlxCamera> = [];
+	for (c in list) order.push(c);
+	// Two arguments only: flixel 5's own `Destroy` defaults to false, and the
+	// two-parameter form is what every version of this method has taken.
+	FlxG.cameras.setOrder(order, null);
 }
 
 // 1905-1913: `fernan` - a 'mario/Races/fernan' plate at (50, 20) on camEst,

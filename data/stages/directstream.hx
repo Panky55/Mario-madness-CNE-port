@@ -13,9 +13,11 @@ import flixel.text.FlxText.FlxTextBorderStyle;
 // Its opening mirrors the hatebg one: `blackBarThingie` - a full-screen black on
 // camEst - is created *up*, and startCountdown's own branch (7893-7897) fades it
 // out over 4s after a one-second delay, so So Cool opens on black and the stream
-// fades in. In the port the curtain is a screen-space sprite appended to the
-// draw list, which is camEst's slot here (above the world and the fighters,
-// below camHUD - see execlassic.hx for the full note; the HUD is hidden anyway).
+// fades in. In the port the curtain is a screen-space sprite on a `camEst` of
+// its own - the layer the source gives it - which composites above the world
+// and the fighters and below camHUD (the HUD is hidden anyway). That layer also
+// carries the live chat, and it matters that both sit on a camera whose zoom is
+// 1: see the camEst section below.
 //
 // The case itself (the chart sends it as 'Triggers Universal' 0-3):
 //   0 (7.99s)  - miyamoto starts talking ('talk', offset.y = 2)
@@ -35,9 +37,79 @@ var mmBlackBar = null; // the opening black / the stream's curtain (camEst)
 var mmCamBG = null;    // the facecam frame ('camBG' in the stage XML)
 var mmFaceAnim:String = "";
 
-// A screen-space sprite, appended to the draw list (see the header).
+// ---------------------------------------------------------------------------
+// The camEst layer (see the header)
+// ---------------------------------------------------------------------------
+// The source puts both of its screen-space sprites on `camEst` - the curtain
+// (2221) and the live chat (2176) each carry `cameras = [camEst]` - and Psych
+// adds that camera right after camGame and therefore *before* camHUD (828-836),
+// so they composite above the fighters but below the notes and the HUD.
+// Codename only has camGame and camHUD, so the port's camera is slid in at
+// camHUD's own index (the same layer the other stages carry).
+//
+// This is the transform, not only the layer. `camEst` is a bare
+// `new FlxCamera()`, so its zoom is 1 for the whole song, while a sprite merely
+// appended to the draw list is drawn on camGame - and a camera's zoom scales its
+// whole canvas about the screen centre. At So Cool's zoom that moved the chat
+// block off its own x/y towards the middle of the screen, i.e. left and down.
+// The only thing the source ever does to camEst.zoom on this stage is the
+// HUD-style note/beat bump (9178 `camEst.zoom += hudZoom`, 16157 `+= 0.03`),
+// which its update loop lerps straight back to 1 (7966-7969).
+var mmEstCam:FlxCamera = null;
+function mmEst():FlxCamera {
+	if (mmEstCam == null) {
+		mmEstCam = new FlxCamera(0, 0, FlxG.width, FlxG.height);
+		mmEstCam.bgColor = FlxColor.TRANSPARENT;
+		mmEstCam.zoom = 1;
+		FlxG.cameras.add(mmEstCam, false); // defaultDraw=false -> world not redrawn
+		mmEstBelowHud();
+	}
+	return mmEstCam;
+}
+
+function mmEstBelowHud() {
+	if (mmEstCam == null) return;
+	var list = (FlxG.cameras != null) ? FlxG.cameras.list : null;
+	if (list == null) return;
+	list.remove(mmEstCam); // no-op when it is not in the list yet
+	var at:Int = -1;
+	var i:Int = 0;
+	while (i < list.length) {
+		if (list[i] == camHUD) { at = i; break; }
+		i += 1;
+	}
+	if (at < 0) { list.push(mmEstCam); return; }
+	list.insert(at, mmEstCam);
+	mmSyncCameraOrder(list);
+}
+
+// A camera's place is two things, and only one of them is `FlxG.cameras.list`:
+// its own flashSprite is its render surface, and it is that sprite, in the
+// display list, that decides what composites over what. Psych never has to
+// think about it - it adds camEst (826-836) *before* camHUD, so both halves land
+// right from the start - but this layer is built later, while the song loads,
+// and `FlxG.cameras.add` drops a fresh camera's flashSprite on top of everything
+// already mounted. Editing the list by hand - which the engine's own docs call
+// out as unsupported ("Do not edit directly, use `add` and `remove`") - moves
+// the list half only, so a layer that reads as "under camHUD" still drew over
+// camHUD: So Cool's chat block over the score/misses, Thalassophobia's blackout
+// over the falling notes. So re-assert the order through the engine's own
+// `setOrder`, from the list this helper just built.
+function mmSyncCameraOrder(list) {
+	if (list == null || list.length == 0) return;
+	var order:Array<FlxCamera> = [];
+	for (c in list) order.push(c);
+	// Two arguments only: flixel 5's own `Destroy` defaults to false, and the
+	// two-parameter form is what every version of this method has taken.
+	FlxG.cameras.setOrder(order, null);
+}
+
+// A screen-space sprite on the camEst layer (see the header). It still has to
+// go into the draw list - that is what the state draws - but it is the camera
+// that decides where on screen it lands.
 function mmScreen(spr) {
 	spr.scrollFactor.set(0, 0);
+	spr.cameras = [mmEst()];
 	add(spr);
 	return spr;
 }
@@ -73,11 +145,18 @@ function onCountdown(event) {
 	event.cancelled = true;
 }
 
-// `hasDownScroll` (2210). PlayState.downscroll is a get/set property, so read it
-// defensively - the same idiom allfinal.hx/exesequel.hx/hatebg.hx use.
+// `hasDownScroll` (2210). `PlayState.downscroll` is a get/set property over
+// `camHUD.downscroll`; on cpp `Reflect.field` returns null for get/set
+// properties (only `Reflect.getProperty`, which is what a script's field access
+// compiles to, runs the getter), so read the property itself - and prefer the
+// HudCamera field it wraps, so an engine whose PlayState keeps the flag
+// somewhere else still works.
 function mmDownScroll():Bool {
-	if (PlayState.instance == null || Reflect.field(PlayState.instance, "downscroll") == null) return false;
-	return Reflect.field(PlayState.instance, "downscroll") == true;
+	var d = (camHUD != null) ? camHUD.downscroll : null;
+	if (d != null) return d == true;
+	if (PlayState.instance != null && PlayState.instance.downscroll != null)
+		return PlayState.instance.downscroll == true;
+	return false;
 }
 
 function postCreate() {
@@ -191,8 +270,9 @@ function onEvent(event) {
 // lines is its own FlxText here and carries the message's colour directly - the
 // same picture (one colour per line) with the source's own five colours.
 //
-// The block sits on `mmScreen`'s screen-space layer, which is camEst's slot:
-// above the world and the fighters, below camHUD.
+// The block sits on `mmScreen`'s screen-space layer, i.e. the port's camEst
+// camera (zoom 1), above the world and the fighters and below camHUD - the same
+// slot the source's `livechat.cameras = [camEst]` gives it.
 var mmChatLines = null;          // the 16 FlxText lines
 var mmChatArray = null;          // the 16 message strings
 var mmChatLineColors = null;     // each line's colour
@@ -220,11 +300,23 @@ function mmChatBuild() {
 	mmChatCount = 0;
 	mmChatTooLong = false;
 	mmChatLong = "";
-	// A single FlxText spaces its lines by the font's own leading; each line is
-	// its own text here, so measure one line once.
+	// A single FlxText spaces its lines by the font's own leading, and the chat
+	// box is sized for exactly that. Each line is its own text here, so the step
+	// has to be measured - and a lone text's `height` is not it: flixel sizes a
+	// text to `textHeight + the 4px bottom gutter + border * 2` (regenGraphic),
+	// so one line's height carries that padding, and using it as the step pushed
+	// every line past the box (the block ended up ~16 paddings too tall and
+	// clipped out of the chat pane, into the face cam below it). Two rows minus
+	// one cancels all of it and leaves the leading the source's single 16-line
+	// FlxText uses. The text is written explicitly before the read because flixel
+	// rebuilds the layout on the *read* of height/width and only a changed text
+	// marks it dirty - so setting one is what makes the format above land first.
 	var probe = new FlxText(0, 0, 0, "A", 16);
 	probe.setFormat(Paths.font("pixel.otf"), 16, FlxColor.WHITE, "left", FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-	mmChatLineH = probe.height;
+	probe.text = "AA";
+	var probeOne:Float = probe.height;
+	probe.text = "AA\nAA";
+	mmChatLineH = probe.height - probeOne;
 	probe.destroy();
 	if (mmChatLineH <= 0 || Math.isNaN(mmChatLineH)) mmChatLineH = 18;
 	mmChatLines = [];

@@ -90,7 +90,9 @@ function beatHit(curBeat:Int) {
 // the chart event itself, the source's own re-dispatches (cases 25 and 26), and
 // `data/events/ycbu text.hx`, which now delegates here.
 
+var mmBg:FunkinSprite;
 var mmBlackFront:FunkinSprite;
+var mmBlackBarThingie:FunkinSprite;
 var mmDuckBg:FunkinSprite;
 var mmScreenColor:FunkinSprite;
 var mmYcbuWhite:FunkinSprite;
@@ -126,12 +128,17 @@ function mmGfChar() { var c = mmMem(2); return (c != null) ? c : gf; }
 // Source beatHit():16068-16108 toggles the TV cast every beat by section.
 // Converted Camera Movement events carry the same mustHitSection information.
 function mmTurn(target) {
-	if (mmBlackFront == null || mmEstatica == null) return;
+	if (mmBlackFront == null || mmBlackBarThingie == null || mmEstatica == null) return;
 	var playerTurn = target == 1;
 	mmDadChar().visible = !playerTurn;
 	mmBfChar().visible = playerTurn;
 	starmanGF.visible = playerTurn;
-	mmBlackFront.alpha = playerTurn ? 0.3 : 0;
+	// 16077/16091: the wash is `blackBarThingie`, not `blackinfrontobowser`.
+	// The two are separate full-screen blacks in the source's create block
+	// (2560-2563 and 2599-2603) and only this one belongs to the section turns -
+	// writing the other one is what used to make every section boundary drop the
+	// case-19 blackout (0.85) back to 0.3 and lose the source's own wash.
+	mmBlackBarThingie.alpha = playerTurn ? 0.3 : 0;
 	if (playerTurn) {
 		mmBfChar().alpha = 1;
 		starmanGF.alpha = 1;
@@ -210,6 +217,28 @@ function mmEstBelowHud() {
 	}
 	list.insert(at, mmEstCam);
 	mmEstPlaced = true;
+	mmSyncCameraOrder(list);
+}
+
+// A camera's place is two things, and only one of them is `FlxG.cameras.list`:
+// its own flashSprite is its render surface, and it is that sprite, in the
+// display list, that decides what composites over what. Psych never has to
+// think about it - it adds camEst (826-836) *before* camHUD, so both halves land
+// right from the start - but this layer is built later, while the song loads,
+// and `FlxG.cameras.add` drops a fresh camera's flashSprite on top of everything
+// already mounted. Editing the list by hand - which the engine's own docs call
+// out as unsupported ("Do not edit directly, use `add` and `remove`") - moves
+// the list half only, so a layer that reads as "under camHUD" still drew over
+// camHUD: So Cool's chat block over the score/misses, Thalassophobia's blackout
+// over the falling notes. So re-assert the order through the engine's own
+// `setOrder`, from the list this helper just built.
+function mmSyncCameraOrder(list) {
+	if (list == null || list.length == 0) return;
+	var order:Array<FlxCamera> = [];
+	for (c in list) order.push(c);
+	// Two arguments only: flixel 5's own `Destroy` defaults to false, and the
+	// two-parameter form is what every version of this method has taken.
+	FlxG.cameras.setOrder(order, null);
 }
 
 // One row per head. The copies are sized for a step three quarters of the
@@ -484,6 +513,13 @@ function postCreate() {
 	ycbuGyromite.visible = false;
 	ycbuLakitu.visible = false;
 	clownCar.visible = false;
+	// 2727-2734: the ycbu Bowser asset is *created* here but never added - the
+	// source only brings him in at 12490 (case 7/1), which is why he must not be
+	// in the draw list at load. He is the one sprite the hidden-at-load pass
+	// missed (his first mention there is that insert), so he stood in the middle
+	// of the stage for the whole first act. The XML node carries the matching
+	// `visible="false"` + property pair.
+	funnylayer0.visible = false;
 
 	// 2605-2611: the beat text, behind everything the source adds after it
 	// (including the characters). mariones at 130, scaled 1.5x vertically, its own
@@ -503,24 +539,65 @@ function postCreate() {
 	cutskyline.screenCenter();
 	cutstatic.screenCenter();
 
-	// generated sprites (the source creates these with makeGraphic/loadGraphic,
-	// so they were never part of the extracted stage XML)
-	mmBlackFront = new FunkinSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-	mmBlackFront.scale.set(10, 10);
-	mmBlackFront.alpha = 1;
-	add(mmBlackFront);
+	// Generated sprites: the source creates these with makeGraphic/loadGraphic, so
+	// they were never part of the extracted stage XML. Their *placement* is the
+	// source's too, and that is not the same thing as appending them. The whole
+	// stage pass runs before the three character layers are added
+	// (PlayState.hx:4300-4341), so every one of these draws behind the cast - and
+	// the three that the source adds early in that pass (mmBg, mmDuckBg,
+	// mmBlackFront) sit between the stage's own plates as well. A script's `add`
+	// appends, and by postCreate the cast is already in the list, which is what
+	// mmPlaceBehind below undoes for each of them.
+	//
+	// 2496-2500: the base background - `bars` at 3x, screen-centered, scroll-locked
+	// at 0/0 and added first of all, so the duck sky and every bowser plate draw
+	// over it. It is also the sprite 2772-2776 hangs the creepy drift and rotation
+	// on (see mmBgCreep), which is most of what this stage looks like.
+	mmBg = new FunkinSprite(0, 0);
+	mmBg.loadGraphic(Paths.image('bars'));
+	mmBg.scale.set(3, 3);
+	mmBg.screenCenter();
+	mmBg.scrollFactor.set(0, 0);
+	insert(0, mmBg);
+	mmBgCreep();
+	new FlxTimer().start(21.5, function(tmr:FlxTimer) { mmBgCreep(); }, 0);
 
+	// 2502-2506: the duck hunt's flat sky, over `bars` and under the tree, the
+	// bush and the grass (2508-2528) - and therefore under the cast too. Appended,
+	// its case-2 alpha 1 covered the entire stage: this is the sprite that made the
+	// duck-hunt act one solid blue screen.
 	mmDuckBg = new FunkinSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
 	mmDuckBg.scale.set(10, 10);
 	mmDuckBg.alpha = 0;
 	mmDuckBg.color = 0xFF5595DA;
-	add(mmDuckBg);
+	mmPlaceBehind(mmDuckBg, ducktree);
 
+	// 2560-2563: `blackinfrontobowser` - the black the song opens on at alpha 1
+	// (case -1 walks it to 0.3 over ten seconds, case 0.5 drops it to 0), and the
+	// one cases 14/15/19/20 tween. The source adds it after the bowser plates and
+	// *before* the cutscene statics, so the statics and the cast draw over it -
+	// appended here it darkened the cast as well.
+	mmBlackFront = new FunkinSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+	mmBlackFront.scale.set(10, 10);
+	mmBlackFront.alpha = 1;
+	mmPlaceBehind(mmBlackFront, cutbg);
+
+	// 2593-2597: the red flash of cases 12/13, scroll-locked and, in the source,
+	// after the cutscene statics.
 	mmScreenColor = new FunkinSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.RED);
 	mmScreenColor.scale.set(10, 10);
 	mmScreenColor.alpha = 0;
 	mmScreenColor.scrollFactor.set(0, 0);
-	add(mmScreenColor);
+	mmPlaceBehind(mmScreenColor, mmBeatText);
+
+	// 2599-2603: `blackBarThingie`, the second full-screen black - invisible at
+	// load, and the one mmTurn's section turns drive. It sits directly in front of
+	// `screencolor` and behind `beatText`.
+	mmBlackBarThingie = new FunkinSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+	mmBlackBarThingie.scale.set(10, 10);
+	mmBlackBarThingie.alpha = 0;
+	mmBlackBarThingie.scrollFactor.set(0, 0);
+	mmPlaceBehind(mmBlackBarThingie, mmBeatText);
 
 	mmYcbuWhite = new FunkinSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
 	mmYcbuWhite.scale.set(10, 10);
@@ -658,6 +735,18 @@ function mmInsertBehindChars(spr) {
 	if (idx < 0) add(spr) else insert(idx, spr);
 }
 
+// Puts `spr` where the source's stage pass put it: directly behind `anchor` in
+// the state's draw list (`insert` at the anchor's own index, which shifts the
+// anchor up). A missing anchor - a mocked state, or a stage XML without that
+// node - falls back to the back of the list, which is where these particular
+// sprites belong anyway (`insert(0, x)` is the one bare index the draw-slot lint
+// allows, because the front is the one place that is not an anchored position).
+function mmPlaceBehind(spr, anchor) {
+	var at:Int = (anchor != null) ? members.indexOf(anchor) : -1;
+	if (at < 0) insert(0, spr);
+	else insert(at, spr);
+}
+
 // Every `remove(x); insert(members.indexOf(anchor) + off, x)` in the source's
 // Unbeatable block means 'move x next to the anchor': off = 1 puts it directly
 // in front of the anchor, off = -1 directly behind it. Neither half does that on
@@ -757,12 +846,17 @@ function mmBeat():Float {
 	return 1 / (Conductor.bpm / 60);
 }
 
-// `hasDownScroll` (PlayState.hx:742). PlayState.downscroll is a get/set
-// property, so read it defensively - the same idiom allfinal.hx, exesequel.hx
-// and hatebg.hx use.
+// `hasDownScroll` (PlayState.hx:742). `PlayState.downscroll` is a get/set
+// property over `camHUD.downscroll`; on cpp `Reflect.field` returns null for
+// get/set properties (only `Reflect.getProperty`, which is what a script's
+// field access compiles to, runs the getter), so read the property itself -
+// the same idiom allfinal.hx, exesequel.hx and hatebg.hx use.
 function mmDownScroll():Bool {
-	if (PlayState.instance == null || Reflect.field(PlayState.instance, "downscroll") == null) return false;
-	return Reflect.field(PlayState.instance, "downscroll") == true;
+	var d = (camHUD != null) ? camHUD.downscroll : null;
+	if (d != null) return d == true;
+	if (PlayState.instance != null && PlayState.instance.downscroll != null)
+		return PlayState.instance.downscroll == true;
+	return false;
 }
 
 function mmCenterX(spr) {
@@ -871,7 +965,11 @@ function mmUnbeatable(value1, value2) {
 		case 3:
 			var icp1 = mmGetIcon(false);
 			if (icp1 != null) {
-				var whiteSquare = new FunkinSprite().makeGraphic(50, 50, FlxColor.WHITE);
+				// 12332: the flash square is half the *live* icon (12332's
+				// `Std.int(iconP1.width / 2)` / `height / 2`), not a fixed 50px box -
+				// this used to be a placeholder size, which drew a visibly smaller
+				// flash behind a 150px icon.
+				var whiteSquare = new FunkinSprite().makeGraphic(Std.int(icp1.width / 2), Std.int(icp1.height / 2), FlxColor.WHITE);
 				whiteSquare.camera = camHUD;
 				whiteSquare.setPosition(icp1.x + 60, icp1.y + 30);
 				add(whiteSquare);
@@ -1434,7 +1532,48 @@ function mmUnbeatable(value1, value2) {
 	}
 }
 
-function mmZoom(amount:Float) { defaultCamZoom += amount; }
+// `lofiTweensToBeCreepyTo` (5907-5950) - the background's slow, deliberately
+// wrong-feeling drift and rotation, which is most of what this stage looks like.
+// Eight tweens, each starting where the last one ended, all measured from the x
+// the sprite had when the chain began; the last lands back on it, which is what
+// lets the source simply restart the whole chain on its own 21.5s timer
+// (2775-2776) without ever walking the background off the screen. The source
+// passes no ease on any of them, so these keep flixel's own linear default.
+// Step layout: [1, moveX, angle, seconds] = move x and angle, [0, -, angle,
+// seconds] = angle alone (the source's `{angle: 20}` / `{angle: 10}` steps).
+var mmBgSteps = [[1, 420, -35, 4.0], [0, 0, 20, 2.0], [1, 400, 30, 2.0], [1, 420, 0, 2.0],
+	[1, 520, -15, 3.0], [0, 0, 10, 1.5], [1, -50, -40, 5.5], [1, 0, 0, 1.5]];
+
+function mmBgCreep() {
+	if (mmBg == null) return;
+	mmBgStep(0, mmBg.x);
+}
+
+function mmBgStep(i:Int, base:Float) {
+	if (mmBg == null || i >= mmBgSteps.length) return;
+	var step = mmBgSteps[i];
+	if (step[0] == 1)
+		FlxTween.tween(mmBg, {x: base + step[1], angle: step[2]}, step[3],
+			{onComplete: function(twn:FlxTween) { mmBgStep(i + 1, base); }});
+	else
+		FlxTween.tween(mmBg, {angle: step[2]}, step[3],
+			{onComplete: function(twn:FlxTween) { mmBgStep(i + 1, base); }});
+}
+
+// 9164-9176, the fork's 'Add Camera Zoom': value1 bumps `FlxG.camera` (camGame)
+// and value2 camHUD, an empty value2 defaulting to 0.03. Both are *transient* -
+// Psych and CnE lerp each camera's zoom back towards its resting value every
+// frame, and that decay is what makes a hit read as a punch. This used to write
+// `defaultCamZoom` instead (the only place in the mod that did): the punch never
+// landed, and every case-3 hit and every case-32 podoboo ratcheted the camera's
+// *resting* zoom further in, for good. The two call sites below both leave value2
+// empty, exactly like the source's own re-dispatch, and the chart's Add Camera
+// Zooms are already two events, one per camera.
+function mmZoom(amount:Float, ?hudAmount:Float) {
+	if (camGame != null) camGame.zoom += amount;
+	var hud:Float = (hudAmount != null && !Math.isNaN(hudAmount)) ? hudAmount : 0.03;
+	if (camHUD != null) camHUD.zoom += hud;
+}
 
 function mmShake(duration:Float, intensity:Float, ?hudIntensity:Float) {
 	if (camGame != null) camGame.shake(intensity, duration);

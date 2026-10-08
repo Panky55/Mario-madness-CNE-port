@@ -83,6 +83,9 @@ function mmGetEst():FlxCamera {
 // would put this layer *above* camHUD - over the notes and the HUD - so it is
 // slid back into camHUD's own index here (the fleet-wide convention: piracy,
 // forest, nesbeat, meatworld, exeport all place their camEst the same way).
+// (The list is only half of a camera's place: its own flashSprite in the
+// display list is the surface that composites, and `add` leaves a fresh one on
+// top of camHUD - which is what `mmSyncCameraOrder` below re-asserts.)
 function mmEstBelowHud() {
 	if (mmEst == null || mmEstPlaced) return;
 	var list = mmCamList();
@@ -101,6 +104,28 @@ function mmEstBelowHud() {
 	}
 	list.insert(at, mmEst);
 	mmEstPlaced = true;
+	mmSyncCameraOrder(list);
+}
+
+// A camera's place is two things, and only one of them is `FlxG.cameras.list`:
+// its own flashSprite is its render surface, and it is that sprite, in the
+// display list, that decides what composites over what. Psych never has to
+// think about it - it adds camEst (826-836) *before* camHUD, so both halves land
+// right from the start - but this layer is built later, while the song loads,
+// and `FlxG.cameras.add` drops a fresh camera's flashSprite on top of everything
+// already mounted. Editing the list by hand - which the engine's own docs call
+// out as unsupported ("Do not edit directly, use `add` and `remove`") - moves
+// the list half only, so a layer that reads as "under camHUD" still drew over
+// camHUD: So Cool's chat block over the score/misses, Thalassophobia's blackout
+// over the falling notes. So re-assert the order through the engine's own
+// `setOrder`, from the list this helper just built.
+function mmSyncCameraOrder(list) {
+	if (list == null || list.length == 0) return;
+	var order:Array<FlxCamera> = [];
+	for (c in list) order.push(c);
+	// Two arguments only: flixel 5's own `Destroy` defaults to false, and the
+	// two-parameter form is what every version of this method has taken.
+	FlxG.cameras.setOrder(order, null);
 }
 
 // A screen-locked overlay. `scrollFactor.set()` + a camera that never scrolls is
