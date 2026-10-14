@@ -146,10 +146,12 @@ function mmOverlay(spr) {
 // `videos/luigifuckingdies.mp4` at beat 228, fades to alpha 0.6 over 2s and back
 // to 0 over 2.2s at beat 248.
 //
-// The player is hxvlc's `hxvlc.flixel.FlxVideoSprite`, fetched with
-// `Type.resolveClass` because HScript's scope does not import hxvlc (the class
-// is in the engine), and every call goes through `Reflect` inside try/catch: an
-// engine without the class or without libvlc traces one line and keeps playing.
+// The player is hxvlc's `hxvlc.flixel.FlxVideoSprite`, reached with an `import`
+// and built with `new FlxVideoSprite()` - hscript's `new` only takes a name that
+// is already in the script's scope (a dotted class path throws "Unknown
+// variable" before Type.resolveClass is ever consulted, and a script's scope has
+// no `Type` to resolve one by hand) - and driven under try/catch: an engine
+// without the class or without libvlc traces one line and keeps playing.
 // The source's `blend = MULTIPLY` (5832) is not applied - a video texture's
 // blend mode is a FlixelBlendMode write this port cannot make from a script -
 // so the clip shows normally instead of multiplied with the game behind it.
@@ -167,24 +169,17 @@ function mmGetOther():FlxCamera {
 var mmDying = null;
 var mmDyingTried:Bool = false;
 
-function mmCall(obj, name:String, args:Array<Dynamic>):Bool {
-	if (obj == null) return false;
-	var fn = Reflect.field(obj, name);
-	if (fn == null) return false;
-	Reflect.callMethod(obj, fn, args);
-	return true;
-}
-
 function mmDyingVideo() {
 	if (mmDyingTried) return mmDying;
 	mmDyingTried = true;
 	try {
-		var cls = Type.resolveClass("hxvlc.flixel.FlxVideoSprite");
-		if (cls == null) {
-			trace("[MM wetworld] beat 228: hxvlc.flixel.FlxVideoSprite is not script-reachable - the death video is skipped");
-			return null;
-		}
-		mmDying = Type.createInstance(cls, []);
+		// `import` binds the class under its short name, which is the only shape
+		// hscript's `new` accepts (a dotted class path throws "Unknown variable"
+		// out of `cnew` before Type.resolveClass is consulted, and a script's scope
+		// has no `Type` to resolve one by hand). It stays inside the try so a build
+		// without hxvlc skips the death video rather than the whole stage script.
+		import hxvlc.flixel.FlxVideoSprite;
+		mmDying = new FlxVideoSprite();
 		if (mmDying == null) return null;
 		mmDying.setPosition(300, 100);
 		mmDying.scale.set(2, 2);
@@ -209,16 +204,20 @@ function beatHit() {
 			if (v == null) return;
 			// Load first: a sprite with nothing loaded stays hidden rather than
 			// sitting over the screen as an empty black plate.
+			// The sprite is built with `new` (see mmDyingVideo), so `load`/`play`
+			// are plain member accesses - `Reflect.field` answers null for class
+			// *methods* on cpp, so the old Reflect pair would have skipped the
+			// video even with a working player.
 			var ok:Bool = false;
 			try {
-				ok = Reflect.callMethod(v, Reflect.field(v, "load"), [Paths.video("luigifuckingdies")]) == true;
+				ok = v.load(Paths.video("luigifuckingdies")) == true;
 			} catch (e:Dynamic) { ok = false; }
 			if (!ok) {
 				trace("[MM wetworld] beat 228: the death video did not load ('luigifuckingdies.mp4')");
 				return;
 			}
 			v.visible = true;
-			mmCall(v, "play", []);
+			try { v.play(); } catch (e2:Dynamic) { return; }
 			FlxTween.tween(v, {alpha: 0.6}, 2, {ease: FlxEase.quadInOut});
 		case 248:
 			if (mmDying != null) FlxTween.tween(mmDying, {alpha: 0}, 2.2, {ease: FlxEase.quadInOut});

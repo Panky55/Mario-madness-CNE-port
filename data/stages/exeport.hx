@@ -95,8 +95,8 @@
 //     driven through hxvlc's FlxVideoSprite, which the engine bundles (its
 //     `load`/`play`/`stop` and `onEndReached`/`finishCallback` all appear in the
 //     binary and libvlc is linked). No script in this mod or in the engine has
-//     ever driven one, so every call is made through Reflect and wrapped in
-//     try/catch - see the video section below. The source's pause/resume of the
+//     ever driven one, so the sprite is built and driven under try/catch - see
+//     the video section below. The source's pause/resume of the
 //     bitmap (7124/7583) is not reproduced: a paused game does not tick the
 //     video either way.
 //   * `PauseSubState.muymalo = 2` (case 5) and `FlxG.game.blendMode =
@@ -421,30 +421,24 @@ function mmFlash(colour:Int, dur:Float) {
 // ---------------------------------------------------------------------------
 // Psych's `VideoSprite` is hxcodec; Codename links hxvlc, whose sprite is
 // `hxvlc.flixel.FlxVideoSprite` (FlxSprite subclass, `load(path)` -> Bool then
-// `play()`). It is fetched with Type.resolveClass rather than constructed
-// directly because HScript's global scope does not import hxvlc - the class is
-// reachable only because it is compiled into the engine.
+// `play()`, its callbacks living on `bitmap`'s signals). A script reaches it
+// through an `import`: hscript's `new` only accepts a name that is already in
+// the script's scope (a dotted class path throws "Unknown variable" before
+// Type.resolveClass is ever consulted), and the scope has no `Type` to resolve
+// one by hand - see the note in mmMidsongVideo.
 //
-// Everything here is best-effort and silent on failure: if the class is not
-// resolvable, if libvlc is missing, or if this hxvlc revision names things
-// differently, the trigger logs one line and the song plays on without the
-// video (which is exactly what the port did before this was attempted).
+// Everything here is best-effort and silent on failure: if libvlc is missing or
+// if this hxvlc revision names things differently, the trigger logs one line
+// and the song plays on without the video.
 //
 // The clip is 1.5s long, and the source's `finishCallback` hides the sprite and
-// red-flashes the screen at the end. Both known end signals (`onEndReached` and
-// `finishCallback`) are set, and a fallback timer one second past the clip's
-// length guarantees the overlay never outlives it even if neither fires.
+// red-flashes the screen at the end. That is wired to hxvlc's own end signal
+// (`bitmap.onEndReached` - `finishCallback` is Psych's field, not this class's),
+// and a fallback timer one second past the clip's length guarantees the overlay
+// never outlives it even if the signal never fires.
 var mmVid = null;
 var mmVidTried:Bool = false;
 var mmVidFinished:Bool = false;
-
-function mmCall(obj, name:String, args:Array<Dynamic>):Bool {
-	if (obj == null) return false;
-	var fn = Reflect.field(obj, name);
-	if (fn == null) return false;
-	Reflect.callMethod(obj, fn, args);
-	return true;
-}
 
 // The source's `finishCallback`: hide the sprite, then `FlxG.camera.flash(RED, 1)`
 // (through the port's own fill-based flash, like every other flash on this
@@ -461,24 +455,21 @@ function mmMidsongVideo() {
 	if (mmVidTried) return mmVid;
 	mmVidTried = true;
 	try {
-		var cls = Type.resolveClass("hxvlc.flixel.FlxVideoSprite");
-		if (cls == null) {
-			trace("[MM exeport] case 7: hxvlc.flixel.FlxVideoSprite is not script-reachable - the mid-song video is skipped");
-			return null;
-		}
-		mmVid = Type.createInstance(cls, []);
+		// `import` then a short `new` is the only shape hscript accepts: `cnew`
+		// resolves the name out of the script's own scope first and throws
+		// "Unknown variable" for a dotted class path, and a script's scope has no
+		// `Type` to resolve one by hand (v1.0.1's defaults are
+		// Std/Math/Reflect/StringTools/Json plus the engine's own list). The
+		// import binds the class under its short name; it sits inside the try so
+		// a build without hxvlc skips the clip rather than the whole script.
+		import hxvlc.flixel.FlxVideoSprite;
+		mmVid = new FlxVideoSprite();
 		if (mmVid == null) return null;
 		mmVid.scrollFactor.set(0, 0);
 		mmVid.cameras = [camHUD];
 		mmVid.visible = false;
 		add(mmVid);
-		// Both spellings of the end callback, each guarded: `Reflect.setField` on a
-		// field the class does not have throws on cpp, and that would land in the
-		// catch below and throw away a perfectly good sprite.
-		if (Reflect.field(mmVid, "onEndReached") != null)
-			Reflect.setField(mmVid, "onEndReached", function() { mmVidDone(); });
-		if (Reflect.field(mmVid, "finishCallback") != null)
-			Reflect.setField(mmVid, "finishCallback", function() { mmVidDone(); });
+		mmVidOnEnd(mmVid);
 	} catch (e:Dynamic) {
 		trace("[MM exeport] case 7: the video sprite could not be built - " + Std.string(e));
 		mmVid = null;
@@ -486,20 +477,33 @@ function mmMidsongVideo() {
 	return mmVid;
 }
 
+// hxvlc's end-of-video callback is a signal on the sprite's own `bitmap`
+// (`video.bitmap.onEndReached.add(fn)` - the line the engine's own VideoCutscene
+// uses); `finishCallback` is Psych's own VideoSprite field and is not on this
+// class at all, so the old guarded `Reflect.setField` pair silently did nothing
+// and the clip only ended on the timer below. Written as a plain member access:
+// hscript's `get` reaches the property and the signal's `add` through
+// Reflect.getProperty, where the old `Reflect.field` lookups answered null on
+// cpp and never wired anything up.
+function mmVidOnEnd(vid) {
+	if (vid == null) return;
+	try {
+		vid.bitmap.onEndReached.add(function() { mmVidDone(); });
+	} catch (e:Dynamic) {}
+}
+
 function mmPlayMidsongVideo() {
 	var vid = mmMidsongVideo();
 	if (vid == null) return;
-	if (Reflect.field(vid, "load") == null) {
-		trace("[MM exeport] case 7: the video sprite has no load() - the mid-song video is skipped");
-		mmVidDone();
-		return;
-	}
 	var loaded:Bool = false;
 	try {
 		// The source asks for `Paths.video('powerdownscene')` while the file is
-		// videos/Powerdownscene.mp4 - a Windows-only case bug (audit_port.py's
-		// check 2 reports it too). The port asks for the name that exists.
-		loaded = Reflect.callMethod(vid, Reflect.field(vid, "load"), [Paths.video("Powerdownscene")]) == true;
+		// videos/Powerdownscene.mp4 - a Windows-only case bug. The port asks for
+		// the name that exists. The sprite is built with `new`, so `load` and
+		// `play` are plain member accesses - the old `Reflect.field` guard
+		// answered null for class *methods* on cpp and would have skipped the
+		// video even with a perfectly good sprite.
+		loaded = vid.load(Paths.video("Powerdownscene")) == true;
 	} catch (e:Dynamic) {
 		loaded = false;
 	}
@@ -511,7 +515,12 @@ function mmPlayMidsongVideo() {
 	}
 	mmVidFinished = false;
 	vid.visible = true;
-	mmCall(vid, "play", []);
+	try {
+		vid.play();
+	} catch (e:Dynamic) {
+		mmVidDone();
+		return;
+	}
 	try {
 		new FlxTimer().start(2.5, function(tmr) { mmVidDone(); });
 	} catch (e2:Dynamic) {}

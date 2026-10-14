@@ -248,8 +248,13 @@ function mmChangeChar(index:Int, name:String) {
 // spacing (defaults to the graphic's width) and a `velocity`; the class itself is
 // not safe to instantiate from HScript, so each backdrop becomes a handful of
 // copies at `i * spacing`, travelling at the source's velocity and wrapped every
-// `spacing` px. That is exactly what FlxBackdrop draws (the same graphic tiled at
-// `spacing`, offset by the accumulated velocity), minus the tile count.
+// `spacing` px. That is what FlxBackdrop draws (the same graphic tiled at
+// `spacing`, offset by the accumulated velocity) - but only ever in the window
+// the camera can see: it lays its tiles out *against the view* every draw
+// (`drawComplex`: `left = modMin(bounds.right, tile, viewMargins.left) -
+// bounds.width`, `tilesX = round((right - left) / tileSize.x)`), so it covers the
+// screen wherever the camera sits. The copies below do the same, on the view
+// rather than on a fixed window from world x 0 - see update().
 //
 // The direction is Flixel's, not an assumption: `FlxBackdrop.velocity` is plain
 // `FlxObject.velocity`, so the sprite's own x/y is what moves, and the tiling is
@@ -258,8 +263,8 @@ function mmChangeChar(index:Int, name:String) {
 // rebuilt (the copies travelled against the velocity), which no static check can
 // see; the source's velocities here are all positive, so all seven were drifting
 // the wrong way.
-// `tile` is the wrap distance; `width` is only used to know how many copies are
-// needed to cover the world window.
+// `tile` is the repeat pitch - the wrap distance *and* how far apart the copies
+// sit; the art's width only sets the pitch, it never places anything.
 var mmBackdrops = [];
 
 // The last sprite of a group, or `fallback` when the group never got built - so
@@ -277,14 +282,34 @@ function mmBackdrop(img:String, y:Float, sfX:Float, sfY:Float, speed:Float, tile
 		trace("[demiseport] backdrop missing -> " + path);
 		return null;
 	}
-	if (tile <= 0) tile = 2600;
-	var n:Int = Std.int(Math.ceil(2600 / tile)) + 1;
-	if (n < 2) n = 2;
+	// `FlxBackdrop`'s third argument is the *gap* between tiles, and the pitch it
+	// draws at is the graphic's own width plus that gap (`tileSize =
+	// frame.frame.width; tileSize.add(spacing)` - flixel-addons 2.12.1, 3.0.0,
+	// 3.3.2, 4.0.0 and 4.0.1 all read it that way, and they are the whole range
+	// of versions whose `FlxBackdrop(graphic, axes, spacing)` signature matches
+	// the source's calls). A spacing of 0 therefore means "tile at the graphic's
+	// own width". The 2600px placeholder this stand-in used was wrong for every
+	// layer - it overlapped the 2893/4642/5128/4304-wide art and wrapped it
+	// hundreds of pixels early - and the three explicit spacings (800, 6000,
+	// 4000) are gaps to add to those widths, not pitches to draw at.
 	var sprs = [];
+	var first = new FunkinSprite(0, y);
+	first.loadGraphic(path);
+	var pitch:Float = first.width + ((tile > 0) ? tile : 0);
+	if (pitch <= 0) pitch = 1;
+	// How many copies: the row is re-anchored on the camera's view every frame
+	// (see update()), so it has to be at least as long as the widest view the song
+	// reaches - `FlxG.width / zoom` - plus the slack the class keeps for itself
+	// (one tile at each end, the `- bounds.width` / `+ origTileSizeX` above). This
+	// stage's own zoom-out is 0.4 (MMcamera's case 3/5 and the chart's own 'Set
+	// Cam Zoom'); the floor is taken at 0.25 so a lower one still lands inside the
+	// row rather than past its end.
+	var n:Int = Std.int(Math.ceil((FlxG.width / 0.25) / pitch)) + 3;
+	if (n < 3) n = 3;
 	var anchor = after;
 	for (i in 0...n) {
-		var s = new FunkinSprite(i * tile, y);
-		s.loadGraphic(path);
+		var s = (i == 0) ? first : new FunkinSprite(i * pitch, y);
+		if (i > 0) s.loadGraphic(path);
 		s.scrollFactor.set(sfX, sfY);
 		s.updateHitbox();
 		s.visible = visible;
@@ -293,7 +318,7 @@ function mmBackdrop(img:String, y:Float, sfX:Float, sfY:Float, speed:Float, tile
 		sprs.push(s);
 		anchor = s;
 	}
-	var g = {sprs: sprs, tile: tile, v: speed, t: 0.0};
+	var g = {sprs: sprs, tile: pitch, v: speed, t: 0.0, sf: sfX};
 	mmBackdrops.push(g);
 	return g;
 }
@@ -311,6 +336,31 @@ function mmBackdropFade(g, a:Float, t:Float, ease) {
 	}
 }
 
+// The world x the middle of the screen sits at *for this row*.
+//
+// The conversion is the one meatworld.hx's `mmHallViewCentre` documents, and it
+// is Flixel's own: `FlxPointer.getScreenPosition` turns a screen pixel back into
+// the world with `screen / camera.zoom + camera.scroll.x`, so a sprite with
+// scroll factor `sf` draws at `(x - camera.scroll.x * sf) * camera.zoom`. The
+// world x at the screen's left edge is therefore `camera.scroll.x * sf`, and the
+// screen's middle is half a view - `camera.width / 2 / camera.zoom` - past it.
+//
+// A camera whose `scroll` cannot be read (or whose zoom is missing, 0 or NaN)
+// returns null, and the row keeps the old fixed window rather than being parked
+// at a non-finite x.
+function mmBackdropViewCentre(g):Dynamic {
+	if (g == null || g.sprs.length < 1) return null;
+	if (camGame == null) return null;
+	var z:Float = camGame.zoom;
+	if (!(z > 0)) z = 1; // missing, 0 or NaN all mean "no zoom"
+	var scrub = Reflect.field(camGame, "scroll");
+	var sx = (scrub != null) ? Reflect.field(scrub, "x") : null;
+	if (sx == null) return null;
+	var vc:Float = sx * g.sf + camGame.width * 0.5 / z;
+	if (vc != vc) return null; // NaN: leave the row on the fixed window
+	return vc;
+}
+
 function update(elapsed:Float) {
 	for (b in mmBackdrops) {
 		if (b.v == 0) continue;
@@ -320,8 +370,32 @@ function update(elapsed:Float) {
 		b.t += b.v * elapsed;
 		while (b.t <= -b.tile) b.t += b.tile;
 		while (b.t > 0) b.t -= b.tile;
+		// Re-anchor the row on what the camera can see, which is what the source's
+		// FlxBackdrop does by construction (it draws the tiles the view needs - see
+		// the note at the top of this block). A row fixed from world x 0 rightwards
+		// is *not* where this stage's camera is: the fight sits at x 0 (BF) and 1900
+		// (dad) - the two XML nodes - while the rows carry 0.3/0.5/0.9 scroll
+		// factors, so a row's own view starts at `camGame.scroll.x * sf`, left of
+		// x 0 for most of the song: at the chart's own wide shot (a 380 follow row
+		// at the 0.4 zoom - `380 - 640 / 0.4` = -1220) that is 366px on the two 0.3
+		// rows and about 1098px on the 0.9 ones, i.e. a bare strip down the left of
+		// the screen. The row's own drift then walked that strip across the screen
+		// and snapped it back a whole tile on every wrap - 29s apart on `dembg`
+		// (2893/100) and 51s on the 5128px mountains - which is what reads as the
+		// art "spawning in". Moving a row by whole tiles is invisible (the art
+		// repeats with `tile`), so the phase `t`, and with it the slide, is
+		// preserved exactly; the row is centred on the view rather than
+		// left-anchored so a frame's own transparent lead-in cannot bare an edge
+		// either.
+		var vc = mmBackdropViewCentre(b);
 		var i:Int = 0;
-		for (s in b.sprs) { s.x = i * b.tile + b.t; i += 1; }
+		if (vc == null) {
+			for (s in b.sprs) { s.x = i * b.tile + b.t; i += 1; }
+		} else {
+			var rowLen:Float = b.sprs.length * b.tile;
+			var start:Float = b.t + Math.floor((vc - rowLen * 0.5 - b.t) / b.tile) * b.tile;
+			for (s in b.sprs) { s.x = start + i * b.tile; i += 1; }
+		}
 	}
 }
 
@@ -378,6 +452,178 @@ function mmGetDemiseTran() {
 		mmOverlay(mmDemiseTran);
 	}
 	return mmDemiseTran;
+}
+
+// ---------------------------------------------------------------------------
+// The opening cutscene video (5805-5808)
+// ---------------------------------------------------------------------------
+// `startVideo('demise_cutscene')` runs before the countdown on the warp
+// version, once per session (`seenCutscene` - the engine's own static, shared
+// here so a cutscene seen anywhere counts), and Demise is the one song ENTER
+// cannot skip (7595), so there is no skip path. Only the modern song: the
+// fork's switch matches `demise`, not `demise-old` - the same displayName gate
+// the other old-song stages use.
+//
+// It is an *overlay on a running song*, not a pre-roll. `startVideo` schedules
+// `startCountdown()` 0.32s into the clip (6193-6196), and this stage's own
+// branch of that countdown runs with `noCount` (3041) and
+// `Conductor.songPosition = 0` (6432-6435 - the one song that skips the
+// `-= crochet * 5` under it), so the inst starts *under* the clip - the port
+// starts it on the postCreate frame, the fork one crochet later thanks to that
+// 0.32s timer - and the end callback has nothing left to do but take the clip
+// down:
+// `remove(cutVid)` plus a red `camHUD.flash` (6188-6192). Holding the engine's
+// start flow instead (`inCutscene` until the clip ended - v1.0.1's update
+// returns at PlayState.hx:1353 while it is set, freezing `Conductor.songPosition`
+// so `startSong` waits) started the song from zero the moment the clip
+// finished, instead of continuing the song under it. The chart's own first
+// notes are at 15.16s (dad's, behind the clip) and the first player note at
+// 20.21s - four seconds after the clip's last frame.
+//
+// The file is `videos/demise_cutscene.mp4` (16.04s, 1280x720) - **video only**,
+// which is the name `startVideo('demise_cutscene')` resolves to. The
+// `demise_cutscene_SOUND.mp4` variant carries its own aac track and does *not*
+// belong here: the fork lists it only in `StoryMenuState.cutscenes`
+// (StoryMenuState.hx:62), the warp **menu** previews, where no song is playing
+// and the clip has to bring its own audio. In song the audio is the song's own -
+// `noCount` + `songPosition = 0` starts the inst and the vocals on the clip's
+// first frame - so playing the SOUND variant here doubled the intro (one
+// version off the clip, one off the inst), which is the reported "two
+// versionings playing together". The player is hxvlc's FlxVideoSprite (the
+// engine bundles it; the same class the mid-song videos in
+// exeport.hx/wetworld.hx use, both of which load the source's own name -
+// exeport's `Powerdownscene.mp4` is video-only for the same reason).
+var mmIntroVid = null;
+var mmIntroDone:Bool = false;
+
+// camOther's slot: a camera of this script's own, appended after camHUD (the
+// wetworld shape) - the clip has to cover the HUD, not slide under it like camEst.
+var mmOtherCam:FlxCamera = null;
+function mmGetOther():FlxCamera {
+	if (mmOtherCam == null) {
+		mmOtherCam = new FlxCamera(0, 0, FlxG.width, FlxG.height);
+		mmOtherCam.bgColor = FlxColor.TRANSPARENT;
+		mmOtherCam.zoom = 1;
+		FlxG.cameras.add(mmOtherCam, false); // appended after camHUD = Psych's camOther
+	}
+	return mmOtherCam;
+}
+
+// A stage script has no `meta` global - the song's is `PlayState.SONG.meta`, the
+// same read exeport.hx/hatebg.hx/meatworld.hx make. (Reading a bare `meta`
+// threw "Unknown variable: meta" on cpp and aborted the rest of
+// mmPlayIntroVideo, which is why the video never started.)
+function mmSongName():String {
+	if (PlayState.SONG == null || PlayState.SONG.meta == null) return "";
+	var n = PlayState.SONG.meta.displayName;
+	return (n == null) ? "" : StringTools.trim(Std.string(n));
+}
+
+function mmPlayIntroVideo() {
+	// The fork's zero lead-in (6432-6435) in Codename's terms: `startCountdown`
+	// arms `introLength` crochets of it (v1.0.1 PlayState.hx:984-990), and the
+	// script-reachable way to make that zero is to write the field and call
+	// `startCountdown()` again - the second call skips its own cancellable
+	// `onStartCountdown` (`_startCountdownCalled`, 973-979) and re-arms
+	// `Conductor.songPosition` from the field, which is the same re-issue
+	// hatebg.hx and exeport.hx use to move a song start. The `startingSong`
+	// guard matters: once `startSong()` has run, re-issuing would rewind
+	// `Conductor.songPosition` to the lead-in again. Demise Old keeps the
+	// engine's lead-in, exactly as the fork's `!= 'demise'` does.
+	if (mmSongName() != "Demise Old" && PlayState.instance != null && PlayState.instance.startingSong) {
+		PlayState.instance.introLength = 0;
+		PlayState.instance.startCountdown();
+	}
+	if (mmSongName() == "Demise Old") return;
+	if (PlayState.seenCutscene) return;
+	// Getting at hxvlc's class takes an `import`. hscript's `new` only accepts a
+	// name that is already in the script's own scope: `Interp.cnew` looks the
+	// name up *there* first and throws "Unknown variable" before it ever asks
+	// Type.resolveClass, so a dotted `new hxvlc.flixel.FlxVideoSprite()` cannot
+	// work (that is the error this port first hit). `import` is what puts the
+	// class in scope - it resolves the path itself and binds the class under its
+	// short name - and the engine's own scripts reach their classes the same way
+	// (a script's scope has no `Type` to resolve one by hand: v1.0.1's defaults
+	// are Std/Math/Reflect/StringTools/Json plus the engine's own list). Both
+	// statements are inside the try so a build without hxvlc skips just the clip
+	// instead of failing the whole stage script.
+	var vid = null;
+	var loaded:Bool = false;
+	try {
+		import hxvlc.flixel.FlxVideoSprite;
+		vid = new FlxVideoSprite();
+		if (vid != null) {
+			vid.scrollFactor.set(0, 0);
+			vid.cameras = [mmGetOther()];
+			vid.visible = false;
+			mmVideoHooks(vid, function() { mmIntroOver(); });
+			add(vid);
+			loaded = vid.load(Paths.video("demise_cutscene")) == true;
+		}
+	} catch (e:Dynamic) {
+		trace("[MM demiseport] opening video: the video could not be prepared - " + Std.string(e));
+		loaded = false;
+	}
+	if (!loaded) {
+		trace("[MM demiseport] opening video did not load ('demise_cutscene.mp4')");
+		return;
+	}
+	// Only a playable clip consumes the session's once: a failed load retries
+	// on the next attempt, like the source's startCountdown fallback.
+	PlayState.seenCutscene = true;
+	mmIntroVid = vid;
+	mmIntroDone = false;
+	vid.visible = true;
+	try {
+		vid.play();
+	} catch (e:Dynamic) {
+		trace("[MM demiseport] opening video could not play - " + Std.string(e));
+		mmIntroOver();
+		return;
+	}
+	// Fallback: the clip is 16.04s; if the end signal never fires, the overlay
+	// still comes down instead of sitting on the song.
+	try {
+		new FlxTimer().start(17, function(tmr) { mmIntroOver(); });
+	} catch (e2:Dynamic) {}
+}
+
+// hxvlc's callbacks are signals on the sprite's own `bitmap`
+// (`video.bitmap.onEndReached.add(fn)`, `...onFormatSetup.add(fn)`) - the exact
+// two lines the engine's own VideoCutscene wires. Psych's `finishCallback` is
+// not on this class at all, which is why the old guarded `Reflect.setField`
+// pair silently did nothing and the clip only ever ended on a timer. They are
+// written as plain member accesses, not `Reflect.field` lookups: hscript's
+// `get` goes through Reflect.getProperty, which reaches the sprite's properties
+// and the signal's `add` method, while a hand-rolled `Reflect.field` on a class
+// *method* answers null on cpp and skipped the wiring (and then the load/play
+// calls below) entirely.
+// The format hook is also where the sprite takes the video's size: it is built
+// 1x1 (`makeGraphic(1, 1)`) and only learns the frame size when the decoder
+// reports it, so the fit-to-window has to happen there for the clip to cover
+// the screen.
+function mmVideoHooks(vid, onEnd) {
+	vid.bitmap.onEndReached.add(onEnd);
+	vid.bitmap.onFormatSetup.add(function() {
+		if (vid.bitmap == null || vid.bitmap.bitmapData == null) return;
+		var w = vid.bitmap.bitmapData.width;
+		var h = vid.bitmap.bitmapData.height;
+		var sc:Float = Math.max(FlxG.width / w, FlxG.height / h);
+		vid.setGraphicSize(w * sc, h * sc);
+		vid.updateHitbox();
+		vid.screenCenter();
+	});
+}
+
+// The source's own end of the clip (6188-6192): drop the video, then
+// `camHUD.flash(FlxColor.RED, 2)`. Nothing here touches the song - the clip
+// runs over a song that is already playing, which is the whole point of the
+// start above.
+function mmIntroOver() {
+	if (mmIntroDone) return;
+	mmIntroDone = true;
+	if (mmIntroVid != null) mmIntroVid.visible = false;
+	if (camHUD != null) camHUD.flash(FlxColor.RED, 2);
 }
 
 // The backdrops go in one by one, each on top of the previous one, so the world
@@ -471,6 +717,17 @@ function onCountdown(event) {
 	event.cancelled = true;
 }
 
+// PlayState.hx:6631-6639, in startSong(): the cutscene bodies start the song
+// hidden at full alpha - case 5 below only flips `visible`, so without this the
+// reveal would show the XML's alpha-0.000001 nothings.
+function onSongStart() {
+	for (s in [demcut1, demcut2, demcut3, demcut4]) {
+		if (s == null) continue;
+		s.visible = false;
+		s.alpha = 1;
+	}
+}
+
 function postCreate() {
 	// PlayState.hx:3044-3046: hidden GF and a full opening health bar.
 	if (gf != null) gf.visible = false;
@@ -507,16 +764,50 @@ function postCreate() {
 
 	// 5647-5663: the filters are mounted at create, before the countdown runs.
 	mmTvStack();
+
+	// 5805-5808: the warp version's opening video, before the countdown.
+	mmPlayIntroVideo();
 }
 
 // PlayState.hx:7705-7707, the Demise-specific flipchar icon layout.
 function postUpdate(elapsed) {
 	// The VCR/border stack's time uniform (`vcr.update(elapsed)`), before the
-	// HUD early-return below - the filters do not depend on the icons.
+	// HUD early-return below - the filters (and the cutscene below) do not
+	// depend on the icons.
 	mmTvTick(elapsed);
+	mmDemCutscene();
 	if (healthBar == null || iconP1 == null || iconP2 == null) return;
 	iconP2.x = healthBar.x + healthBar.width - 40;
 	iconP1.x = healthBar.x + healthBar.width * (1 - health / 2) - 35;
+}
+
+// PlayState.hx:7791-7816, the cutscene's per-frame half: bodies 2..4 ride on
+// body 1 every frame, body 1's Bodies animation carries GF and MX's fall, and
+// its own frame 17 starts body 1's drift up off the stage into its hover.
+function mmDemCutscene() {
+	if (demcut1 == null) return;
+	if (demcut2 != null) { demcut2.x = demcut1.x + 650; demcut2.y = demcut1.y; }
+	if (demcut3 != null) { demcut3.x = demcut1.x + 1100; demcut3.y = demcut1.y + 370; }
+	if (demcut4 != null) { demcut4.x = demcut1.x + 270; demcut4.y = demcut1.y + 30; }
+	var fi:Dynamic = (demcut1.animation != null) ? demcut1.animation.frameIndex : null;
+	if (fi == null) return;
+	// 7800-7806: frame 17, body 1 (GF and MX with it) lifts off.
+	if (fi == 17 && demcut1.alpha == 1 && demcut1.visible) {
+		FlxTween.tween(demcut1, {y: -600, x: -200}, 5, {ease: FlxEase.quadInOut, onComplete: function(twn) {
+			FlxTween.tween(demcut1, {x: -300}, 2.5, {ease: FlxEase.quadInOut, type: FlxTween.PINGPONG});
+			FlxTween.tween(demcut1, {y: -500}, 4, {ease: FlxEase.quadInOut, type: FlxTween.PINGPONG});
+		}});
+	}
+	// 7808-7816: the last frame - bodies and MX out, fighters back. Without
+	// this BF kept case 5's alpha 0 for the rest of the song.
+	if (fi == 232 && demcut1.alpha == 1 && demcut1.visible) {
+		for (s in [demcut1, demcut2, demcut3, demcut4]) if (s != null) s.visible = false;
+		if (gordobondiola != null) gordobondiola.visible = false;
+		var b = mmBfChar();
+		if (b != null) b.alpha = 1;
+		var d = mmDadChar();
+		if (d != null) d.alpha = 1;
+	}
 }
 
 // 16489-16493: the flash pulse, one crochet long, on every beat while case 11
@@ -590,12 +881,12 @@ function onEvent(event) {
 			var b5 = mmBfChar();
 			if (b5 != null) b5.alpha = 0;
 			var d5 = mmDadChar();
-			if (d5 != null) d5.alpha = 0;
-			for (s in [demcut1, demcut2, demcut3, demcut4]) {
-				if (s == null) continue;
-				s.visible = true;
-				s.animation.play("idle", true);
-			}
+			if (d5 != null) d5.alpha = 0;			for (s in [demcut1, demcut2, demcut3, demcut4]) {
+			if (s == null) continue;
+			s.visible = true;
+			s.alpha = 1; // onSongStart already did this; belt and braces for the XML's 0.000001
+			if (s.animation != null) s.animation.play("idle", true);
+		}
 			if (floordemise != null) FlxTween.tween(floordemise, {alpha: 0}, 0.5);
 			mmBackdropFade(mmDemGround, 0, 0.5, null);
 			FlxTween.tween(camHUD, {alpha: 0.1}, 0.5);
