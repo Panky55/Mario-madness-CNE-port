@@ -573,16 +573,29 @@ function onEvent(event) {
 			// 11816-11840: one FlxText *per letter* of value2, each carrying its own
 			// letter padded out to the full string's width with two spaces on each
 			// side, centred in the 720px box - so the word is spread across the
-			// screen and every letter flies on its own random timing.
+			// screen and every letter flies on its own random timing. (The source's
+			// loop overwrites what it has appended so far, so the letter lands first
+			// and the padding trails it - kept as written.)
+			// The source's box is `new FlxText(900, 570, 720, ...)` then x += 80,
+			// y += 40: x 980 puts a 720px field over 980..1700, i.e. more than half
+			// of it past the right edge of a 1280-wide HUD - which is the row that
+			// showed up as "offset towards the right, I can see like half of it".
+			// The same spread box is centred on the HUD instead, and its row is the
+			// source's 610/720 fraction rather than a bare 610 on a taller HUD.
 			var msg:String = Std.string(event.event.params[1]);
 			if (msg == null) break;
+			var hudW:Float = (camHUD != null) ? camHUD.width : FlxG.width;
+			var hudH:Float = (camHUD != null) ? camHUD.height : FlxG.height;
+			var boxW:Float = 720 * (hudW / 1280);
+			var boxX:Float = (hudW - boxW) * 0.5;
+			var boxY:Float = 610 * (hudH / 720);
 			for (i in 0...msg.length) {
 				var line = "";
 				for (p in 0...msg.length) {
 					if (p != i) line += "  ";
 					else line = msg.charAt(i);
 				}
-				var text = new FlxText(980, 610, 720, line, 30);
+				var text = new FlxText(boxX, boxY, boxW, line, 30);
 				text.setFormat(Paths.font("vcr.ttf"), 30, 0xFF198C0E, "center");
 				text.borderSize = 1.25;
 				text.cameras = [camHUD];

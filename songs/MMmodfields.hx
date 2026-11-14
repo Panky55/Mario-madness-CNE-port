@@ -633,6 +633,17 @@ function _apply() {
 // documented way to iterate only the notes that can still be on screen
 // (StrumLine.notes) - it starts at the tail, the oldest notes, and stops at the
 // first one further away than the group's limit.
+// The drift mods' x for a note at `vd` pixels of scroll (`_pDrunk`/`_pBeat` are
+// the lane's values for this frame - see `_apply`).
+function _bendX(vd, lane, h, swag) {
+	var out = 0.0;
+	if (_pDrunk != 0 && _pCos[lane] != null)
+		out += _pDrunk * (Math.cos(_pTime + lane * 0.2 + vd * 10 / h) - _pCos[lane]) * swag * 0.5;
+	if (_pBeat != 0)
+		out += _pBeat * 40 * _pBeatAmt * (Math.sin(vd / 30 + Math.PI / 2) - 1);
+	return out;
+}
+
 function _notePass(fw, line, nLanes) {
 	var now = Conductor.songPosition;
 	var h = FlxG.height;
@@ -648,12 +659,21 @@ function _notePass(fw, line, nLanes) {
 
 		// the note's own scroll offset, in the same pixels the source's
 		// `visualDiff` is in (both are `(strumTime - songPos) * 0.45 * speed`)
-		var dx = 0.0;
 		var visualDiff = dt * 0.45 * _pScroll;
-		if (_pDrunk != 0 && _pCos[lane] != null)
-			dx += _pDrunk * (Math.cos(_pTime + lane * 0.2 + visualDiff * 10 / h) - _pCos[lane]) * swag * 0.5;
-		if (_pBeat != 0)
-			dx += _pBeat * 40 * _pBeatAmt * (Math.sin(visualDiff / 30 + Math.PI / 2) - 1);
+		var dx = _bendX(visualDiff, lane, h, swag);
+
+		// `PlayState.hx:8288-8305`: a hold is angled toward where it will be 75ms
+		// from now, so a lane's holds follow the wave instead of hanging straight
+		// off a swinging head.  Both positions are the source's own - the note
+		// now and the note 75ms later - and `atan2(dy, dx) + 90` is 0 for a
+		// vertical hold (notes rise, so `dy` is negative and `atan2` is -90).
+		var tilt = 0.0;
+		if (n.isSustainNote && (_pDrunk != 0 || _pBeat != 0)) {
+			var scroll75 = 0.45 * 75 * _pScroll;
+			var ddx = _bendX(visualDiff - scroll75, lane, h, swag) - dx;
+			tilt = Math.atan2(-scroll75, ddx) * 180 / Math.PI + 90;
+			if (!(tilt == tilt)) tilt = 0;
+		}
 
 		// `getVisibility` + `getAlpha`: a note fades out once its sprite y is
 		// past the middle of the screen, over the sudden/hidden band
@@ -668,7 +688,7 @@ function _notePass(fw, line, nLanes) {
 		}
 		var total = a * vis;
 
-		if (total == 1 && fx == 1 && fy == 1 && dx == 0) {
+		if (total == 1 && fx == 1 && fy == 1 && dx == 0 && tilt == 0) {
 			_restoreNote(n);
 			return;
 		}
@@ -677,6 +697,7 @@ function _notePass(fw, line, nLanes) {
 			n.extra.set('mmMSX', n.scale.x);
 			n.extra.set('mmMSY', n.scale.y);
 			n.extra.set('mmMRP', n.strumRelativePos);
+			n.extra.set('mmMAng', n.angle);
 		}
 		n.alpha = n.extra.get('mmMA') * total;
 		// a sustain's y scale is its own length, the source leaves it alone too
@@ -692,6 +713,8 @@ function _notePass(fw, line, nLanes) {
 			line.members[lane].updateNotePosition(n);
 			if (dx != 0) n.x += dx;
 		}
+		// after `updateNotePosition`, which hands the note the receptor's angle
+		if (n.isSustainNote && n.angle != tilt) n.angle = tilt;
 		_noteDirty[fw][lane] = true;
 	});
 	// a lane that is clean now had all of its notes restored above, so its flag
@@ -709,6 +732,7 @@ function _notePass(fw, line, nLanes) {
 function _restoreNote(n) {
 	if (!n.extra.exists('mmMA')) return;
 	n.alpha = n.extra.get('mmMA');
+	n.angle = n.extra.get('mmMAng');
 	if (n.isSustainNote) n.scale.x = n.extra.get('mmMSX');
 	else {
 		n.scale.x = n.extra.get('mmMSX');
@@ -724,4 +748,5 @@ function _restoreNote(n) {
 	n.extra.remove('mmMSX');
 	n.extra.remove('mmMSY');
 	n.extra.remove('mmMRP');
+	n.extra.remove('mmMAng');
 }

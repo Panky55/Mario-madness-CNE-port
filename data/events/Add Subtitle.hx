@@ -28,10 +28,13 @@ import flixel.text.FlxText.FlxTextBorderStyle;
 var mmSubtitle:FunkinText;
 var mmSubCam:FlxCamera = null;
 
+function mmCamW():Float return (camHUD != null) ? camHUD.width : FlxG.width;
+function mmCamH():Float return (camHUD != null) ? camHUD.height : FlxG.height;
+
 function mmSubCamGet():FlxCamera {
 	if (mmSubCam == null) {
-		var w = (camHUD != null) ? camHUD.width : FlxG.width;
-		var h = (camHUD != null) ? camHUD.height : FlxG.height;
+		var w = mmCamW();
+		var h = mmCamH();
 		mmSubCam = new FlxCamera(0, 0, w, h);
 		mmSubCam.bgColor = FlxColor.TRANSPARENT;
 		mmSubCam.zoom = 1;		FlxG.cameras.add(mmSubCam, false); // defaultDraw=false -> world not redrawn
@@ -47,12 +50,34 @@ function mmSubCamSize() {
 	if (mmSubCam.height != camHUD.height) mmSubCam.height = camHUD.height;
 }
 
+// 5255: the row's y is the fork's own 560.8 in its 1280x720 screen. The HUD here
+// is laid out in FlxG.height pixels (healthBarBG is at FlxG.height * 0.9), so a
+// bare 560.8 sits 39% down a 1440px window instead of on the fork's row; keeping
+// the fraction puts it where the source has it at any height.
+function mmSubY():Float return mmCamH() * (560.8 / 720);
+
+// Centring. The source gets it for free from `FlxText(0, ..., FlxG.width, ...)`
+// with CENTER, and this port did the same - but a field width of FlxG.width only
+// centres while `alignment` is honoured (it is a String->enum-abstract argument
+// that does not survive being passed through a script; the title card avoids it
+// by using a 0 field plus screenCenter) and while FlxG.width is the width of the
+// camera the row draws to. Measuring the line and centring it on that camera
+// holds either way, and re-doing it every frame follows a window resize.
+function mmSubFit() {
+	if (mmSubtitle == null) return;
+	mmSubtitle.y = mmSubY();
+	mmSubtitle.x = (mmCamW() - mmSubtitle.width) * 0.5;
+}
+
 function postUpdate(elapsed:Float) {
 	mmSubCamSize();
+	mmSubFit();
 }
 
 function create() {
-	mmSubtitle = new FunkinText(0, 560.8, FlxG.width, "", 30);
+	// field width 0: the row's own width is the line's, which is what mmSubFit
+	// centres (a wide field is the thing that goes wrong when alignment is lost)
+	mmSubtitle = new FunkinText(0, mmSubY(), 0, "", 30);
 	// 5256-5263: exeport is the one stage whose subtitle uses the mod's own font.
 	var font:String = (curStage == "exeport") ? "mariones.ttf" : "vcr.ttf";
 	mmSubtitle.setFormat(Paths.font(font), 30, FlxColor.WHITE, "center", FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -60,11 +85,13 @@ function create() {
 	mmSubtitle.scrollFactor.set(0, 0);
 	mmSubtitle.cameras = [mmSubCamGet()];
 	add(mmSubtitle);
+	mmSubFit();
 }
 
 function onEvent(event) {
 	if (event.event.name != "Add Subtitle") return;
 	mmSubtitle.text = Std.string(event.event.params[0]);
+	mmSubFit();
 
 	var colour = Std.string(event.event.params[1]);
 	var newColour = null;
