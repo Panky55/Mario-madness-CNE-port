@@ -11,6 +11,21 @@ function create() {
 	add(poisonVG);
 }
 
+// Note.hx:231-237 sets `ignoreNote = mustPress` on this type: letting one scroll
+// past is how it is played, so it must not count as a miss.
+function onPlayerMiss(event) {
+	if (event.noteType == "Bad Poison")
+		event.cancel();
+}
+
+// Note.hx:231-237 reloads the type's sheet as `badMario_NOTE_assets` - the evil
+// mushroom. `songs/noteskin.hx` maps it too; a type's own script is guaranteed to
+// be loaded for it.
+function onNoteCreation(event) {
+	if (event.noteType != "Bad Poison") return;
+	event.noteSprite = "game/notes/badMario_NOTE_assets";
+}
+
 function onPlayerHit(event) {
 	if (event.noteType != "Bad Poison") return;
 	FlxG.sound.play(Paths.sound("bad-day/smw_scroll"), 0.8);

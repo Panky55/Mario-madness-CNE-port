@@ -28,8 +28,8 @@
 // the source's `BF_CAM_X = ...` / `DAD_CAM_X = ...` writes go through the api it
 // publishes through the engine's ScriptPack like every other staged camera move. Psych's
 // camEst (the layer between camGame and camHUD) is a camera of this script's own,
-// slid in at camHUD's index - cases 14/15 drag the health bar and both icons onto
-// it and tilt it, which is the "mario breaks the health bar" gag.
+// slid in at camHUD's index - cases 14/15 drag the bar's whole block onto it and
+// tilt it, which is the "mario breaks the health bar" gag (see `mmHudSet`).
 //
 // Cases that re-dispatch events instead of doing the work inline are inlined:
 // 'Triggers Universal' 13 is case 13's `badFlash` and 'Triggers Universal' 11 is
@@ -43,8 +43,10 @@
 // `addCharacterToList` target is warmed by `mmPreloadCharacters`.
 // NOT ported: `gf.specialAnim = false` (CNE's Character has no such field -
 // see data/events/MM Play Animation.hx) and `customHB`/`customHBweegee`, the
-// 'healthBarNEW' frames over the health bar: Codename draws its own bar and has
-// no such sprite, so cases 14/15 move the health bar and the icons only.
+// 'healthBarNEW' frames the fork draws over the health bar: Codename draws its
+// own bar and has no such sprite. The engine's bar does have a frame and a score
+// line though, and those are what the player saw left behind when only the fill
+// fell - `mmHudSet` is that whole block, so cases 14/15 move all of it.
 function mmCam(which:String, args:Array<Dynamic>):Dynamic {
 	// songs/MMcamera.hx publishes its api through CnE's ScriptPack
 	// (`PlayState.instance.scripts.set/get`), the engine's own cross-script
@@ -71,18 +73,84 @@ function mmDownscroll():Bool {
 	return false;
 }
 
-// `playerStrums.members[i].x` (cases 10/12 fly the HUD Mario to strum 3's and
-// strum 0's columns). Read through Reflect so an engine whose strum group is
-// shaped differently degrades to 0 instead of throwing.
-function mmStrumX(i:Int):Float {
+// Psych's HUD rows are physical screen positions, and CNE's HudCamera draws a HUD
+// sprite at `height - y - sprite.height`, so a row copied from the source is
+// mirrored a second time. Callers pass the row they want the sprite drawn on;
+// the fork's own downscroll rows are hand-built for a camera that does not flip.
+function mmHudY(s, up:Float, down:Float):Float {
+	if (!mmDownscroll()) return up;
+	var h:Float = (camHUD != null) ? camHUD.height : FlxG.height;
+	return h - down - s.height;
+}
+
+// `playerStrums.members[i].x` in the source. Codename has no `playerStrums` field:
+// the charts build the opponent line first, so BF's is `strumLines.members[1]`
+// (songs/MMmodfields.hx's FW_LINE says the same).
+function mmPlayerStrum(i:Int) {
 	var ps = PlayState.instance;
-	if (ps == null) return 0;
-	var group = Reflect.field(ps, "playerStrums");
-	if (group == null) return 0;
-	var mem = Reflect.field(group, "members");
-	if (mem == null || mem.length <= i) return 0;
-	var s = mem[i];
+	if (ps == null) return null;
+	var lines = Reflect.field(ps, "strumLines");
+	if (lines == null) return null;
+	var mem = Reflect.field(lines, "members");
+	if (mem == null || mem.length <= 1) return null;
+	var line = mem[1];
+	if (line == null) return null;
+	var strums = Reflect.field(line, "members");
+	if (strums == null || strums.length <= i) return null;
+	return strums[i];
+}
+
+function mmStrumX(i:Int):Float {
+	var s = mmPlayerStrum(i);
 	return (s != null) ? s.x : 0;
+}
+
+// The row BF's strums sit on. The source's HUD Mario rows are relative to Psych's
+// row of 50, so they are rebuilt from this engine's row instead.
+var MM_SOURCE_STRUM_ROW:Float = 50;
+function mmStrumY():Float {
+	var s = mmPlayerStrum(0);
+	if (s != null && s.y != null) return s.y;
+	return MM_SOURCE_STRUM_ROW;
+}
+
+// Centres a HUD sprite on one of BF's lanes. The source's
+// `playerStrums.members[3].x + 105` (12015) is measured from Psych's strum origin,
+// so it lands off the right of the line here. Lane spacing is the step from lane 0
+// to lane 3; a strum's width is not read because it may already carry the note
+// scale.
+function mmCenterOnStrums(s, lane:Int = 3) {
+	if (s == null) return;
+	var a:Float = mmStrumX(0);
+	var d:Float = mmStrumX(3);
+	if (a == 0 && d == 0) {
+		s.x = (FlxG.width - s.width) / 2;
+		return;
+	}
+	var step:Float = (d - a) / 3;
+	s.x = a + step * lane + step / 2 - s.width / 2;
+}
+
+// The hop moves him left as it plays - `x -= 80` at once, then 45 more over 0.8
+// beats - so at the peak he sits about 102px left of where he started. Columns
+// are offset right by that much.
+var MM_HOP_LEAN:Float = 102.5;
+
+// Case 11 fires the hop three times and case 12 a fourth; the source's 125px per
+// hop is about one lane, so he stomps lanes 3, 2, 1, 0. Each hop re-anchors while
+// the previous one is off screen (row 800).
+var mmHudHop:Int = 0;
+function mmHudMarioColumn(m, lane:Int) {
+	if (m == null) return;
+	mmCenterOnStrums(m, lane);
+	m.x += MM_HOP_LEAN;
+}
+
+function mmHudMarioNextColumn(m) {
+	var lane:Int = 3 - mmHudHop;
+	if (lane < 0) lane = 0;
+	mmHudHop += 1;
+	mmHudMarioColumn(m, lane);
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +243,8 @@ function mmGetHudMario() {
 		mmHudMario.animation.addByPrefix("fall", "fall", 12, true);
 		mmHudMario.scale.set(5, 5);
 		mmHudMario.cameras = [camHUD];
+		// mmHudY and the camera mirror both use the sprite's own box.
+		mmHudMario.updateHitbox();
 	}
 	return mmHudMario;
 }
@@ -202,6 +272,14 @@ function mmGetGrads() {
 
 // 2053-2055 + 5574-5580: `blackBarThingie` for this stage - see postCreate.
 var mmSuperbadBar = null;
+
+// badmario.xml's own `x="90" y="535"` (Psych's badmario.json `position`): the
+// engine adds a character's own position to the stage's, so his frame is drawn
+// that far in from the sprite's stored `dad.x`/`dad.y`. Anything the source
+// spawns at `dad.x + n, dad.y + n` needs the pair added to it - without it the
+// case 6 shell started 535px above his head, off the top of the screen.
+var MM_MARIO_OX = 90;
+var MM_MARIO_OY = 535;
 
 function postCreate() {
 	mmGetBye();
@@ -269,9 +347,11 @@ function mmBadFlash() {
 	if (!mmDownscroll()) {
 		FlxG.sound.play(Paths.sound("bad-day/smw_stomp2"), 0.5);
 	} else {
-		badFlash.x = (FlxG.width - badFlash.width) / 2;
-		badFlash.y = 730;
-		badFlash.x += 80;
+		// 12097-12101: row 730, 70px under the jump. The source also centres it on
+		// the screen; here it keeps the `m.x + 70` it was built with so it stays on
+		// him (see mmHudY for the row).
+		badFlash.updateHitbox();
+		badFlash.y = mmHudY(badFlash, 0, 570);
 	}
 	insert(members.indexOf(m) + 1, badFlash);
 	badFlash.animation.play("idle", true);
@@ -282,19 +362,25 @@ function mmBadFlash() {
 function mmHudMarioHop() {
 	var m = mmGetHudMario();
 	if (m == null) return;
+	// Next lane left, then the source's own 80 + 45 walk.
+	mmHudMarioNextColumn(m);
 	m.x -= 80;
 	m.animation.play("jump", true);
 	FlxG.sound.play(Paths.sound("bad-day/smw_jump"), 0.7);
 	FlxTween.tween(m, {x: m.x - 45}, 0.8 / (Conductor.bpm / 60), {startDelay: 0.1, ease: FlxEase.quadIn});
-	FlxTween.tween(m, {y: 660}, 0.4 / (Conductor.bpm / 60), {startDelay: 0.1, ease: FlxEase.quadOut, onComplete: function(twn) {
+	// 12030-12044: up to 660 and back down to 800. The fall has to end off screen
+	// or he is left hanging there after the last hop (see mmHudY).
+	FlxTween.tween(m, {y: mmHudY(m, 0, 500)}, 0.4 / (Conductor.bpm / 60), {startDelay: 0.1, ease: FlxEase.quadOut, onComplete: function(twn) {
 		m.animation.play("fall", true);
 		FlxG.sound.play(Paths.sound("bad-day/smw_stomp2"), 0.5);
-		FlxTween.tween(m, {y: 800}, 0.4 / (Conductor.bpm / 60), {ease: FlxEase.linear});
+		FlxTween.tween(m, {y: mmHudY(m, 0, 800)}, 0.4 / (Conductor.bpm / 60), {ease: FlxEase.linear});
 	}});
 }
 
-// Case 12's downscroll half: a second shell, this time on the HUD, that falls
-// onto the health bar.
+// Case 12's downscroll half (12061-12084): mario throws a second shell, on the
+// HUD this time. It climbs from the bottom row up to the health bar, then drops
+// back off the screen - which is the hit that case 14 answers with the bar
+// falling away.
 function mmHudShell() {
 	var m = mmGetHudMario();
 	if (m == null || !Assets.exists(Paths.image("mario/BadMario/shell"))) return;
@@ -302,16 +388,59 @@ function mmHudShell() {
 	var shell = new FlxSprite().loadGraphic(Paths.image("mario/BadMario/shell"));
 	shell.scale.set(5, 5);
 	shell.x = (FlxG.width - shell.width) / 2;
-	shell.y = 710;
+	shell.updateHitbox();
+	shell.y = mmHudY(shell, 0, 710);
 	shell.angle -= 30;
 	shell.cameras = [camHUD];
 	insert(members.indexOf(m) + 1, shell);
 	mmBadFlash();
 	FlxTween.tween(shell, {angle: 30}, 1 / (Conductor.bpm / 60));
-	FlxTween.tween(shell, {y: 60}, 1 / (Conductor.bpm / 60), {onComplete: function(twn) {
+	FlxTween.tween(shell, {y: mmHudY(shell, 0, 60)}, 1 / (Conductor.bpm / 60), {onComplete: function(twn) {
 		FlxTween.tween(shell, {x: shell.x + 90}, 1.5);
-		FlxTween.tween(shell, {y: 900}, 1.5, {ease: FlxEase.backIn, onComplete: function(twn2) { shell.kill(); }});
+		FlxTween.tween(shell, {y: mmHudY(shell, 0, 900)}, 1.5, {ease: FlxEase.backIn, onComplete: function(twn2) { shell.kill(); }});
 	}});
+}
+
+// The block case 14 drags onto camEst. The source moves `healthBar` and the icons
+// and its AttachedSprite frame follows; here the frame is its own engine sprite,
+// and the source's one `scoreTxt` is three (`scoreTxt`, `missesTxt`,
+// `accuracyTxt`), so they are all listed.
+function mmHudSet() {
+	return [healthBar, healthBarBG, iconP1, iconP2, scoreTxt, missesTxt, accuracyTxt];
+}
+
+// Moving a sprite off camHUD loses the HudCamera's downscroll mirror, which flips
+// the drawn position rather than the sprite. Mirror each y on the way out and
+// `mmHudBack` restores the logical ones.
+var mmHudSaved = null;
+function mmHudTo(est) {
+	if (mmHudSaved == null) mmHudSaved = [];
+	if (mmHudSaved.length > 0) return;
+	var h:Float = (camHUD != null) ? camHUD.height : FlxG.height;
+	for (s in mmHudSet()) {
+		if (s == null) continue;
+		mmHudSaved.push({spr: s, y: s.y});
+		if (mmDownscroll()) s.y = h - s.y - s.height;
+		s.cameras = [est];
+	}
+}
+
+function mmHudBack() {
+	if (mmHudSaved == null) return;
+	for (e in mmHudSaved) {
+		if (e.spr == null) continue;
+		e.spr.y = e.y;
+		e.spr.cameras = [camHUD];
+	}
+	mmHudSaved = [];
+}
+
+// 11897-11916 and the shroom's 11925-11940: both spawn 140/80 from the top-left
+// of mario's frame, which the engine draws MM_MARIO_OX/OY in from his stored
+// position.
+function mmShellFromMario(spr) {
+	if (dad == null) return;
+	spr.setPosition(dad.x + MM_MARIO_OX + 140, dad.y + MM_MARIO_OY + 80);
 }
 
 // ---------------------------------------------------------------------------
@@ -374,7 +503,7 @@ function onEvent(event) {
 					if (!Assets.exists(Paths.image("mario/BadMario/shell"))) return;
 					var shell = new FlxSprite().loadGraphic(Paths.image("mario/BadMario/shell"));
 					shell.scale.set(4, 4);
-					shell.setPosition(dad.x + 140, dad.y + 80);
+					mmShellFromMario(shell);
 					add(shell);
 					FlxTween.tween(shell, {y: shell.y + 40}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadIn});
 					FlxTween.tween(shell, {x: shell.x + 360}, 0.5 / (Conductor.bpm / 60), {onComplete: function(twn) {
@@ -392,7 +521,7 @@ function onEvent(event) {
 					if (!Assets.exists(Paths.image("mario/BadMario/shroom"))) return;
 					var shroom = new FlxSprite().loadGraphic(Paths.image("mario/BadMario/shroom"));
 					shroom.scale.set(4, 4);
-					shroom.setPosition(dad.x + 140, dad.y + 80);
+					mmShellFromMario(shroom);
 					add(shroom);
 					FlxTween.tween(shroom, {y: 900}, 1 / (Conductor.bpm / 60), {ease: FlxEase.quadIn});
 					FlxTween.tween(shroom, {x: shroom.x + 200}, 1 / (Conductor.bpm / 60), {onComplete: function(twn) { shroom.kill(); }});
@@ -439,17 +568,23 @@ function onEvent(event) {
 			if (m10 == null) return;
 			add(m10);
 			if (!mmDownscroll()) {
-				m10.setPosition(1280, 100);
+				// 12002/12006/12008: 100, -110 and -10 on Psych's row of 50, i.e.
+				// +50, -160 and -60 from the row (see mmStrumY).
+				m10.setPosition(1280, mmStrumY() + 50);
 				m10.animation.play("spin", true);
 				FlxG.sound.play(Paths.sound("bad-day/smw_spinjump"), 0.6);
 				FlxTween.tween(m10, {x: mmStrumX(3) + 35}, 1.5 / (Conductor.bpm / 60));
-				FlxTween.tween(m10, {y: -110}, 0.9 / (Conductor.bpm / 60), {ease: FlxEase.quadOut, onComplete: function(twn) {
-					FlxTween.tween(m10, {y: -10}, 0.6 / (Conductor.bpm / 60), {ease: FlxEase.quadIn, onComplete: function(twn2) {
+				FlxTween.tween(m10, {y: mmStrumY() - 160}, 0.9 / (Conductor.bpm / 60), {ease: FlxEase.quadOut, onComplete: function(twn) {
+					FlxTween.tween(m10, {y: mmStrumY() - 60}, 0.6 / (Conductor.bpm / 60), {ease: FlxEase.quadIn, onComplete: function(twn2) {
 						FlxTween.tween(m10, {x: mmStrumX(0) - 110 - 400}, 7.5 / (Conductor.bpm / 60));
 					}});
 				}});
 			} else {
-				m10.setPosition(mmStrumX(3) + 105, 800);
+				// 12015 parks him on row 800, under the bottom edge that cases 11/12 hop
+				// him out of (see mmHudY). Column from the lanes, not the source's `+ 105`.
+				m10.y = mmHudY(m10, 0, 800);
+				mmHudHop = 0;
+				mmHudMarioColumn(m10, 3);
 			}
 		case 11:
 			// 12026-12046.
@@ -457,8 +592,8 @@ function onEvent(event) {
 				mmBadFlash();
 				var m11 = mmGetHudMario();
 				if (m11 == null) return;
-				FlxTween.tween(m11, {y: -80}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadOut, onComplete: function(twn) {
-					FlxTween.tween(m11, {y: -10}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadIn});
+				FlxTween.tween(m11, {y: mmStrumY() - 130}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadOut, onComplete: function(twn) {
+					FlxTween.tween(m11, {y: mmStrumY() - 60}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadIn});
 				}});
 			} else {
 				mmHudMarioHop();
@@ -469,21 +604,25 @@ function onEvent(event) {
 				mmBadFlash();
 				var m12 = mmGetHudMario();
 				if (m12 == null) return;
-				FlxTween.tween(m12, {y: -80}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadOut, onComplete: function(twn) {
+				FlxTween.tween(m12, {y: mmStrumY() - 130}, 0.5 / (Conductor.bpm / 60), {ease: FlxEase.quadOut, onComplete: function(twn) {
 					FlxTween.tween(m12, {y: 575}, 2 / (Conductor.bpm / 60), {ease: FlxEase.quadIn});
 				}});
 			} else {
-				mmHudShell();
+				// 12058-12060: the downscroll half re-dispatches case 11 (the hop)
+				// straight away and throws the shell 1.5 beats later, not at once.
+				mmHudMarioHop();
+				new FlxTimer().start(1.5 / (Conductor.bpm / 60), function(tmr) {
+					mmHudShell();
+				});
 			}
 		case 13:
 			mmBadFlash();
 		case 14:
-			// 12104-12138: the health bar and both icons are dragged onto camEst
-			// and the camera is thrown off the screen - mario has just stomped it.
+			// 12104-12138: the bar's block is dragged onto camEst and the camera is
+			// thrown off the screen - mario has just stomped it. See mmHudSet for
+			// what `healthBar`/`healthBarBG`/the icons/the score are here.
 			var est = mmEst();
-			if (healthBar != null) healthBar.cameras = [est];
-			if (iconP1 != null) iconP1.cameras = [est];
-			if (iconP2 != null) iconP2.cameras = [est];
+			mmHudTo(est);
 			if (!mmDownscroll()) {
 				FlxTween.tween(est, {y: 500}, 0.8, {ease: FlxEase.backIn});
 				FlxTween.tween(est, {angle: 20}, 0.8, {ease: FlxEase.cubeIn});
@@ -513,9 +652,7 @@ function onEvent(event) {
 			var est2 = mmEst();
 			est2.setPosition(0, 0);
 			est2.angle = 0;
-			if (healthBar != null) healthBar.cameras = [camHUD];
-			if (iconP1 != null) iconP1.cameras = [camHUD];
-			if (iconP2 != null) iconP2.cameras = [camHUD];
+			mmHudBack();
 			mmGetGrads();
 			if (mmGrad1 != null) mmGrad1.visible = true;
 			if (mmGrad2 != null) mmGrad2.visible = true;
